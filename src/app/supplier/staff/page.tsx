@@ -3,127 +3,92 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import supplierStaffService from "@/app/services/supplierStaffService";
+import supplierStaffService, {
+  revalidateSupplierStaffs,
+  toggleSupplierStaffStatus,
+} from "@/app/services/supplierStaffService";
 import CreateSupplierStaff from "@/app/components/Staff/CreateStaff";
-import UpdateSupplierStaff from "@/app/components/Staff/UpdateStaff";
-import { RollerShades } from "@mui/icons-material";
 import UpdateStaff from "@/app/components/Staff/UpdateStaff";
 import { toast } from "react-toastify";
-import console from "console";
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
+import "../../../../public/css/tour.css";
 
 const SupplierStaffList = () => {
-  const [showPopup, setShowPopup] = useState(false); 
-  const [selectStaff, setSelectedSupplierStaff] = useState<ISupplierStaff | null>(null);
-  const [supplierStaffList, setSupplierStaffList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedStaff, setSelectedSupplierStaff] =
+    useState<ISupplierStaff | null>(null);
   const [showStaffCreate, setShowStaffCreate] = useState<boolean>(false);
   const [showStaffUpdate, setShowStaffUpdate] = useState<boolean>(false);
-  const [StaffId, setStaffId] = useState(0);
-  const [RoleId, setRoleId] = useState(0);
-  const [SupplierStaff, setSupplierStaff] = useState<ISupplierStaff | null>(null);
+  const [staffId, setStaffId] = useState(0);
+  const [supplierStaff, setSupplierStaff] = useState<ISupplierStaff | null>(
+    null
+  );
+
+  const supplierId = localStorage.getItem("supplierId");
+
+  // Sử dụng useSWR để lấy danh sách nhân viên với key phù hợp
+  const {
+    data: supplierStaffList,
+    error,
+    mutate: mutateSupplierStaffs,
+  } = useSWR(
+    supplierId ? `supplierStaffList-${supplierId}` : null,
+    () => supplierStaffService.getStaffsBySuppierId(Number(supplierId)),
+    {
+      revalidateOnFocus: false,
+    }
+  );
 
   const handleImageClick = (supplierStaff: ISupplierStaff) => {
     setSelectedSupplierStaff(supplierStaff);
     setShowPopup(true);
   };
+
   const handleClosePopup = () => {
     setShowPopup(false);
     setSelectedSupplierStaff(null);
   };
 
-  useEffect(() => {
-    const supplierId = localStorage.getItem("supplierId");
-    if (supplierId) {
-      supplierStaffService
-        .getStaffsBySuppierId(Number(supplierId))
-        .then((data: any) => {
-          setSupplierStaffList(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching supplier staff list:", error);
-          setError(error);
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
-  }, []);
-
-  //reload sau khi add
   const handleCreateStaff = async () => {
     setShowStaffCreate(false);
-    const supplierId = localStorage.getItem("supplierId");
-    if (supplierId) {
-      supplierStaffService
-        .getStaffsBySuppierId(Number(supplierId))
-        .then((data: any) => {
-          setSupplierStaffList(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching supplier staff list:", error);
-          setError(error);
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
+    mutateSupplierStaffs(); // Revalidate lại danh sách nhân viên sau khi tạo mới
   };
 
   const handleUpdateStaff = async () => {
     setShowStaffUpdate(false);
-    const supplierId = localStorage.getItem("supplierId");
-    if (supplierId) {
-      supplierStaffService
-        .getStaffsBySuppierId(Number(supplierId))
-        .then((data: any) => {
-          setSupplierStaffList(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching supplier staff list:", error);
-          setError(error);
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
+    mutateSupplierStaffs(); // Revalidate lại danh sách nhân viên sau khi cập nhật
+  };
+
+  const toggleSupplierStaff = async (staffId: number) => {
+    try {
+      await toggleSupplierStaffStatus(staffId);
+      setShowPopup(false);
+      mutateSupplierStaffs(); // Revalidate lại danh sách nhân viên sau khi thay đổi trạng thái
+      toast.success("Success");
+    } catch (error: any) {
+      console.error(error.message);
+      toast.error("Failed to toggle supplier staff status");
     }
   };
 
-  if (loading) {
+  if (!supplierStaffList) {
     return <div>Loading...</div>;
   }
 
   if (error) {
     return <div>Error loading supplier staff</div>;
-  } 
-  // const toggleSupplierStaff = async (staffId:number) => {
-  //   setLoading(true);
-  //   try {
-  //     await toggleTourStatus(userId);
-  //     setShowPopup(false);
-  //     mutate(revalidateTours)
-  //     toast.success("Success");
-  //   } catch (error:any) {
-  //     console.error(error.message);
-  //     toast.error("Failed to toggle tour status");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  }
+
   return (
     <div className="relative">
-      <div className="search-add ">
+      <div className="search-add">
         <div className="search-hotel flex">
           <input
             type="text"
             placeholder="Search........."
             className="input-hotel pl-3"
           />
-          <img src="/image/search.png" alt="" />
+          <img src="/image/search.png" alt="Search" />
         </div>
         <button
           className="ml-8 button-add ml-4rem"
@@ -165,76 +130,91 @@ const SupplierStaffList = () => {
                   </thead>
                   <tbody>
                     {supplierStaffList.length > 0 ? (
-                      supplierStaffList.map((item: ISupplierStaff, index) => {
-                        return (
-                          <tr
-                            key={index}
-                            className="border-b border-neutral-200 dark:border-white/10"
+                      supplierStaffList.map((item: ISupplierStaff, index) => (
+                        <tr
+                          key={index}
+                          className="border-b border-neutral-200 dark:border-white/10"
+                        >
+                          <td className="whitespace-nowrap px-6 py-4 font-medium text-black">
+                            {item.staffId}
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            {item.staffName}
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            {item.staffPhoneNumber}
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            {item.staffEmail}
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            {item.staffAddress}
+                          </td>
+                          <td
+                            className={`whitespace-nowrap px-6 py-4 ${
+                              item.status ? "color-active" : "color-stop"
+                            }`}
                           >
-                            <td className="whitespace-nowrap px-6 py-4 font-medium">
-                              {item.staffId}
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {item.staffName}
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {item.staffPhoneNumber}
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {item.staffEmail}
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {item.staffAddress}
-                            </td>
-                            <td
-                              className={`whitespace-nowrap px-6 py-4 ${
-                                item.status ? "color-active" : "color-stop"
-                              }`}
-                            >
-                              {item.status ? "Active" : "Stopped"}
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 flex">
-                              <Link href="#">
-                                <img
-                                  className="w-5 h-5 cursor-pointer"
-                                  src="/image/pen.png"
-                                  alt="Edit"
-                                  onClick={() => {
-                                    setStaffId(item.staffId);
-                                    setSupplierStaff(item);
-                                    setShowStaffUpdate(true);                                    
-                                  }}
-                                />
-                              </Link>
+                            {item.status ? "Active" : "Stopped"}
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4 flex">
+                            <Link href="#">
                               <img
-                                className="w-5 h-5 cursor-pointer ml-3"
-                                src="/image/unlock.png"
-                                alt="Delete"
-                                onClick={() => handleImageClick(item)}
-                                // src={item.status ? "/image/unlock.png" : "/image/lock.png"}
-                                // alt={item.status ? "Ban" : "Unban"}
+                                className="w-5 h-5 cursor-pointer"
+                                src="/image/pen.png"
+                                alt="Edit"
+                                onClick={() => {
+                                  setStaffId(item.staffId);
+                                  setSupplierStaff(item);
+                                  setShowStaffUpdate(true);
+                                }}
                               />
-                              {/* {showPopup && selectedTour?.tourId === item.tourId && (
+                            </Link>
+                            <img
+                              className="w-5 h-5 cursor-pointer ml-3"
+                              src={
+                                item.status
+                                  ? "/image/unlock.png"
+                                  : "/image/lock.png"
+                              }
+                              alt={item.status ? "Ban" : "Unban"}
+                              onClick={() => handleImageClick(item)}
+                            />
+                            {showPopup &&
+                              selectedStaff?.staffId === item.staffId && (
                                 <div className="fixed inset-0 z-10 flex items-center justify-center ">
-                                  {/* Nền mờ */}
-                                  {/* <div className="fixed inset-0 bg-black opacity-5" onClick={handleClosePopup}></div> */}
-
-                                  {/* Nội dung của popup */}
-                                  {/* <div className="relative bg-white p-8 rounded-lg">
-                                    <p className='color-black font-bold text-2xl'>
-                                      Do you want to {item.status ? 'lock' : 'unlock'} this {item.tourName}?
+                                  <div
+                                    className="fixed inset-0 bg-black opacity-5"
+                                    onClick={handleClosePopup}
+                                  ></div>
+                                  <div className="relative bg-white p-8 rounded-lg">
+                                    <p className="color-black font-bold text-2xl">
+                                      Do you want to{" "}
+                                      {item.status ? "lock" : "unlock"} this{" "}
+                                      {item.staffName}?
                                     </p>
                                     <div className="button-kichhoat pt-4">
-                                      <button className='button-exit mr-2' onClick={handleClosePopup}>Exit</button>
-                                      <button className='button-yes' onClick={() => toggleTour(item.staffId)}>Yes</button>
+                                      <button
+                                        className="button-exit mr-2"
+                                        onClick={handleClosePopup}
+                                      >
+                                        Exit
+                                      </button>
+                                      <button
+                                        className="button-yes"
+                                        onClick={() =>
+                                          toggleSupplierStaff(item.staffId)
+                                        }
+                                      >
+                                        Yes
+                                      </button>
                                     </div>
-                                  </div> */}
-                                {/* </div>
-                              )} */}
-                            </td>
-                          </tr>
-                        );
-                      })
+                                  </div>
+                                </div>
+                              )}
+                          </td>
+                        </tr>
+                      ))
                     ) : (
                       <tr>
                         <td
@@ -255,9 +235,9 @@ const SupplierStaffList = () => {
                 <UpdateStaff
                   showSupplierStaffUpdate={showStaffUpdate}
                   setShowStaffUpdate={setShowStaffUpdate}
-                  onUpdate={handleUpdateStaff} // Thêm callback để xử lý sau khi tạo
-                  ThisstaffId={StaffId}                  
-                  supplierStaff={SupplierStaff}
+                  onUpdate={handleUpdateStaff}
+                  ThisstaffId={staffId}
+                  supplierStaff={supplierStaff}
                   setSupplierStaff={setSupplierStaff}
                 />
               </div>

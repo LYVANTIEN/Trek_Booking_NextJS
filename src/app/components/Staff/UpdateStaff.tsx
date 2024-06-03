@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import hotelService from "@/app/services/hotelService";
 import { Button, Form, Modal } from "react-bootstrap";
 import { Hotel } from "@mui/icons-material";
 import supplierStaffService from "@/app/services/supplierStaffService";
@@ -29,19 +28,75 @@ function UpdateStaff(props: Iprops) {
   const [roleId, setRoleId] = useState<number>(0);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isTouched, setIsTouched] = useState<{ [key: string]: boolean }>({
+    staffName: false,
+    staffPhoneNumber: false,
+    staffEmail: false,
+    staffAddress: false,
+    staffPassword: false,
+  });
 
-  const validate = () => {
-    const newErrors: { [key: string]: string } = {};
+  const validateStaffName = (name: string) => {
+    if (!name) return "Staff Name is required";
+    return "";
+  };
 
-    if (!staffName) newErrors.staffName = "Staff Name is required";
-    if (!staffPhoneNumber) {
-      newErrors.staffPhoneNumber = "Staff Phone Number is required";
-    } else if (!/0[0-9]{9}/.test(staffPhoneNumber)) {
-      newErrors.staffPhoneNumber = "Staff Phone Number must be 10 digits";
+  const validateStaffPhoneNumber = (phoneNumber: string) => {
+    if (!phoneNumber) return "Staff Phone Number is required";
+    if (!/0[0-9]{9}$/.test(phoneNumber))
+      return "Staff Phone Number must be 10 digits";
+    return "";
+  };
+
+  const validateStaffEmail = (email: string) => {
+    if (!email) return "Staff Email is required";
+    if (!/^([A-Za-z][\w\.\-]+)@([a-z]+)((\.(\w){2,3})+)$/.test(email))
+      return "Staff Email must be a valid format email address";
+    return "";
+  };
+
+  const validateStaffAddress = (address: string) => {
+    if (!address) return "Staff Address is required";
+    return "";
+  };
+
+  const validateStaffPassword = (password: string) => {
+    if (!password) return "Staff Password is required";
+    return "";
+  };
+
+  useEffect(() => {
+    if(isTouched.staffName){
+      setErrors((prevErrors) => ({...prevErrors, staffName: validateStaffName(staffName)}));
     }
-    if (!staffAddress) newErrors.staffAddress = "Staff Address is required";    
+  }, [staffName, isTouched.staffName]);
 
-    return newErrors;
+  useEffect(() => {
+    if(isTouched.staffPhoneNumber){
+      setErrors((prevErrors) => ({...prevErrors, staffPhoneNumber: validateStaffPhoneNumber(staffPhoneNumber)}));
+    }
+  }, [staffPhoneNumber, isTouched.staffPhoneNumber]);
+
+  useEffect(() => {
+    if(isTouched.staffEmail){
+      setErrors((prevErrors) => ({...prevErrors, staffEmail: validateStaffEmail(staffEmail)}));
+    }
+  }, [staffEmail, isTouched.staffEmail]);
+
+  useEffect(() => {
+    if(isTouched.staffAddress) {
+    setErrors((prevErrors) => ({...prevErrors, staffAddress: validateStaffAddress(staffAddress)}));
+    } 
+  }, [staffAddress, isTouched.staffAddress]);
+
+  useEffect(() => {
+    if (isTouched.staffPassword) {
+      setErrors((prevErrors) => ({...prevErrors, staffPassword: validateStaffPassword(staffPassword)}));
+    }
+  }, [staffPassword, isTouched.staffPassword]);
+
+  const handleBlur = (field: string) => {
+    setIsTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
   };
 
   useEffect(() => {
@@ -60,15 +115,19 @@ function UpdateStaff(props: Iprops) {
   const handleSubmit = async () => {
     const staffId = ThisstaffId;    
     const supplierId = localStorage.getItem("supplierId");
-    // if (!staffName || !staffPhoneNumber || !staffEmail || !staffAddress || !staffPassword ) {
-    //   toast.error("Please fill in all fields!!!");
-    //   return;
-    // } 
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    const validationErrors = {
+      staffName: validateStaffName(staffName),
+      staffPhoneNumber: validateStaffPhoneNumber(staffPhoneNumber),
+      staffEmail: validateStaffEmail(staffEmail),
+      staffAddress: validateStaffAddress(staffAddress),
+      staffPassword: validateStaffPassword(staffPassword),
+    };
+
+    setErrors(validationErrors);
+
+    if (Object.values(validationErrors).some((error) => error)) {
       return;
-    } 
+    }
     try {
       const supplierStaff: ISupplierStaff = {
         staffId: Number(ThisstaffId),
@@ -100,6 +159,13 @@ function UpdateStaff(props: Iprops) {
     setSupplierStaff(null);  
     setShowStaffUpdate(false);
     setErrors({});
+    setIsTouched({
+      staffName: false,
+      staffPhoneNumber: false,
+      staffEmail: false,
+      staffAddress: false,
+      staffPassword: false,
+    });
   };
 
   return (
@@ -125,6 +191,7 @@ function UpdateStaff(props: Iprops) {
                 placeholder="Please enter staff name"
                 value={staffName}
                 onChange={(e) => setStaffName(e.target.value)}
+                onBlur={() => handleBlur("staffName")}
                 isInvalid={!!errors.staffName}
               />
               <Form.Control.Feedback type="invalid">
@@ -138,6 +205,7 @@ function UpdateStaff(props: Iprops) {
                 placeholder="Please enter staff phone number"
                 value={staffPhoneNumber}
                 onChange={(e) => setStaffPhoneNumber(e.target.value)}
+                onBlur={() => handleBlur("staffPhoneNumber")}
                 isInvalid={!!errors.staffPhoneNumber}
               />
                <Form.Control.Feedback type="invalid">
@@ -151,6 +219,7 @@ function UpdateStaff(props: Iprops) {
                 placeholder="Please enter staff email"
                 value={staffEmail}
                 onChange={(e) => setStaffEmail(e.target.value)}
+                onBlur={() => handleBlur("staffEmail")}
                 readOnly
                 style={{background: "#CED1D2", fontWeight: "bold"}}                
               />              
@@ -162,6 +231,7 @@ function UpdateStaff(props: Iprops) {
                 placeholder="Please enter staff address"
                 value={staffAddress}
                 onChange={(e) => setStaffAddress(e.target.value)}
+                onBlur={() => handleBlur("staffAddress")}
                 isInvalid={!!errors.staffAddress}
               />
               <Form.Control.Feedback type="invalid">
@@ -176,6 +246,7 @@ function UpdateStaff(props: Iprops) {
                 value={staffPassword}
                 onChange={(e) => setStaffPassword(e.target.value)}
                 readOnly
+                onBlur={() => handleBlur("staffPassword")}
                 style={{background: "#CED1D2", fontWeight: "bold"}}
               />
             </Form.Group>           

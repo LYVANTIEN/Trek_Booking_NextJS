@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import hotelService from "@/app/services/hotelService";
 import { Button, Form, Modal } from "react-bootstrap";
 import supplierStaffService from "@/app/services/supplierStaffService";
 
@@ -21,36 +20,91 @@ function CreateSupplierStaff(props: Iprops) {
   const [staffPassword, setStaffPassword] = useState<string>("");
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isTouched, setIsTouched] = useState<{ [key: string]: boolean }>({
+    staffName: false,
+    staffPhoneNumber: false,
+    staffEmail: false,
+    staffAddress: false,
+    staffPassword: false,
+  });
 
-  const validate = () => {
-    const newErrors: { [key: string]: string } = {};
+  const validateStaffName = (name: string) => {
+    if (!name) return "Staff Name is required";
+    return "";
+  };
 
-    if (!staffName) newErrors.staffName = "Staff Name is required";
-    if (!staffPhoneNumber) {
-      newErrors.staffPhoneNumber = "Staff Phone Number is required";
-    } else if (!/0[0-9]{9}$/.test(staffPhoneNumber)) {
-      newErrors.staffPhoneNumber = "Staff Phone Number must be 10 digits";
+  const validateStaffPhoneNumber = (phoneNumber: string) => {
+    if (!phoneNumber) return "Staff Phone Number is required";
+    if (!/0[0-9]{9}$/.test(phoneNumber))
+      return "Staff Phone Number must be 10 digits";
+    return "";
+  };
+
+  const validateStaffEmail = (email: string) => {
+    if (!email) return "Staff Email is required";
+    if (!/^([A-Za-z][\w\.\-]+)@([a-z]+)((\.(\w){2,3})+)$/.test(email))
+      return "Staff Email must be a valid format email address";
+    return "";
+  };
+
+  const validateStaffAddress = (address: string) => {
+    if (!address) return "Staff Address is required";
+    return "";
+  };
+
+  const validateStaffPassword = (password: string) => {
+    if (!password) return "Staff Password is required";
+    return "";
+  };
+
+  useEffect(() => {
+    if(isTouched.staffName){
+      setErrors((prevErrors) => ({...prevErrors, staffName: validateStaffName(staffName)}));
     }
-    if (!staffEmail) {
-      newErrors.staffEmail = "Staff Email is required";
-    } else if (!/^([A-Za-z][\w\.\-]+)@([a-z]+)((\.(\w){2,3})+)$/.test(staffEmail)) {
-      newErrors.staffEmail = "Staff Email must be a valid format email address";
-    }
-    if (!staffAddress) newErrors.staffAddress = "Staff Address is required";
-    if (!staffPassword) newErrors.staffPassword = "Staff Password is required";
+  }, [staffName, isTouched.staffName]);
 
-    return newErrors;
+  useEffect(() => {
+    if(isTouched.staffPhoneNumber){
+      setErrors((prevErrors) => ({...prevErrors, staffPhoneNumber: validateStaffPhoneNumber(staffPhoneNumber)}));
+    }
+  }, [staffPhoneNumber, isTouched.staffPhoneNumber]);
+
+  useEffect(() => {
+    if(isTouched.staffEmail){
+      setErrors((prevErrors) => ({...prevErrors, staffEmail: validateStaffEmail(staffEmail)}));
+    }
+  }, [staffEmail, isTouched.staffEmail]);
+
+  useEffect(() => {
+    if(isTouched.staffAddress) {
+    setErrors((prevErrors) => ({...prevErrors, staffAddress: validateStaffAddress(staffAddress)}));
+    } 
+  }, [staffAddress, isTouched.staffAddress]);
+
+  useEffect(() => {
+    if (isTouched.staffPassword) {
+      setErrors((prevErrors) => ({...prevErrors, staffPassword: validateStaffPassword(staffPassword)}));
+    }
+  }, [staffPassword, isTouched.staffPassword]);
+
+  const handleBlur = (field: string) => {
+    setIsTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
   };
 
   const handleSubmit = async () => {
     const supplierId = localStorage.getItem("supplierId");
-    // if (!staffName || !staffPhoneNumber || !staffEmail || !staffAddress || !staffPassword) {
-    //   toast.error("Please fill in all fields!!!");
-    //   return;
-    // }
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    
+    const validationErrors = {
+      staffName: validateStaffName(staffName),
+      staffPhoneNumber: validateStaffPhoneNumber(staffPhoneNumber),
+      staffEmail: validateStaffEmail(staffEmail),
+      staffAddress: validateStaffAddress(staffAddress),
+      staffPassword: validateStaffPassword(staffPassword),
+    };
+
+    setErrors(validationErrors);
+
+    if (Object.values(validationErrors).some((error) => error)) {
       return;
     }
     try {
@@ -83,6 +137,13 @@ function CreateSupplierStaff(props: Iprops) {
     setStaffPassword("");
     setErrors({});
     setShowStaffCreate(false);
+    setIsTouched({
+      staffName: false,
+      staffPhoneNumber: false,
+      staffEmail: false,
+      staffAddress: false,
+      staffPassword: false,
+    });
   };
 
   return (
@@ -107,6 +168,7 @@ function CreateSupplierStaff(props: Iprops) {
                 placeholder="Please enter staff name"
                 value={staffName}
                 onChange={(e: any) => setStaffName(e.target.value)}
+                onBlur={() => handleBlur("staffName")}
                 isInvalid={!!errors.staffName}
               />
               <Form.Control.Feedback type="invalid">
@@ -120,6 +182,7 @@ function CreateSupplierStaff(props: Iprops) {
                 placeholder="Please enter staff phone number"
                 value={staffPhoneNumber}
                 onChange={(e: any) => setStaffPhoneNumber(e.target.value)}
+                onBlur={() => handleBlur("staffPhoneNumber")}
                 isInvalid={!!errors.staffPhoneNumber}
               />
               <Form.Control.Feedback type="invalid">
@@ -133,6 +196,7 @@ function CreateSupplierStaff(props: Iprops) {
                 placeholder="Please enter staff email"
                 value={staffEmail}
                 onChange={(e: any) => setStaffEmail(e.target.value)}
+                onBlur={() => handleBlur("staffEmail")}
                 isInvalid={!!errors.staffEmail}
               />
               <Form.Control.Feedback type="invalid">
@@ -146,6 +210,7 @@ function CreateSupplierStaff(props: Iprops) {
                 placeholder="Please enter staff address"
                 value={staffAddress}
                 onChange={(e: any) => setStaffAddress(e.target.value)}
+                onBlur={() => handleBlur("staffAddress")}
                 isInvalid={!!errors.staffAddress}
               />
               <Form.Control.Feedback type="invalid">
@@ -159,6 +224,7 @@ function CreateSupplierStaff(props: Iprops) {
                 placeholder="Please enter staff password"
                 value={staffPassword}
                 onChange={(e: any) => setStaffPassword(e.target.value)}
+                onBlur={() => handleBlur("staffPassword")}
                 isInvalid={!!errors.staffPassword}
               />
               <Form.Control.Feedback type="invalid">

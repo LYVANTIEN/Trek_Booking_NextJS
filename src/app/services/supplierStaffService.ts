@@ -1,3 +1,5 @@
+import { mutate } from "swr";
+
 interface ISupplierStaffService {
   getStaffsBySuppierId(supplierId: number): Promise<ISupplierStaff[]>;
   createStaff(supplierStaff: ISupplierStaff): Promise<ISupplierStaff>;
@@ -100,6 +102,25 @@ interface ISupplierStaffService {
         throw error;
       }
     },
+  };
+  export const revalidateSupplierStaffs = () => mutate(supplierStaffService.getStaffsBySuppierId);
+  export const toggleSupplierStaffStatus = async (staffId: number): Promise<void> => {
+    try {
+      const response = await fetch('https://localhost:7132/api/SupplierStaffAPI/ToggleSupplierStaff', {
+        method: 'PUT',
+        headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ staffId })
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to toggle supplier staff status');
+      }
+    } catch (error:any) {
+      throw new Error('Failed to toggle supplier staff status: ' + error.message);
+    }
   };
   export default supplierStaffService;
   
