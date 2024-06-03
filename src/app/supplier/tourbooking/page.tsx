@@ -1,78 +1,164 @@
-// my-new-page.js
-'use client'
-import React, { useState } from 'react'
-import Table from '../../../../node_modules/react-bootstrap/esm/Table';
+/* eslint-disable @next/next/no-img-element */
+"use client";
+import useSWR from "swr";
+import { useState } from "react";
+import tourOrderService from "@/app/services/tourOrderService";
+import UpdateTourOrder from "./update_tour_order";
+import TourOrderDetail from "./tour_order_detail";
 
+const TourOrderListOfSupplier = () => {
+  const supplierId = localStorage.getItem("supplierId");
+  const { data: tourOrderList, error } = useSWR("tourOrderList", () =>
+    tourOrderService.getTourOrderBySupplierId(Number(supplierId))
+  );
+  const [showModalEdit, setShowModalEdit] = useState<boolean>(false);
+  const [showModalTourOrderDetail, setShowModalTourOrderDetail] = useState<boolean>(false);
+  const [tourOrder, setTourOrder] = useState<ITourOrder | null>(null);
+  if (!tourOrderList) {
+    return <div>Loading...</div>;
+  }
 
-
-const MyNewPage = () => {
-  
-  
-
+  if (error) {
+    return <div>Error loading tour orders</div>;
+  }
   return (
-    <div className='relative'>
+    <div className="relative">
       <div className="search-add ">
         <div className="search-hotel flex">
-          <input type="text" placeholder='Search.........' className='input-hotel pl-3'/>
+          <input
+            type="text"
+            placeholder="Search........."
+            className="input-hotel pl-3"
+          />
           <img src="/image/search.png" alt="" />
         </div>
-        <button className='ml-8 button-add ml-4rem'>+ Add hotel</button>
-  
       </div>
-   <div className="table-hotel pt-8">
- 
-
-<div className="flex flex-col overflow-x-auto">
-  <div className="sm:-mx-6 lg:-mx-8">
-    <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
-      <div className="overflow-x-auto">
-        <table
-          className="min-w-full text-start text-sm font-light text-surface dark:text-white">
-          <thead
-            className="border-b border-neutral-200 font-medium dark:border-white/10">
-            <tr>
-              <th scope="col" className="px-6 py-4">HotelId</th>
-              <th scope="col" className="px-6 py-4">Name</th>
-              <th scope="col" className="px-6 py-4">Phone</th>
-              <th scope="col" className="px-6 py-4">Email</th>
-              <th scope="col" className="px-6 py-4">Avatar</th>
-              <th scope="col" className="px-6 py-4">Destination</th>
-              <th scope="col" className="px-6 py-4">District</th>
-              <th scope="col" className="px-6 py-4">City</th>
-              <th scope="col" className="px-6 py-4">Information</th>
-              <th scope="col" className="px-6 py-4">Isverify</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b border-neutral-200 dark:border-white/10">
-              <td className="whitespace-nowrap px-6 py-4 font-medium">1234589</td>
-              <td className="whitespace-nowrap px-6 py-4">Cereja Hotel & Resort Dalat</td>
-              <td className="whitespace-nowrap px-6 py-4">012382xxxxxx</td>
-              <td className="whitespace-nowrap px-6 py-4">hotel@gmail.com</td>
-              <td className="whitespace-nowrap px-6 py-4">Hotel avatar</td>
-              <td className="whitespace-nowrap px-6 py-4">Lorem ipsum dolor sit amet consectetur.</td>
-              <td className="whitespace-nowrap px-6 py-4">Lorem ipsum dolor sit amet consectetur.</td>
-              <td className="whitespace-nowrap px-6 py-4">Da Lat</td>
-              <td className="whitespace-nowrap px-6 py-4">Lorem ipsum dolor sit amet consectetur.</td>
-              <td className="whitespace-nowrap px-6 py-4 flex">
-              <img className='w-5 h-5 cursor-pointer' src="/image/pen.png" alt="" />
-            <img className='w-5 h-5 cursor-pointer ml-3' src="/image/trash.png" alt="" />
-              </td>
-            </tr>
-        
-          
-</tbody>
-        </table>
+      <div className="table-hotel pt-8">
+        <div className="flex flex-col overflow-x-auto">
+          <div className="sm:-mx-6 lg:-mx-8">
+            <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-start text-sm font-light text-surface dark:text-white border-solid">
+                  <thead className="border-b border-neutral-200 font-medium dark:border-white/10 bk-top-table">
+                    <tr className="text-center">
+                      <th scope="col" className="px-6 py-4">
+                        TourOrderId
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-center">
+                        User Name
+                      </th>
+                      <th scope="col" className="px-6 py-4">
+                        Tour Name
+                      </th>
+                      <th scope="col" className="px-6 py-4">
+                        IsConfirmed
+                      </th>
+                      <th scope="col" className="px-6 py-4">
+                        View Detail
+                      </th>
+                      <th scope="col" className="px-6 py-4">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tourOrderList.length > 0 ? (
+                      tourOrderList.map((item: ITourOrder, index) => {
+                        // Parse the tourTime to a Date object if it's a string
+                        // const checkInDate = new Date(item.checkInDate);
+                        // const checkOutDate = new Date(item.checkOutDate);
+                        // const formattedCheckInTime =
+                        //   checkInDate.toLocaleDateString(undefined, {
+                        //     year: "numeric",
+                        //     month: "numeric",
+                        //     day: "numeric",
+                        //   });
+                        // const formattedCheckOutTime =
+                        //   checkOutDate.toLocaleDateString(undefined, {
+                        //     year: "numeric",
+                        //     month: "numeric",
+                        //     day: "numeric",
+                        //   });
+                        return (
+                          <tr
+                            key={index}
+                            className="border-b border-neutral-200 dark:border-white/10 text-center"
+                          >
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
+                              {item.tourOrderId}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
+                              {item.user?.email}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
+                              {item.tour?.tourName}
+                            </td>
+                            <td
+                              className={`whitespace-nowrap px-6 py-4 ${
+                                item.isConfirmed ? "color-active" : "color-stop"
+                              }`}
+                            >
+                              {item.isConfirmed ? "Confirmed" : "Pending..."}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4">
+                                <div className="flex justify-center">
+                                  <img className="w-5 h-5 cursor-pointer"
+                                  src="/image/viewdetail.png"
+                                  alt="View Detail"
+                                  onClick={() => {
+                                    setTourOrder(item);
+                                    setShowModalTourOrderDetail(true);
+                                  }}
+                                />
+                                </div>
+                                
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 flex justify-center">
+                              <img
+                                className="w-5 h-5 cursor-pointer"
+                                src="/image/pen.png"
+                                alt="Edit"
+                                onClick={() => {
+                                  setTourOrder(item);
+                                  setShowModalEdit(true);
+                                }}
+                              />
+                              
+                            </td>
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={9}
+                          className="text-center py-4 text-red-600 font-bold"
+                        >
+                          No tour orders found
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+                <UpdateTourOrder
+                  showModalEditTourOrder={showModalEdit}
+                  setShowModalEditTourOrder={setShowModalEdit}
+                  tourOrder={tourOrder}
+                  setTourOrder={setTourOrder}
+                />
+                <TourOrderDetail
+                  showModalTourOrderDetail={showModalTourOrderDetail}
+                  setShowModalTourOrderDetail={setShowModalTourOrderDetail}
+                  tourOrder={tourOrder}
+                  setTourOrder={setTourOrder}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-   </div>
-  
+  );
+};
 
-
-    </div>
-  )
-}
-
-export default MyNewPage
+export default TourOrderListOfSupplier;

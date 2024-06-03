@@ -44,6 +44,7 @@ interface ILoginResult {
 }
 interface IAuthenticateService {
   loginClient(email: string, password: string): Promise<ILoginResult>;
+  logOut(): Promise<void>;
   signUpClient(user: {
         email: string;
         password: string;
@@ -164,6 +165,20 @@ const authenticateService: IAuthenticateService = {
       console.error("Error sign up user:", error);
       throw error;
     }
-  }
+  },
+
+  async logOut() {
+    try {
+      // Clear the local storage
+      localStorage.removeItem("token");
+      localStorage.removeItem("roleId");
+      localStorage.removeItem("supplier");
+      localStorage.removeItem("supplierId");
+      console.log("User logged out successfully.");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      throw error;
+    }
+  }, 
 };
 export default authenticateService;

@@ -17,21 +17,21 @@ const Footer = () => {
             </div>
             <div className="mt-4">
               <input
-                className="h-10 pr-52 pl-3 rounded-xl placeholder-gray-500 border"
+                className="h-10 pr-52 pl-3 rounded-xl placeholder-gray-500 border pright-repon"
                 placeholder="Name"
                 type="text"
               />
             </div>
             <div className="mt-4">
               <input
-                className="h-10 pr-52 pl-3 rounded-xl placeholder-gray-500 border"
+                className="h-10 pr-52 pl-3 rounded-xl placeholder-gray-500 border pright-repon"
                 placeholder="Email"
                 type="text"
               />
             </div>
             <div className="mt-4">
               <input
-                className="h-10 pr-52 pl-3 rounded-xl placeholder-gray-500 border"
+                className="h-10 pr-52 pl-3 rounded-xl placeholder-gray-500 border pright-repon"
                 placeholder="Message"
                 type="text"
               />

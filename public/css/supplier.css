@@ -55,6 +55,15 @@
   justify-content: flex-end;
   align-items: center;
 }
+.breadcrumb{
+  left: 396px;
+  top: 145px;
+  width: 60%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
 .input-hotel {
   outline: none;
   border: 1px solid #ccc;
@@ -118,6 +127,16 @@
 }
 .border-solid{
   border: 1px solid #ccc;
+}
+.bottom-logout p:hover {
+ color: #D9D9D9;
+}
+.active{
+color: #ffffff;
+background: #305A61;
+border: 1px solid #ccc;
+padding: 0px 8px;
+border-radius: 12px;
 }
 @media all and (max-width: 1024px) {
   .pc-none {

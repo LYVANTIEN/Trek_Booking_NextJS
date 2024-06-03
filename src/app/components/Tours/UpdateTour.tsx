@@ -23,6 +23,7 @@ const [tourAddress,setTourAddress] = useState<string>("");
 const [tourTime,setTourTime] = useState<string>("");
 const [tourTransportation,setTourTransportation] = useState<string>("");
 const [tourCapacity,setTourCapacity] =useState<number>(0);
+const [tourDiscount,setTourDiscount] =useState<number>(0);
 const [status, SetStatus] = useState<boolean>(true);
 const [supplierId,setSupplierId] =useState<number>(0);
 
@@ -33,7 +34,7 @@ const handleSetTourTime = (time: string | Date) => {
     } else {
         parsedDate = new Date(time);
     }
-    parsedDate.setDate(parsedDate.getDate() + 1); // Cộng thêm một ngày
+    // parsedDate.setDate(parsedDate.getDate() + 1); // Cộng thêm một ngày
     setTourTime(parsedDate.toISOString().split('T')[0]); // Định dạng ngày thành yyyy-MM-dd
 };
 useEffect(() => {
@@ -45,6 +46,7 @@ useEffect(() => {
         setTourAddress(tour.tourAddress);
         handleSetTourTime(tour.tourTime);
         setTourCapacity(tour.tourCapacity);
+        setTourDiscount(tour.tourDiscount);
         setTourTransportation(tour.tourTransportation);
         setSupplierId(tour.supplierId);
     }
@@ -56,7 +58,7 @@ const handleSubmit = async () => {
         return;
       }
     try {
-        const response = await updateTour(tourId,tourName, tourDescription,tourPrice,tourAddress,tourTime,tourTransportation,tourCapacity,status,supplierId);
+        const response = await updateTour(tourId,tourName, tourDescription,tourPrice,tourAddress,tourTime,tourTransportation,tourCapacity,tourDiscount,status,supplierId);
       if (typeof response === 'string') {
         toast.success(response);
       } else {
@@ -76,14 +78,14 @@ const handleSubmit = async () => {
  }
  return (
     <>
-      <Modal className='pt-36' show={showTourUpdate} onHide={() => handleCloseModal()} size='lg'>
+      <Modal className='pt-20' show={showTourUpdate} onHide={() => handleCloseModal()} size='lg'>
         <Modal.Header closeButton>
           <Modal.Title>Update Tour</Modal.Title>
         </Modal.Header>
         <Modal.Body>
         <Form>
-        <div className="row">
-        <Form.Group className="mb-3 col-6" controlId="tourName">
+        <div className="row font-semibold">
+        <Form.Group hidden className="mb-3 col-6" controlId="tourName">
             <Form.Label>Tour Id</Form.Label>
             <Form.Control readOnly type="text" placeholder="Please enter tour name !!!" value={tourId} onChange={(e) => setTourId(parseInt(e.target.value))} />
           </Form.Group>
@@ -91,39 +93,44 @@ const handleSubmit = async () => {
             <Form.Label>Tour Name</Form.Label>
             <Form.Control type="text" placeholder="Please enter tour name !!!" value={tourName} onChange={(e) => setTourName(e.target.value)} />
           </Form.Group>
-     
-          <Form.Group className="mb-3 col-6" controlId="tourAddress">
-            <Form.Label>Tour Address</Form.Label>
-            <Form.Control type="text" placeholder="Please enter tour address !!!" value={tourAddress} onChange={(e) => setTourAddress(e.target.value)} />
-          </Form.Group>
-          <Form.Group className="mb-3 col-6" controlId="tourPrice">
-            <Form.Label>Tour Price</Form.Label>
-            <Form.Control type="number" placeholder="Please enter tour price !!!" value={tourPrice} onChange={(e) => setTourPrice(parseFloat(e.target.value))} />
-          </Form.Group>
           <Form.Group className="mb-3 col-6" controlId="tourTime">
-                            <Form.Label>Tour Time</Form.Label>
+                            <Form.Label>Time</Form.Label>
                             <Form.Control type="date" placeholder="Please enter tour time" value={tourTime} onChange={(e) => setTourTime(e.target.value)} />
                         </Form.Group>
-          <Form.Group className="mb-3 col-6" controlId="tourTransportation">
+                        <Form.Group className="mb-3 col-6" controlId="tourTransportation">
             <Form.Label>Tour Transportation</Form.Label>
             <Form.Control type="text" placeholder="Please enter tour transportation !!!" value={tourTransportation} onChange={(e) => setTourTransportation(e.target.value)} />
           </Form.Group>
+          
+          <Form.Group className="mb-3 col-3" controlId="tourPrice">
+            <Form.Label>Price</Form.Label>
+            <Form.Control type="number" placeholder="Please enter tour price !!!" value={tourPrice} onChange={(e) => setTourPrice(parseFloat(e.target.value))} />
+          </Form.Group>
+          <Form.Group className="mb-3 col-3" controlId="tourPrice">
+            <Form.Label>Discount</Form.Label>
+            <Form.Control type="number" placeholder="Please enter tour discount !!!" value={tourDiscount} onChange={(e) => setTourDiscount(parseFloat(e.target.value))} />
+          </Form.Group>
+          <Form.Group className="mb-3 col-6" controlId="tourAddress">
+            <Form.Label>Address</Form.Label>
+            <Form.Control type="text" placeholder="Please enter tour address !!!" value={tourAddress} onChange={(e) => setTourAddress(e.target.value)} />
+          </Form.Group>
+          
           <Form.Group className="mb-3 col-6" controlId="tourCapacity">
-            <Form.Label>Tour Capacity</Form.Label>
+            <Form.Label>Capacity</Form.Label>
             <Form.Control type="number" placeholder="Please enter tour capacity !!!" value={tourCapacity} onChange={(e) => setTourCapacity(parseInt(e.target.value))} />
           </Form.Group>
-          <Form.Group className="mb-3 col-6" controlId="tourDescription">
-            <Form.Label>Tour Description</Form.Label>
-                 <Form.Control 
-        as="textarea" 
-        rows={5} // Bạn có thể điều chỉnh số hàng hiển thị mặc định của textarea
-        placeholder="Please enter tour description !!!" 
-        value={tourDescription} 
-        onChange={(e) => setTourDescription(e.target.value)} 
-      />
-
-          </Form.Group>
-          <Form.Group hidden className="mb-3 col-6" controlId="supplierId">
+          <Form.Group className="mb-3 col-9" controlId="tourDescription">
+  <Form.Label>Description</Form.Label>
+  <Form.Control
+    as="textarea"
+    rows={3}
+    placeholder="Please enter tour description !!!"
+    value={tourDescription}
+    onChange={(e) => setTourDescription(e.target.value)}
+    style={{ height: '150px', overflowY: 'scroll' }}
+  />
+</Form.Group>
+          <Form.Group hidden className="mb-3 col-6 " controlId="supplierId">
           <Form.Label>Supplier Id</Form.Label>
           <Form.Control
             type="number"
@@ -132,17 +139,21 @@ const handleSubmit = async () => {
             onChange={(e) => setSupplierId(parseInt(e.target.value))}
           />
         </Form.Group>
+      
         </div>
         </Form>
+        <div className="mb-3 ">
+  <div className=" text-right relative">
+    <button className="btn-save-modal mb-2" onClick={() => handleSubmit()}>
+      Save
+    </button>
+    <br />
+    <button className="btn-exit-modal" onClick={() => handleCloseModal()}>
+      Exit
+    </button>
+  </div>
+</div>
             </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => handleCloseModal()}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={() => handleSubmit()}>
-            Update
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );

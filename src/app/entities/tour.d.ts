@@ -7,6 +7,7 @@ export interface ITour{
     tourTime: string|Date;
     tourTransportation: string;
     tourCapacity: number;
+    tourDiscount: number;
     status: boolean;
     supplierId: number;
     supplier: {

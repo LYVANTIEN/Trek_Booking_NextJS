@@ -13,7 +13,6 @@ export default function RootLayout({
       <body>
         <NavbarRegisterSupplier />
                 {children}
-        <ToastContainer/>
         </body>
     </html>
   );

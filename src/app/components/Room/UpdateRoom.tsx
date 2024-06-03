@@ -2,21 +2,23 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import roomService from "@/app/services/roomService";
 import { mutate } from "swr";
 import { toast } from "react-toastify";
 
 interface IProps {
-  showRoomCreate: boolean;
-  setShowRoomCreate: (value: boolean) => void;
+  showRoomUpdate: boolean;
+  setShowRoomUpdate: (value: boolean) => void;
   hotelId: string;
+  room: IRoom | null;
+  setRoom: (value: IRoom | null) => void;
 }
 
-function CreateModal(props: IProps) {
-  const { showRoomCreate, setShowRoomCreate, hotelId } = props;
-
+function UpdateRoom(props: IProps) {
+  const { showRoomUpdate, setShowRoomUpdate, hotelId, room, setRoom } = props;
+  const [roomId, setRoomId] = useState<number>(0);
   const [roomName, setRoomName] = useState<string>("");
   const [roomNote, setNote] = useState<string>("");
   const [discountPercent, setDiscount] = useState<string>("");
@@ -31,14 +33,12 @@ function CreateModal(props: IProps) {
     const newErrors: { [key: string]: string } = {};
 
     if (!roomName) newErrors.roomName = "Room Name is required";
-    if (!roomAvailable) newErrors.roomAvailable = "Available is required";
-    if (!roomNote) newErrors.roomNote = "Note is required";
-    if (!roomPrice) newErrors.roomPrice = "Price is required";
-    if (!discountPercent)
-      newErrors.discountPercent = "Discount Percent is required";
-    if (!roomCapacity) newErrors.roomCapacity = "Capacity is required";
-    if (!roomDescription) newErrors.roomDescription = "Description is required";
-
+    if (!roomAvailable || isNaN(parseInt(roomAvailable)))
+      newErrors.roomAvailable = "Available must be a number";
+    if (!roomPrice || isNaN(parseFloat(roomPrice)))
+      newErrors.roomPrice = "Price must be a number";
+    if (!roomCapacity || isNaN(parseInt(roomCapacity)))
+      newErrors.roomCapacity = "Capacity must be a number";
     return newErrors;
   };
 
@@ -51,8 +51,26 @@ function CreateModal(props: IProps) {
     setPrice("");
     setCapacity("");
     setErrors({});
-    setShowRoomCreate(false);
+    setRoom(null);
+    setShowRoomUpdate(false);
   };
+
+  useEffect(() => {
+    if (room && room.roomId) {
+      setRoomId(room.roomId);
+      setRoomName(room.roomName);
+      setNote(room.roomNote);
+      setAvailable(room.roomAvailable.toString());
+      setPrice(room.roomPrice.toString());
+      setCapacity(room.roomCapacity.toString());
+      setDiscount(room.discountPercent.toString());
+      setDescription(room.roomDescription);
+    }
+  }, [room]);
+
+  const discount = discountPercent ? parseFloat(discountPercent) : 0;
+  const note = roomNote ? roomNote : "";
+  const description = roomDescription ? roomDescription : "";
 
   const handleSubmit = async () => {
     const validationErrors = validate();
@@ -60,48 +78,46 @@ function CreateModal(props: IProps) {
       setErrors(validationErrors);
       return;
     }
-
     try {
       const room: IRoom = {
-        roomId: 0,
+        roomId: Number(roomId),
         roomName,
-        roomNote,
+        roomNote: note,
         roomStatus: true,
         roomAvailable: parseInt(roomAvailable),
         roomPrice: parseFloat(roomPrice),
         roomCapacity: parseInt(roomCapacity),
-        discountPercent: parseFloat(discountPercent),
-        roomDescription,
+        discountPercent: discount,
+        roomDescription: description,
         hotelId: Number(hotelId),
       };
 
-      const createdRoom = await roomService.createRoom(room);
-      if (createdRoom != null) {
-        console.log("Room created:", createdRoom);
-        handleCloseModal();
-        mutate(`https://localhost:7132/getRoombyHotelId/${hotelId}`);
-        toast.success("Room created successfully");
+      const updateRoom = await roomService.updateRoom(room);
+
+      if (typeof updateRoom === "string") {
+        toast.success(updateRoom);
       } else {
-        console.log("Failed to create room");
-        toast.error("Failed to create room");
+        toast.success("Update Room Success");
       }
+      handleCloseModal();
+      mutate("listRoom");
     } catch (error) {
-      console.error("Error creating room:", error);
-      toast.error("Error creating room");
+      toast.error("Failed to update room");
+      console.error(error);
     }
   };
 
   return (
     <Modal
       className="modal-xl"
-      show={showRoomCreate}
+      show={showRoomUpdate}
       onHide={() => handleCloseModal()}
       backdrop="static"
       keyboard={false}
       size="xl"
     >
       <Modal.Header closeButton>
-        <Modal.Title>Add New Room</Modal.Title>
+        <Modal.Title>Update Room</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -143,7 +159,6 @@ function CreateModal(props: IProps) {
                   type="text"
                   value={roomNote}
                   onChange={(e) => setNote(e.target.value)}
-                  // isInvalid={!!errors.roomNote}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.roomNote}
@@ -173,7 +188,6 @@ function CreateModal(props: IProps) {
                   type="text"
                   value={discountPercent}
                   onChange={(e) => setDiscount(e.target.value)}
-                  //isInvalid={!!errors.discountPercent}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.discountPercent}
@@ -204,7 +218,6 @@ function CreateModal(props: IProps) {
                   rows={3}
                   value={roomDescription}
                   onChange={(e) => setDescription(e.target.value)}
-                  //isInvalid={!!errors.roomDescription}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.roomDescription}
@@ -214,13 +227,21 @@ function CreateModal(props: IProps) {
             <Col xs={1} className="d-flex align-items-end">
               <div className="d-flex flex-column gap-2">
                 <Button
-                  style={{ background: "#305A61", color: "white" }}
+                  style={{
+                    background: "#305A61",
+                    color: "white",
+                    border: "1px solid #ccc",
+                  }}
                   onClick={() => handleSubmit()}
                 >
                   Save
                 </Button>
                 <Button
-                  variant="outline-secondary"
+                  style={{
+                    border: "1px solid #ccc",
+                    color: "black",
+                    background: "white",
+                  }}
                   onClick={() => handleCloseModal()}
                 >
                   Exit
@@ -234,4 +255,4 @@ function CreateModal(props: IProps) {
   );
 }
 
-export default CreateModal;
+export default UpdateRoom;

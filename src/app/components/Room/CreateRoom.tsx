@@ -14,9 +14,8 @@ interface IProps {
   hotelId: string;
 }
 
-function CreateModal(props: IProps) {
+function CreateRoom(props: IProps) {
   const { showRoomCreate, setShowRoomCreate, hotelId } = props;
-
   const [roomName, setRoomName] = useState<string>("");
   const [roomNote, setNote] = useState<string>("");
   const [discountPercent, setDiscount] = useState<string>("");
@@ -31,14 +30,12 @@ function CreateModal(props: IProps) {
     const newErrors: { [key: string]: string } = {};
 
     if (!roomName) newErrors.roomName = "Room Name is required";
-    if (!roomAvailable) newErrors.roomAvailable = "Available is required";
-    if (!roomNote) newErrors.roomNote = "Note is required";
-    if (!roomPrice) newErrors.roomPrice = "Price is required";
-    if (!discountPercent)
-      newErrors.discountPercent = "Discount Percent is required";
-    if (!roomCapacity) newErrors.roomCapacity = "Capacity is required";
-    if (!roomDescription) newErrors.roomDescription = "Description is required";
-
+    if (!roomAvailable || isNaN(parseInt(roomAvailable)))
+      newErrors.roomAvailable = "Available must be a number";
+    if (!roomPrice || isNaN(parseFloat(roomPrice)))
+      newErrors.roomPrice = "Price must be a number";
+    if (!roomCapacity || isNaN(parseInt(roomCapacity)))
+      newErrors.roomCapacity = "Capacity must be a number";
     return newErrors;
   };
 
@@ -60,33 +57,36 @@ function CreateModal(props: IProps) {
       setErrors(validationErrors);
       return;
     }
+    const discount = discountPercent ? parseFloat(discountPercent) : 0;
+    const note = roomNote ? roomNote : "";
+    const description = roomDescription ? roomDescription : "";
 
     try {
       const room: IRoom = {
         roomId: 0,
         roomName,
-        roomNote,
+        roomNote: note,
         roomStatus: true,
         roomAvailable: parseInt(roomAvailable),
         roomPrice: parseFloat(roomPrice),
         roomCapacity: parseInt(roomCapacity),
-        discountPercent: parseFloat(discountPercent),
-        roomDescription,
+        discountPercent: discount,
+        roomDescription: description,
         hotelId: Number(hotelId),
       };
 
       const createdRoom = await roomService.createRoom(room);
-      if (createdRoom != null) {
-        console.log("Room created:", createdRoom);
-        toast.success("Create success");
-        handleCloseModal();
+
+      if (typeof createdRoom === "string") {
+        toast.success(createdRoom);
       } else {
-        console.log("Failed to create room");
-        toast.error("Failed to create room");
+        toast.success("Create room Success");
       }
+      handleCloseModal();
+      mutate("listRoom");
     } catch (error) {
-      console.error("Error creating room:", error);
-      toast.error("Error creating room");
+      toast.error("Failed to create room");
+      console.error(error);
     }
   };
 
@@ -213,13 +213,21 @@ function CreateModal(props: IProps) {
             <Col xs={1} className="d-flex align-items-end">
               <div className="d-flex flex-column gap-2">
                 <Button
-                  style={{ background: "#305A61", color: "white" }}
+                  style={{
+                    background: "#305A61",
+                    color: "white",
+                    border: "1px solid #ccc",
+                  }}
                   onClick={() => handleSubmit()}
                 >
                   Save
                 </Button>
                 <Button
-                  variant="outline-secondary"
+                  style={{
+                    border: "1px solid #ccc",
+                    color: "black",
+                    background: "white",
+                  }}
                   onClick={() => handleCloseModal()}
                 >
                   Exit
@@ -233,4 +241,4 @@ function CreateModal(props: IProps) {
   );
 }
 
-export default CreateModal;
+export default CreateRoom;

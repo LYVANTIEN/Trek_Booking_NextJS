@@ -85,9 +85,7 @@ function CreateSupplierStaff(props: Iprops) {
     if (isTouched.staffPassword) {
       setErrors((prevErrors) => ({...prevErrors, staffPassword: validateStaffPassword(staffPassword)}));
     }
-  }, [staffPassword, isTouched.staffPassword]);
-
-  const handleBlur = (field: string) => {
+  }, [staffPassword, isTouched.staffPassword]);const handleBlur = (field: string) => {
     setIsTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
   };
 
@@ -114,6 +112,7 @@ function CreateSupplierStaff(props: Iprops) {
         staffPhoneNumber,
         staffEmail,
         staffAddress,
+        IsVerify:true,
         staffPassword,
         status: true, // Default value is true
         supplierId: Number(supplierId),
@@ -181,8 +180,7 @@ function CreateSupplierStaff(props: Iprops) {
                 type="tel"
                 placeholder="Please enter staff phone number"
                 value={staffPhoneNumber}
-                onChange={(e: any) => setStaffPhoneNumber(e.target.value)}
-                onBlur={() => handleBlur("staffPhoneNumber")}
+                onChange={(e: any) => setStaffPhoneNumber(e.target.value)}onBlur={() => handleBlur("staffPhoneNumber")}
                 isInvalid={!!errors.staffPhoneNumber}
               />
               <Form.Control.Feedback type="invalid">

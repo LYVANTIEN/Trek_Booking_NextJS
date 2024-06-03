@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Button, Form, Modal } from "react-bootstrap";
-import { Hotel } from "@mui/icons-material";
 import supplierStaffService from "@/app/services/supplierStaffService";
 
 interface Iprops {
@@ -84,106 +83,105 @@ function UpdateStaff(props: Iprops) {
   }, [staffEmail, isTouched.staffEmail]);
 
   useEffect(() => {
-    if(isTouched.staffAddress) {
-    setErrors((prevErrors) => ({...prevErrors, staffAddress: validateStaffAddress(staffAddress)}));
-    } 
-  }, [staffAddress, isTouched.staffAddress]);
+    if(isTouched.staffAddress) {setErrors((prevErrors) => ({...prevErrors, staffAddress: validateStaffAddress(staffAddress)}));
+  } 
+}, [staffAddress, isTouched.staffAddress]);
 
-  useEffect(() => {
-    if (isTouched.staffPassword) {
-      setErrors((prevErrors) => ({...prevErrors, staffPassword: validateStaffPassword(staffPassword)}));
-    }
-  }, [staffPassword, isTouched.staffPassword]);
+useEffect(() => {
+  if (isTouched.staffPassword) {
+    setErrors((prevErrors) => ({...prevErrors, staffPassword: validateStaffPassword(staffPassword)}));
+  }
+}, [staffPassword, isTouched.staffPassword]);
 
-  const handleBlur = (field: string) => {
-    setIsTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
+const handleBlur = (field: string) => {
+  setIsTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
+};
+
+useEffect(() => {
+  if (supplierStaff && supplierStaff.staffId) {
+    setStaffId(supplierStaff.staffId)
+    setStaffName(supplierStaff.staffName);
+    setStaffPhoneNumber(supplierStaff.staffPhoneNumber);
+    setStaffEmail(supplierStaff.staffEmail);
+    setStaffAddress(supplierStaff.staffAddress);
+    setStaffPassword(supplierStaff.staffPassword);   
+    setRoleId(supplierStaff.roleId);   
+    //setShowStaffUpdate(false);      
+  }
+}, [supplierStaff]);  
+
+const handleSubmit = async () => {
+  const staffId = ThisstaffId;    
+  const supplierId = localStorage.getItem("supplierId");
+  const validationErrors = {
+    staffName: validateStaffName(staffName),
+    staffPhoneNumber: validateStaffPhoneNumber(staffPhoneNumber),
+    staffEmail: validateStaffEmail(staffEmail),
+    staffAddress: validateStaffAddress(staffAddress),
+    staffPassword: validateStaffPassword(staffPassword),
   };
 
-  useEffect(() => {
-    if (supplierStaff && supplierStaff.staffId) {
-      setStaffId(supplierStaff.staffId)
-      setStaffName(supplierStaff.staffName);
-      setStaffPhoneNumber(supplierStaff.staffPhoneNumber);
-      setStaffEmail(supplierStaff.staffEmail);
-      setStaffAddress(supplierStaff.staffAddress);
-      setStaffPassword(supplierStaff.staffPassword);   
-      setRoleId(supplierStaff.roleId);   
-      //setShowStaffUpdate(false);      
-    }
-  }, [supplierStaff]);  
-  
-  const handleSubmit = async () => {
-    const staffId = ThisstaffId;    
-    const supplierId = localStorage.getItem("supplierId");
-    const validationErrors = {
-      staffName: validateStaffName(staffName),
-      staffPhoneNumber: validateStaffPhoneNumber(staffPhoneNumber),
-      staffEmail: validateStaffEmail(staffEmail),
-      staffAddress: validateStaffAddress(staffAddress),
-      staffPassword: validateStaffPassword(staffPassword),
+  setErrors(validationErrors);
+
+  if (Object.values(validationErrors).some((error) => error)) {
+    return;
+  }
+  try {
+    const supplierStaff: ISupplierStaff = {
+      staffId: Number(ThisstaffId),
+      staffName,
+      staffPhoneNumber,
+      staffEmail,
+      staffAddress,
+      IsVerify:true,
+      staffPassword,
+      status: true,        
+      roleId: 3,
+      supplierId: Number(supplierId),
     };
+    const response = await supplierStaffService.updateStaff(supplierStaff);
+    toast.success("Update Supplier Staff Success");
+    handleCloseModal();
+    onUpdate();
+  } catch (error) {
+    toast.error("Failed to update supplier staff");
+    console.error("Error updating supplier staff:", error);
+  }
+};
 
-    setErrors(validationErrors);
+const handleCloseModal = () => {
+  setStaffName("");
+  setStaffPhoneNumber("");
+  setStaffEmail("");
+  setStaffAddress("");
+  setStaffPassword("");  
+  setSupplierStaff(null);  
+  setShowStaffUpdate(false);
+  setErrors({});
+  setIsTouched({
+    staffName: false,
+    staffPhoneNumber: false,
+    staffEmail: false,
+    staffAddress: false,
+    staffPassword: false,
+  });
+};
 
-    if (Object.values(validationErrors).some((error) => error)) {
-      return;
-    }
-    try {
-      const supplierStaff: ISupplierStaff = {
-        staffId: Number(ThisstaffId),
-        staffName,
-        staffPhoneNumber,
-        staffEmail,
-        staffAddress,
-        staffPassword,
-        status: true,        
-        roleId: 3,
-        supplierId: Number(supplierId),
-      };
-      const response = await supplierStaffService.updateStaff(supplierStaff);
-      toast.success("Update Supplier Staff Success");
-      handleCloseModal();
-      onUpdate();
-    } catch (error) {
-      toast.error("Failed to update supplier staff");
-      console.error("Error updating supplier staff:", error);
-    }
-  };
-  
-  const handleCloseModal = () => {
-    setStaffName("");
-    setStaffPhoneNumber("");
-    setStaffEmail("");
-    setStaffAddress("");
-    setStaffPassword("");  
-    setSupplierStaff(null);  
-    setShowStaffUpdate(false);
-    setErrors({});
-    setIsTouched({
-      staffName: false,
-      staffPhoneNumber: false,
-      staffEmail: false,
-      staffAddress: false,
-      staffPassword: false,
-    });
-  };
-
-  return (
-    <>
-      <Modal
-        className="pt-36"
-        show={showSupplierStaffUpdate}
-        onHide={() => handleCloseModal()}
-        size="lg"
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Update Staff</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="formStaffName">
+return (
+  <>
+    <Modal
+      className="pt-36"
+      show={showSupplierStaffUpdate}
+      onHide={() => handleCloseModal()}
+      size="lg"
+      backdrop="static"
+      keyboard={false}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>Update Staff</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form><Form.Group className="mb-3" controlId="formStaffName">
               <Form.Label>Staff Name</Form.Label>
 
               <Form.Control
@@ -250,8 +248,7 @@ function UpdateStaff(props: Iprops) {
                 style={{background: "#CED1D2", fontWeight: "bold"}}
               />
             </Form.Group>           
-          </Form>
-        </Modal.Body>
+          </Form></Modal.Body>
         <Modal.Footer>
           <Button className="border" style={{background:"white",color: "black", borderRadius: "10px"}} onClick={() => handleCloseModal()}>
             Close

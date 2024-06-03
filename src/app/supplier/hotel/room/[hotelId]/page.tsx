@@ -4,36 +4,90 @@
 import React, { useEffect, useState } from "react";
 import roomService from "@/app/services/roomService";
 import Link from "next/link";
-import CreateModal from "../../../../components/Room/create";
-import { useRouter } from "next/router";
-import { ToastContainer } from "react-bootstrap";
-import ViewDetailRoom from "../../../../components/Room/detail";
+import useSWR, { mutate } from "swr";
+import CreateModal from "@/app/components/Room/CreateRoom";
+import CreateRoom from "@/app/components/Room/CreateRoom";
+import UpdateRoom from "@/app/components/Room/UpdateRoom";
+import { Hotel, Room } from "@mui/icons-material";
+import DetailRoom from "@/app/components/Room/DetailRoom";
+import hotelService from "@/app/services/hotelService";
+import { toast } from "react-toastify";
+import { Button } from "react-bootstrap";
 
 const ListRoom = ({ params }: { params: { hotelId: string } }) => {
-  const [listRoom, setRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   const [showRoomCreate, setShowRoomCreate] = useState<boolean>(false);
+  const [showRoomUpdate, setShowRoomUpdate] = useState<boolean>(false);
   const [showRoomDetail, setShowRoomDetail] = useState<boolean>(false);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [selectedRoom, setSelectedRoom] = useState<IRoom | null>(null);
 
+  const [loading, setLoading] = useState(false);
+  const [RoomId, setRoomId] = useState(0);
+
+  const [Room, setRoom] = useState<IRoom | null>(null);
+  const [hotel, setHotel] = useState<IHotel | null>(null);
+
+  const { data: listRoom, error } = useSWR("listRoom", () =>
+    roomService.getRoomsByHotelId(Number(params.hotelId))
+  );
+
+  const handleImageClick = (room: IRoom) => {
+    setSelectedRoom(room);
+    setShowPopup(true);
+  };
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setSelectedRoom(null);
+  };
   useEffect(() => {
-    if (params.hotelId) {
-      roomService
-        .getRoomsByHotelId(Number(params.hotelId))
-        .then((data: any) => {
-          setRooms(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching room list:", error);
-          setError(error);
-          setLoading(false);
-        });
-    }
+    const fetchHotel = async () => {
+      try {
+        const hotelData = await hotelService.getHotelById(
+          Number(params.hotelId)
+        );
+        setHotel(hotelData);
+      } catch (error) {
+        console.error("Error fetching hotel details:", error);
+      }
+    };
+
+    fetchHotel();
   }, [params.hotelId]);
 
-  if (loading) {
+  const handleLockUnlockRoom = async (roomId: number, roomStatus: boolean) => {
+    setLoading(true);
+    try {
+      let response;
+      if (roomStatus) {
+        response = await roomService.deleteRoom(roomId);
+      } else {
+        response = await roomService.recoverRoomDeleted(roomId);
+      }
+      if (response) {
+        setShowPopup(false);
+        await mutate(
+          "listRoom",
+          roomService.getRoomsByHotelId(Number(params.hotelId)),
+          true
+        );
+        toast.success(
+          `Room ${roomStatus ? "locked" : "unlocked"} successfully`
+        );
+      } else {
+        throw new Error(`Failed to ${roomStatus ? "lock" : "unlock"} room`);
+      }
+    } catch (error) {
+      console.error(
+        `Error ${roomStatus ? "locking" : "unlocking"} room:`,
+        error
+      );
+      toast.error(`Failed to ${roomStatus ? "lock" : "unlock"} room`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!listRoom) {
     return <div>Loading...</div>;
   }
 
@@ -42,7 +96,32 @@ const ListRoom = ({ params }: { params: { hotelId: string } }) => {
   }
   return (
     <div className="relative">
-      <div className="search-add ">
+      <div className="search-add">
+        {hotel && (
+          <div className="breadcrumb">
+            <a
+              href="/supplier/hotel"
+              style={{ color: "black", fontSize: "18px" }}
+            >
+              Hotel
+            </a>
+
+            <span
+              style={{
+                color: "black",
+                fontSize: "18px",
+                marginLeft: "5px",
+                marginRight: "5px",
+              }}
+            >
+              {" > "}
+            </span>
+
+            <span style={{ color: "blue", fontSize: "18px" }}>
+              {hotel.hotelName}
+            </span>
+          </div>
+        )}
         <div className="search-hotel flex">
           <input
             type="text"
@@ -58,6 +137,7 @@ const ListRoom = ({ params }: { params: { hotelId: string } }) => {
           + Add room
         </button>
       </div>
+
       <div className="table-hotel pt-8">
         <div className="flex flex-col overflow-x-auto">
           <div className="sm:-mx-6 lg:-mx-8">
@@ -99,10 +179,10 @@ const ListRoom = ({ params }: { params: { hotelId: string } }) => {
                           key={index}
                           className="border-b border-neutral-200 dark:border-white/10"
                         >
-                          <td className="whitespace-nowrap px-6 py-4 font-medium">
+                          <td className="whitespace-nowrap px-6 py-4 font-medium text-black">
                             {item.roomId}
                           </td>
-                          <td className="whitespace-nowrap px-6 py-4 font-semibold">
+                          <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
                             {item.roomName}
                           </td>
                           <td
@@ -117,7 +197,12 @@ const ListRoom = ({ params }: { params: { hotelId: string } }) => {
                               <img
                                 src="/image/viewdetail.png"
                                 alt="View Detail"
-                                onClick={() => setShowRoomDetail(true)}
+                                onClick={() => {
+                                  setRoomId(item.roomId);
+                                  setRoom(item);
+                                  setShowRoomDetail(true);
+                                  console.log("RoomId: " + item.roomId, item);
+                                }}
                               />
                             </Link>
                           </td>
@@ -138,7 +223,7 @@ const ListRoom = ({ params }: { params: { hotelId: string } }) => {
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link href="#">
+                            <Link href={`/supplier/hotel/room/${params.hotelId}/roomImage/${item.roomId}`}>
                               <img
                                 src="/image/managevoucher.png"
                                 alt="Manage Room Image"
@@ -151,16 +236,68 @@ const ListRoom = ({ params }: { params: { hotelId: string } }) => {
                                 className="w-5 h-5 cursor-pointer"
                                 src="/image/pen.png"
                                 alt="Edit"
+                                onClick={() => {
+                                  setRoomId(item.roomId);
+                                  setRoom(item);
+                                  setShowRoomUpdate(true);
+                                  console.log("RoomId: " + item.roomId, item);
+                                }}
                               />
                             </Link>
                             <img
                               className="w-5 h-5 cursor-pointer ml-3"
-                              src="/image/lock.png"
-                              alt="Delete"
-                              onClick={() =>
-                                console.log(`Lock room ${item.roomId}`)
+                              onClick={() => handleImageClick(item)}
+                              src={
+                                item.roomStatus
+                                  ? "/image/lock.png"
+                                  : "/image/unlock.png"
                               }
+                              alt={item.roomStatus ? "Ban" : "Unban"}
                             />
+                            {showPopup &&
+                              selectedRoom?.roomId === item.roomId && (
+                                <div className="fixed inset-0 z-10 flex items-center justify-center">
+                                  <div
+                                    className="fixed inset-0 bg-black opacity-50"
+                                    onClick={handleClosePopup}
+                                  ></div>
+                                  <div className="relative bg-white p-8 rounded-lg">
+                                    <p className="color-black font-bold text-2xl">
+                                      Do you want to{" "}
+                                      {item.roomStatus ? "lock" : "unlock"} this{" "}
+                                      {item.roomName}?
+                                    </p>
+                                    <div className="button-kichhoat pt-4">
+                                      <Button
+                                        className="button-exit mr-2"
+                                        onClick={handleClosePopup}
+                                        style={{
+                                          background: "white",
+                                          color: "black",
+                                          border: "1px solid #ccc",
+                                        }}
+                                      >
+                                        Exit
+                                      </Button>
+                                      <Button
+                                        className="button-yes"
+                                        onClick={() =>
+                                          handleLockUnlockRoom(
+                                            item.roomId,
+                                            item.roomStatus
+                                          )
+                                        }
+                                        style={{
+                                          background: "#305A61",
+                                          border: "1px solid #ccc",
+                                        }}
+                                      >
+                                        Yes
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                           </td>
                         </tr>
                       ))
@@ -176,10 +313,24 @@ const ListRoom = ({ params }: { params: { hotelId: string } }) => {
                     )}
                   </tbody>
                 </table>
-                <CreateModal
+                <CreateRoom
                   showRoomCreate={showRoomCreate}
                   setShowRoomCreate={setShowRoomCreate}
                   hotelId={params.hotelId}
+                />
+                <UpdateRoom
+                  showRoomUpdate={showRoomUpdate}
+                  setShowRoomUpdate={setShowRoomUpdate}
+                  hotelId={params.hotelId}
+                  room={Room}
+                  setRoom={setRoom}
+                />
+                <DetailRoom
+                  showRoomDetail={showRoomDetail}
+                  setShowRoomDetail={setShowRoomDetail}
+                  hotelId={params.hotelId}
+                  room={Room}
+                  setRoom={setRoom}
                 />
               </div>
             </div>

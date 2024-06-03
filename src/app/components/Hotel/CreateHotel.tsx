@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -26,24 +26,32 @@ function CreateHotel(props: Iprops) {
 
   const handleSubmit = async () => {
     const supplierId = localStorage.getItem("supplierId");
-    if (!hotelName || !hotelPhone || !hotelEmail || !hotelFulDescription || !hotelDistrict || !hotelCity || !hotelInformation) {
+    if (
+      !hotelName ||
+      !hotelPhone ||
+      !hotelEmail ||
+      !hotelFulDescription ||
+      !hotelDistrict ||
+      !hotelCity ||
+      !hotelInformation
+    ) {
       toast.error("Please fill in all fields!!!");
       return;
     }
 
     try {
-      const hotel: IHotel= {
+      const hotel: IHotel = {
         hotelId: 0,
         hotelName,
         hotelPhone,
         hotelEmail,
-        hotelAvatar:"1",
+        hotelAvatar: "1",
         hotelFulDescription,
         hotelDistrict,
         hotelCity,
         hotelInformation,
         isVerify: true, // Default value is true
-        supplierId: Number(supplierId)
+        supplierId: Number(supplierId),
       };
       const response = await hotelService.createHotel(hotel);
       toast.success("Create Hotel Success");
@@ -68,7 +76,14 @@ function CreateHotel(props: Iprops) {
 
   return (
     <>
-      <Modal className='pt-36' show={showHotelCreate} onHide={() => handleCloseModal()} size='lg'>
+      <Modal
+        className="pt-36"
+        show={showHotelCreate}
+        onHide={() => handleCloseModal()}
+        size="lg"
+        backdrop="static"
+        keyboard={false}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Add New Hotel</Modal.Title>
         </Modal.Header>

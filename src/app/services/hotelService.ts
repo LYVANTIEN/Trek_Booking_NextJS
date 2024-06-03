@@ -1,11 +1,37 @@
 interface IHotelService {
   getHotelsBySuppierId(supplierId: number): Promise<IHotel[]>;
+  getHotelById(hotelId: number): Promise<IHotel>;
   createHotel(hotel: IHotel): Promise<IHotel>;
   updateHotel(hotel: Partial<IHotel>): Promise<IHotel>;
-  deleteHotel(hotelId: number): Promise<void>;
+ 
+  getHotels(): Promise<any[]>;
+  deleteHotel(hotelId: number): Promise<IHotel>;
+  recoverHotelDeleted(hotelId: number): Promise<IHotel>;
+
 }
 
 const hotelService: IHotelService = {
+  async getHotels() {
+    try {
+      const response = await fetch("https://localhost:7132/getHotels", {
+        headers: {
+          "Content-Type": "application/json",
+          // Include the token in the headers
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+        },
+      });
+      if (!response.ok) { 
+        throw new Error("Failed to fetch booking list");
+      }
+      const data = await response.json();
+      // console.log(data); // Trigger refetch after fetching
+      return data;
+    } catch (error) {
+      console.error("Error fetching booking list:", error);
+      throw error;
+    }
+  },
+  
   async getHotelsBySuppierId(supplierId) {
     console.log(supplierId);
     try {
@@ -30,6 +56,33 @@ const hotelService: IHotelService = {
     } 
     catch (error) {
       console.error("Error fetching hotel list:", error);
+      throw error;
+    }
+  },
+
+  async getHotelById(hotelId) {
+    console.log(hotelId);
+    try {
+      const response = await fetch(
+        `https://localhost:7132/getHotelById/${hotelId}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch hotel details");
+      }
+      const data: IHotel = await response.json(); // Ensure the returned data is a single hotel object
+      console.log(data); // Trigger refetch after fetching
+      return data;
+    } 
+    catch (error) {
+      console.error("Error fetching hotel details:", error);
       throw error;
     }
   },
@@ -80,6 +133,7 @@ const hotelService: IHotelService = {
     }
   },
   async deleteHotel(hotelId) {
+    console.log(hotelId);
     try {
       const response = await fetch(
         `https://localhost:7132/deleteHotel/${hotelId}`,
@@ -88,16 +142,60 @@ const hotelService: IHotelService = {
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({ status: false }),
         }
       );
       if (!response.ok) {
-        throw new Error("Failed to update hotel status to false");
+        throw new Error("Failed to fetch hotel");
       }
+  
+      const contentType = response.headers.get("content-type");
+      let data;
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        data = await response.text(); // Handle plain text response
+      }
+  
+      console.log(data);
+      return data;
     } catch (error) {
-      console.error("Error updating hotel status to false:", error);
+      console.error("Error fetching hotel:", error);
+      throw error;
+    }
+  },
+
+  async recoverHotelDeleted(hotelId) {
+    console.log(hotelId);
+    try {
+      const response = await fetch(
+        `https://localhost:7132/recoverHotelDeleted/${hotelId}`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch hotel");
+      }
+  
+      const contentType = response.headers.get("content-type");
+      let data;
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        data = await response.text(); // Handle plain text response
+      }
+  
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error("Error fetching hotel:", error);
       throw error;
     }
   },

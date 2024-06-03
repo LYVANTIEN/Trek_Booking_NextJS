@@ -1,9 +1,23 @@
 "use client";
 import React from "react";
 import Link from "../../../node_modules/next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import authenticateService from "../services/authenticateService";
+import { toast } from "react-toastify";
 const NavSupplier = () => {
+  const router = useRouter();
   const pathname = usePathname();
+  const handleLogout = async () => {
+    try {
+      await authenticateService.logOut();
+      toast.success("Logout Successful!..");
+      setTimeout(() => {
+        router.push("/login_supplier");
+      }, 1000);
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
   return (
     <div>
       <header className="nav-supllier">
@@ -12,10 +26,10 @@ const NavSupplier = () => {
             Trek Booking
           </p>
         </div>
-        <div className="list-choose pt-10 px-4 pb-14">
+        <div className="list-choose pt-10 px-4 pb-6">
           <ul className="pl-0">
             <div className="py-2">
-              <li className="flex items-center pb-6 pl-3">
+              <li className="flex items-center pb-10 pl-3">
                 <img className="w-7 h-7 " src="/image/darhboard.png" alt="" />
                 <span className="text-white ml-2 text-xl font-semibold">
                   Dashboard
@@ -24,7 +38,7 @@ const NavSupplier = () => {
             </div>
 
             <div className="menu-container">
-              <li className="flex items-center pb-6 hotel-room">
+              <li className="flex items-center pb-10 hotel-room">
                 <Link
                   className={`flex no-underline  nav-i-hover py-2 pl-3 pr-40 ${
                     pathname === "/supplier/hotel" ? "active-link" : ""
@@ -38,20 +52,18 @@ const NavSupplier = () => {
                 </Link>
               </li>
             </div>
-            <li className="flex items-center pb-6 ">
-              <Link
-                className={`flex no-underline  nav-i-hover py-2 pl-3 pr-40 ${
-                  pathname === "/supplier/tour" ? "active-link" : ""
-                } `}
-                href="/supplier/tour"
-              >
-                <img className="w-7 h-7 " src="/image/suitcase.png" alt="" />
-                <span className="text-white ml-2 text-xl font-semibold">
-                  Tour
-                </span>
-              </Link>
-            </li>
-            <li className="flex items-center pb-6 ">
+            <li className="flex items-center pb-10">
+  <Link
+    className={`flex no-underline nav-i-hover py-2 pl-3 pr-40 ${
+      pathname.startsWith("/supplier/tour") ? "active-link" : ""
+    }`}
+    href="/supplier/tour"
+  >
+    <img className="w-7 h-7" src="/image/suitcase.png" alt="" />
+    <span className="text-white ml-2 text-xl font-semibold">Tour</span>
+  </Link>
+</li>
+            <li className="flex items-center pb-10 ">
               <Link
                 className={`flex no-underline  nav-i-hover py-2 pl-3 pr-40 ${
                   pathname === "/supplier/staff" ? "active-link" : ""
@@ -66,7 +78,7 @@ const NavSupplier = () => {
             </li>
 
             
-            <li className="flex items-center pb-6 ">
+            <li className="flex items-center pb-10 ">
               <Link
                 className={`flex no-underline  nav-i-hover py-2 pl-3 pr-40 ${
                   pathname === "/supplier/roombooking" ? "active-link" : ""
@@ -80,7 +92,7 @@ const NavSupplier = () => {
               </Link>
             </li>
 
-            <li className="flex items-center pb-6 ">
+            <li className="flex items-center pb-10 ">
               <Link
                 className={`flex no-underline  nav-i-hover py-2 pl-3 pr-40 ${
                   pathname === "/supplier/tourbooking" ? "active-link" : ""
@@ -95,16 +107,16 @@ const NavSupplier = () => {
             </li>
           </ul>
         </div>
-        <div className="border-solid border-t-2 border-white">
-          <Link
-            href="/"
-            className="bottom-logout flex justify-center items-center  no-underline text-white"
+        <div className="border-solid border-t-2 border-white pt-3">
+          <button
+            onClick={handleLogout}
+            className="bottom-logout flex justify-center items-center no-underline text-white bg-transparent border-none cursor-pointer"
           >
-            <img className="w-7 h-7 " src="/image/out.png" alt="" />
+            <img className="w-7 h-7" src="/image/out.png" alt="" />
             <p className="color-white mb-0 ml-1 font-semibold text-xl">
               Log out
             </p>
-          </Link>
+          </button>
         </div>
       </header>
     </div>

@@ -15,14 +15,11 @@ import "../../../../public/css/tour.css";
 
 const SupplierStaffList = () => {
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedStaff, setSelectedSupplierStaff] =
-    useState<ISupplierStaff | null>(null);
+  const [selectedStaff, setSelectedSupplierStaff] = useState<ISupplierStaff | null>(null);
   const [showStaffCreate, setShowStaffCreate] = useState<boolean>(false);
   const [showStaffUpdate, setShowStaffUpdate] = useState<boolean>(false);
   const [staffId, setStaffId] = useState(0);
-  const [supplierStaff, setSupplierStaff] = useState<ISupplierStaff | null>(
-    null
-  );
+  const [supplierStaff, setSupplierStaff] = useState<ISupplierStaff | null>(null);
 
   const supplierId = localStorage.getItem("supplierId");
 
@@ -93,8 +90,7 @@ const SupplierStaffList = () => {
         <button
           className="ml-8 button-add ml-4rem"
           onClick={() => setShowStaffCreate(true)}
-        >
-          + Add staff
+        >+ Add staff
         </button>
       </div>
       <div className="table-hotel pt-8">
@@ -155,8 +151,7 @@ const SupplierStaffList = () => {
                               item.status ? "color-active" : "color-stop"
                             }`}
                           >
-                            {item.status ? "Active" : "Stopped"}
-                          </td>
+                            {item.status ? "Active" : "Stopped"}</td>
                           <td className="whitespace-nowrap px-6 py-4 flex">
                             <Link href="#">
                               <img
@@ -212,8 +207,7 @@ const SupplierStaffList = () => {
                                   </div>
                                 </div>
                               )}
-                          </td>
-                        </tr>
+                          </td></tr>
                       ))
                     ) : (
                       <tr>

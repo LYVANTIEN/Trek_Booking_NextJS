@@ -6,6 +6,7 @@ interface ISupplierStaff{
     staffPassword: string;
     staffAddress: string;
     status: boolean;
+    IsVerify: boolean;
     supplierId: number;    
     roleId: number;    
 }
