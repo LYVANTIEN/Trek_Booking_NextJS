@@ -2,7 +2,6 @@ interface IVoucherService {
     getVouchersByHotelId(hotelId: number): Promise<IVoucher[]>;
     createVoucher(voucher: IVoucher): Promise<IVoucher>;
     updateVoucher(voucher: IVoucher):Promise<IVoucher>;
-    deleteVoucher(voucherId: number): Promise<IVoucher>;
 }
 
 const voucherService: IVoucherService = {
@@ -102,40 +101,6 @@ const voucherService: IVoucherService = {
           return data;
         } catch (error) {
           console.error("Error update voucher:", error);
-          throw error;
-        }
-      },
-
-      async deleteVoucher(voucherId) {
-        console.log(voucherId);
-        try {
-          const response = await fetch(
-            `https://localhost:7132/deleteVoucher/${voucherId}`,
-            {
-              method: "PUT",
-              headers: {
-                Accept: "application/json, text/plain, */*",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-          if (!response.ok) {
-            throw new Error("Failed to fetch voucher");
-          }
-      
-          const contentType = response.headers.get("content-type");
-          let data;
-          if (contentType && contentType.includes("application/json")) {
-            data = await response.json();
-          } else {
-            data = await response.text(); // Handle plain text response
-          }
-      
-          console.log(data);
-          return data;
-        } catch (error) {
-          console.error("Error fetching voucher:", error);
           throw error;
         }
       },

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Button, Form, Modal } from "react-bootstrap";
+import { Hotel } from "@mui/icons-material";
 import supplierStaffService from "@/app/services/supplierStaffService";
 
 interface Iprops {
@@ -133,7 +134,7 @@ const handleSubmit = async () => {
       staffPhoneNumber,
       staffEmail,
       staffAddress,
-      IsVerify:true,
+      IsVerify: true,
       staffPassword,
       status: true,        
       roleId: 3,

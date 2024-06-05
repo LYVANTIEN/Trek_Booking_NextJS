@@ -111,8 +111,8 @@ function CreateSupplierStaff(props: Iprops) {
         staffName,
         staffPhoneNumber,
         staffEmail,
+        IsVerify: true,
         staffAddress,
-        IsVerify:true,
         staffPassword,
         status: true, // Default value is true
         supplierId: Number(supplierId),

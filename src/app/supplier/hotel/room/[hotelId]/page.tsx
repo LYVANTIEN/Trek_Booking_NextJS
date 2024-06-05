@@ -215,7 +215,7 @@ const ListRoom = ({ params }: { params: { hotelId: string } }) => {
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link href="#">
+                            <Link href={`/supplier/hotel/room/${params.hotelId}/room3DImage/${item.roomId}`}>
                               <img
                                 src="/image/managevoucher.png"
                                 alt="Manage Room 3D"
@@ -271,11 +271,6 @@ const ListRoom = ({ params }: { params: { hotelId: string } }) => {
                                       <Button
                                         className="button-exit mr-2"
                                         onClick={handleClosePopup}
-                                        style={{
-                                          background: "white",
-                                          color: "black",
-                                          border: "1px solid #ccc",
-                                        }}
                                       >
                                         Exit
                                       </Button>
@@ -287,10 +282,6 @@ const ListRoom = ({ params }: { params: { hotelId: string } }) => {
                                             item.roomStatus
                                           )
                                         }
-                                        style={{
-                                          background: "#305A61",
-                                          border: "1px solid #ccc",
-                                        }}
                                       >
                                         Yes
                                       </Button>

@@ -7,8 +7,6 @@ import CreateHotel from "@/app/components/Hotel/CreateHotel";
 import { Button } from "react-bootstrap";
 import UpdateHotel from "@/app/components/Hotel/UpdateHotel";
 import DetailHotel from "@/app/components/Hotel/DetailHotel";
-import { mutate } from "swr";
-import { toast } from "react-toastify";
 
 const HotelListOfSupplier = () => {
   const [hotelList, setHotelList] = useState([]);
@@ -20,54 +18,6 @@ const HotelListOfSupplier = () => {
   const [showNoti, setShowNoti] = useState<boolean>(false);
   const [HotelId, setHotelId] = useState(0);
   const [Hotel, setHotel] = useState<IHotel | null>(null);
-
-  const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [selectedHotel, setSelectedHotel] = useState<IHotel | null>(null);
-
-  const [loadingPage, setLoadingPage] = useState(false);
-
-  const handleImageClick = (hotel: IHotel) => {
-    setSelectedHotel(hotel);
-    setShowPopup(true);
-  };
-  const handleClosePopup = () => {
-    setShowPopup(false);
-    setSelectedHotel(null);
-  };
-
-  const handleLockUnlockHotel = async (hotelId: number, isVerify: boolean) => {
-    setLoadingPage(true);
-    try {
-      let response;
-      if (isVerify) {
-        response = await hotelService.deleteHotel(hotelId);
-      } else {
-        response = await hotelService.recoverHotelDeleted(hotelId);
-      }
-      if (response) {
-        setShowPopup(false);
-        const supplierId = localStorage.getItem("supplierId");
-        await hotelService
-          .getHotelsBySuppierId(Number(supplierId))
-          .then((data: any) => {
-            setHotelList(data);
-            setLoading(false);
-          });
-
-        toast.success(`Hotel ${isVerify ? "locked" : "unlocked"} successfully`);
-      } else {
-        throw new Error(`Failed to ${isVerify ? "lock" : "unlock"} hotel`);
-      }
-    } catch (error) {
-      console.error(
-        `Error ${isVerify ? "locking" : "unlocking"} hotel:`,
-        error
-      );
-      toast.error(`Failed to ${isVerify ? "lock" : "unlock"} hotel`);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     const supplierId = localStorage.getItem("supplierId");
@@ -289,58 +239,10 @@ const HotelListOfSupplier = () => {
                             </Link>
                             <img
                               className="w-5 h-5 cursor-pointer ml-3"
-                              onClick={() => handleImageClick(item)}
-                              src={
-                                item.isVerify
-                                  ? "/image/lock.png"
-                                  : "/image/unlock.png"
-                              }
-                              alt={item.isVerify ? "Ban" : "Unban"}
+                              src="/image/lock.png"
+                              alt="Delete"
+                              onClick={() => handleDeleteHotel(item.hotelId)}
                             />
-                            {showPopup &&
-                              selectedHotel?.hotelId === item.hotelId && (
-                                <div className="fixed inset-0 z-10 flex items-center justify-center">
-                                  <div
-                                    className="fixed inset-0 bg-black opacity-50"
-                                    onClick={handleClosePopup}
-                                  ></div>
-                                  <div className="relative bg-white p-8 rounded-lg">
-                                    <p className="color-black font-bold text-2xl">
-                                      Do you want to{" "}
-                                      {item.isVerify ? "lock" : "unlock"} this{" "}
-                                      {item.hotelName}?
-                                    </p>
-                                    <div className="button-kichhoat pt-4">
-                                      <Button
-                                        className="button-exit mr-2"
-                                        onClick={handleClosePopup}
-                                        style={{
-                                          background: "white",
-                                          color: "black",
-                                          border: "1px solid #ccc",
-                                        }}
-                                      >
-                                        Exit
-                                      </Button>
-                                      <Button
-                                        className="button-yes"
-                                        onClick={() =>
-                                          handleLockUnlockHotel(
-                                            item.hotelId,
-                                            item.isVerify
-                                          )
-                                        }
-                                        style={{
-                                          background: "#305A61",
-                                          border: "1px solid #ccc",
-                                        }}
-                                      >
-                                        Yes
-                                      </Button>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
                           </td>
                         </tr>
                       ))

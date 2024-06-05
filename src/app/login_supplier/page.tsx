@@ -28,7 +28,7 @@ export default function LoginSupplier() {
       toast.success("Login Successful!..");
       setTimeout(() => {
         router.push("/supplier");
-      }, 1000);
+      }, 2000);
     } else {
       setErrorMessage(result.errorMessage || "An unknown error occurred.");
     }

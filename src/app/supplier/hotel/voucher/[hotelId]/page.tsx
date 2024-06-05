@@ -8,17 +8,11 @@ import hotelService from "@/app/services/hotelService";
 import voucherService from "@/app/services/voucherService";
 import CreateVoucher from "@/app/components/Voucher/CreateVoucher";
 import UpdateVoucher from "@/app/components/Voucher/UpdateVoucher";
-import { toast } from "react-toastify";
-import { Button } from "react-bootstrap";
 
 const ListVoucher = ({ params }: { params: { hotelId: string } }) => {
   const [showVoucherCreate, setShowVoucherCreate] = useState<boolean>(false);
   const [showVoucherUpdate, setShowVoucherUpdate] = useState<boolean>(false);
   const [VoucherId, setVoucherId] = useState(0);
-
-  const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [selectedVoucher, setSelectedVoucher] = useState<IVoucher | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const [Voucher, setVoucher] = useState<IVoucher | null>(null);
   const [hotel, setHotel] = useState<IHotel | null>(null);
@@ -26,15 +20,6 @@ const ListVoucher = ({ params }: { params: { hotelId: string } }) => {
   const { data: listVoucher, error } = useSWR("listVoucher", () =>
     voucherService.getVouchersByHotelId(Number(params.hotelId))
   );
-
-  const handleImageClick = (voucher: IVoucher) => {
-    setSelectedVoucher(voucher);
-    setShowPopup(true);
-  };
-  const handleClosePopup = () => {
-    setShowPopup(false);
-    setSelectedVoucher(null);
-  };
 
   useEffect(() => {
     const fetchHotel = async () => {
@@ -50,35 +35,6 @@ const ListVoucher = ({ params }: { params: { hotelId: string } }) => {
 
     fetchHotel();
   }, [params.hotelId]);
-
-  const handleLockVoucher = async (
-    voucherId: number,
-    voucherStatus: boolean
-  ) => {
-    setLoading(true);
-    try {
-      let response;
-      if (voucherStatus) {
-        response = await voucherService.deleteVoucher(voucherId);
-      }
-      if (response) {
-        setShowPopup(false);
-        await mutate(
-          "listVoucher",
-          voucherService.getVouchersByHotelId(Number(params.hotelId)),
-          true
-        );
-        toast.success("Voucher locked successfully");
-      } else {
-        throw new Error(`Failed to lock voucher`);
-      }
-    } catch (error) {
-      console.error(`Error lock voucher:`, error);
-      toast.error(`Failed to lock voucher`);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const checkAndUpdateVoucherStatus = async () => {
     const currentDate = new Date();
@@ -256,53 +212,12 @@ const ListVoucher = ({ params }: { params: { hotelId: string } }) => {
                                 className="w-5 h-5 cursor-pointer ml-3"
                                 src="/image/lock.png"
                                 alt="Delete"
-                                onClick={() => handleImageClick(item)}
+                                onClick={() =>
+                                  console.log(
+                                    `Delete voucher ${item.voucherId}`
+                                  )
+                                }
                               />
-
-                              {showPopup &&
-                                selectedVoucher?.voucherId ===
-                                  item.voucherId && (
-                                  <div className="fixed inset-0 z-10 flex items-center justify-center">
-                                    <div
-                                      className="fixed inset-0 bg-black opacity-50"
-                                      onClick={handleClosePopup}
-                                    ></div>
-                                    <div className="relative bg-white p-8 rounded-lg">
-                                      <p className="color-black font-bold text-2xl">
-                                        Do you want to lock this{" "}
-                                        {item.voucherCode}?
-                                      </p>
-                                      <div className="button-kichhoat pt-4">
-                                        <Button
-                                          className="button-exit mr-2"
-                                          onClick={handleClosePopup}
-                                          style={{
-                                            background: "white",
-                                            color: "black",
-                                            border: "1px solid #ccc",
-                                          }}
-                                        >
-                                          Exit
-                                        </Button>
-                                        <Button
-                                          className="button-yes"
-                                          onClick={() =>
-                                            handleLockVoucher(
-                                              item.voucherId,
-                                              item.voucherStatus
-                                            )
-                                          }
-                                          style={{
-                                            background: "#305A61",
-                                            border: "1px solid #ccc",
-                                          }}
-                                        >
-                                          Yes
-                                        </Button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
                             </td>
                           </tr>
                         );

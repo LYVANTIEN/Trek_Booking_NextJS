@@ -11,26 +11,27 @@ interface ITourService {
 
 export const tourService: ITourService = {
 
-    async getTours() {
-      try {
-        const response = await fetch("https://localhost:7132/getTours", {
-          headers: {
-            "Content-Type": "application/json",
-            // Include the token in the headers
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
-          },
-        });
-        if (!response.ok) { 
-          throw new Error("Failed to fetch tour list");
-        }
-        const data = await response.json();
-        // console.log(data); // Trigger refetch after fetching
-        return data;
-      } catch (error) {
-        console.error("Error fetching user list:", error);
-        throw error;
+
+  async getTours() {
+    try {
+      const response = await fetch("https://localhost:7132/getTours", {
+        headers: {
+          "Content-Type": "application/json",
+          // Include the token in the headers
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+        },
+      });
+      if (!response.ok) { 
+        throw new Error("Failed to fetch tour list");
       }
-    },
+      const data = await response.json();
+      // console.log(data); // Trigger refetch after fetching
+      return data;
+    } catch (error) {
+      console.error("Error fetching user list:", error);
+      throw error;
+    }
+  },
 
   async getTourImageByTourId(tourId) {
     console.log(tourId);
@@ -151,5 +152,6 @@ export const revalidateTours = () => mutate(tourService.getToursBySuppierId);
       throw new Error('Failed to toggle tour status: ' + error.message);
     }
   };
+  
   export default tourService;
   

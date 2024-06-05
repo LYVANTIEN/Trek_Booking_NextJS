@@ -1,4 +1,5 @@
 import { mutate } from "swr";
+
 interface ISupplierStaffService {
   getStaffsBySuppierId(supplierId: number): Promise<ISupplierStaff[]>;
   createStaff(supplierStaff: ISupplierStaff): Promise<ISupplierStaff>;
@@ -84,7 +85,8 @@ interface ISupplierStaffService {
         const response = await fetch(
           `https://localhost:7132/deleteSupplierStaff/${staffId}`,
           {
-            method: "PUT",headers: {
+            method: "PUT",
+            headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
@@ -121,3 +123,4 @@ interface ISupplierStaffService {
     }
   };
   export default supplierStaffService;
+  
