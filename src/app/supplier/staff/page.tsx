@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import supplierStaffService, {
-  revalidateSupplierStaffs,
   toggleSupplierStaffStatus,
 } from "@/app/services/supplierStaffService";
 import CreateSupplierStaff from "@/app/components/Staff/CreateStaff";
