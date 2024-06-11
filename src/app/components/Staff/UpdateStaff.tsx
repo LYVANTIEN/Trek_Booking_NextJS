@@ -22,8 +22,7 @@ function UpdateStaff(props: Iprops) {
   const [staffPhoneNumber, setStaffPhoneNumber] = useState<string>("");
   const [staffEmail, setStaffEmail] = useState<string>("");
   const [staffAddress, setStaffAddress] = useState<string>("");
-  const [staffPassword, setStaffPassword] = useState<string>("");
-  const [status, SetStatus] = useState<boolean>(true);
+  const [staffPassword, setStaffPassword] = useState<string>("");  
   const [roleId, setRoleId] = useState<number>(0);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});

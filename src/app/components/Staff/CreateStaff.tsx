@@ -85,7 +85,9 @@ function CreateSupplierStaff(props: Iprops) {
     if (isTouched.staffPassword) {
       setErrors((prevErrors) => ({...prevErrors, staffPassword: validateStaffPassword(staffPassword)}));
     }
-  }, [staffPassword, isTouched.staffPassword]);const handleBlur = (field: string) => {
+  }, [staffPassword, isTouched.staffPassword]);
+  
+  const handleBlur = (field: string) => {
     setIsTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
   };
 

@@ -47,12 +47,13 @@ const voucherService: IVoucherService = {
               },
               body: JSON.stringify(voucher),
             }
-          );
-      
-          if (!response.ok) {
-            throw new Error("Failed to create Voucher");
+          );          
+          if (!response.ok && response.status == 409) {
+            throw new Error("Voucher Code already exists");
           }
-      
+          else if (!response.ok) {
+            throw new Error("Failed to create Voucher");
+          }         
           const contentType = response.headers.get("Content-Type");
           let data;
           if (contentType && contentType.includes("application/json")) {
@@ -85,8 +86,11 @@ const voucherService: IVoucherService = {
             }
           );
       
-          if (!response.ok) {
-            throw new Error("Failed to update Voucher");
+          if (!response.ok && response.status == 409) {
+            throw new Error("Voucher Code already exists");
+          }
+          else if (!response.ok) {
+            throw new Error("Failed to create Voucher");
           }
       
           const contentType = response.headers.get("Content-Type");
