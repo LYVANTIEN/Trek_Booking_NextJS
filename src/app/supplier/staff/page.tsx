@@ -118,7 +118,7 @@ const SupplierStaffList = () => {
               <div className="overflow-x-auto">
                 <table className="min-w-full text-start text-sm font-light text-surface dark:text-white border-solid">
                   <thead className="border-b border-neutral-200 font-medium dark:border-white/10 bk-top-table">
-                    <tr>
+                    <tr className="text-center">
                       <th scope="col" className="px-6 py-4">StaffId</th>
                       <th scope="col" className="px-6 py-4 text-center">Staff Name</th>
                       <th scope="col" className="px-6 py-4">Phone</th>
@@ -133,7 +133,7 @@ const SupplierStaffList = () => {
                       currentStaff.map((item: ISupplierStaff, index) => (
                         <tr
                           key={index}
-                          className="border-b border-neutral-200 dark:border-white/10"
+                          className="border-b border-neutral-200 dark:border-white/10 text-center"
                         >
                           <td className="whitespace-nowrap px-6 py-4 font-medium text-black">
                             {item.staffId}
@@ -156,7 +156,7 @@ const SupplierStaffList = () => {
                             }`}
                           >
                             {item.status ? "Active" : "Stopped"}</td>
-                          <td className="whitespace-nowrap px-6 py-4 flex">
+                          <td className="whitespace-nowrap px-6 py-4 flex justify-center">
                             <Link href="#">
                               <img
                                 className="w-5 h-5 cursor-pointer"

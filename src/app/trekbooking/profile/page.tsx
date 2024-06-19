@@ -1,7 +1,8 @@
 "use client";
+import UpdateProfile from "@/app/components/Profile/UpdateProfile";
 import UpdateUser from "@/app/components/Profile/UpdateProfile";
 import userService from "@/app/services/userService";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 const Profile = () => {
@@ -16,10 +17,11 @@ const Profile = () => {
   const [User, setUser] = useState<IUser | null>(null);
 
   const { data: user, error } = useSWR(
-    userId,
+    userId ? `user/${userId}` : null,
     () => userService.getUserById(Number(userId)),
     { revalidateOnFocus: false }
   );
+
   useEffect(() => {
     if (user) {
       setUserName(user.userName);
@@ -27,11 +29,15 @@ const Profile = () => {
       setEmail(user.email);
       setPhone(user.phone);
       setAddress(user.address);
-      setUser(user);
-    } else {
+      // setUser(user);
+    } else if (error) {
       console.error("Failed to fetch user:", error);
     }
   }, [user, error]);
+
+  if (!userId) {
+    return <div>User ID not found in localStorage</div>;
+  }
 
   return (
     <>
@@ -42,7 +48,7 @@ const Profile = () => {
           style={{ borderBottom: "2px solid #D2D2D2" }}
         >
           <div className="flex items-start pr-10">
-            <img src="/image/user.png" alt="" />
+            <img src="/image/user.png" alt="User" />
             <a
               href="#"
               className="text-hv font-semibold no-underline text-xl pl-2"
@@ -52,7 +58,7 @@ const Profile = () => {
             </a>
           </div>
           <div className="flex items-start">
-            <img src="/image/lock.png" alt="" />
+            <img src="/image/lock.png" alt="Lock" />
             <a
               href="#"
               className="text-hv no-underline font-semibold text-black text-xl pl-2"
@@ -78,11 +84,10 @@ const Profile = () => {
                   <img
                     className="max-w-[300px] max-h-[300px] cursor-pointer m-2"
                     src={avatar ? avatar : "/image/addpicture.png"}
-                    alt=""
+                    alt="Avatar"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.onerror = null;
-                      target.src = "/image/addpicture.png";
+                      target.onerror = null; target.src = "/image/addpicture.png";
                     }}
                   />
                 </div>
@@ -157,7 +162,7 @@ const Profile = () => {
                 style={{ marginTop: "-20px" }}
               >
                 <button
-                  className=" text-white font-medium py-2 px-6 text-lg border"
+                  className="text-white font-medium py-2 px-6 text-lg border"
                   style={{ backgroundColor: "#305A61", borderRadius: "20px" }}
                   onClick={() => {
                     setShowUserUpdate(true);
@@ -167,7 +172,7 @@ const Profile = () => {
                 </button>
               </div>
             </div>
-            <UpdateUser
+            <UpdateProfile
               showUserUpdate={showUserUpdate}
               setShowUserUpdate={setShowUserUpdate}
               user={User}
@@ -180,4 +185,5 @@ const Profile = () => {
     </>
   );
 };
+
 export default Profile;

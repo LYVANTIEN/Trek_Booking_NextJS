@@ -41,7 +41,7 @@ const NavSupplier = () => {
             <li className="flex items-center pb-10">
   <Link
     className={`flex no-underline nav-i-hover py-2 pl-3 pr-40 ${
-      pathname.startsWith("/supplier/tour") ? "active-link" : ""
+      pathname ===("/supplier/tour") ? "active-link" : ""
     }`}
     href="/supplier/tour"
   >

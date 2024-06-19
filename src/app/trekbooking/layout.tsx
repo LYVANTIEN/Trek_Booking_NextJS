@@ -5,8 +5,11 @@ const inter = Inter({ subsets: ["latin"] });
 import { Roboto } from "next/font/google";
 import Navbar from "../components/Navbar";
 import Footer from "../components/footer";
+
+
+
 import Script from "next/script";
-import { ToastContainer } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -31,17 +34,19 @@ export default function RootLayout({
         />
       </head>
       <body className={roboto.className}>
-        <Navbar></Navbar>
+      <Navbar title=""></Navbar> 
+    
         {children}
-        <Footer />
-        <ToastContainer />
+   
+         <Footer/>
+        
         <df-messenger
           intent="WELCOME"
           chat-title="Trek_Booking"
           agent-id="8906b6ec-4d2c-476b-b37c-7823f3f31ce8"
           language-code="en"
         ></df-messenger>
-      </body>
+        </body>
     </html>
   );
 }

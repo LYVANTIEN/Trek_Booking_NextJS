@@ -9,6 +9,9 @@ import UpdateHotel from "@/app/components/Hotel/UpdateHotel";
 import DetailHotel from "@/app/components/Hotel/DetailHotel";
 import { mutate } from "swr";
 import { toast } from "react-toastify";
+import HotelAvatar from "@/app/components/Hotel/HotelAvatar";
+import { ref, deleteObject } from "firebase/storage";
+import { analytics } from "../../../../public/firebase/firebase-config";
 
 const HotelListOfSupplier = () => {
   const [hotelList, setHotelList] = useState([]);
@@ -17,17 +20,22 @@ const HotelListOfSupplier = () => {
   const [showHotelCreate, setShowHotelCreate] = useState<boolean>(false);
   const [showHotelUpdate, setShowHotelUpdate] = useState<boolean>(false);
   const [showHotelDetail, setShowHotelDetail] = useState<boolean>(false);
+  const [showHotelAvatar, setShowHotelAvatar] = useState<boolean>(false);
   const [showNoti, setShowNoti] = useState<boolean>(false);
   const [HotelId, setHotelId] = useState(0);
   const [Hotel, setHotel] = useState<IHotel | null>(null);
-
+  const [oldAvatarUrl, setOldAvatarUrl] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const [hotelPerPage] = useState(5);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [selectedHotel, setSelectedHotel] = useState<IHotel | null>(null);
+  const [imageLoadErrors, setImageLoadErrors] = useState<{ [key: number]: boolean }>({});
 
   const [loadingPage, setLoadingPage] = useState(false);
 
+  const handleImageError = (hotelId: number) => {
+    setImageLoadErrors((prevErrors) => ({ ...prevErrors, [hotelId]: true }));
+  };
   const handleImageClick = (hotel: IHotel) => {
     setSelectedHotel(hotel);
     setShowPopup(true);
@@ -90,6 +98,27 @@ const HotelListOfSupplier = () => {
     }
   }, []);
 
+  const handleHotelAvatar = async () => {
+    setShowHotelAvatar(false);
+    const supplierId = localStorage.getItem("supplierId");
+    if (supplierId) {
+      hotelService
+        .getHotelsBySuppierId(Number(supplierId))
+        .then(async (data: any) => {
+          setHotelList(data);
+          setLoading(false);
+          await handleDeleteHotelAvatar(oldAvatarUrl);
+        })
+        .catch((error) => {
+          console.error("Error fetching hotel list:", error);
+          setError(error);
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
+    }
+  };
+
   //reload sau khi add
   const handleCreateHotel = async () => {
     setShowHotelCreate(false);
@@ -130,7 +159,27 @@ const HotelListOfSupplier = () => {
     }
   };
 
-  //Update
+//delete image from firebase
+  const deleteImageFromStorage = async (imageUrl: string) => {
+    try {
+      const storageRef = ref(analytics, imageUrl);
+      await deleteObject(storageRef);
+   //   console.log("Image deleted successfully from Firebase Storage");
+    } catch (error) {
+      console.error("Error deleting image from Firebase Storage:", error);
+    }
+  };
+  //Delete Hotel avatar in cloud storage after update new avatar
+  const handleDeleteHotelAvatar = async (imageUrl: string) => {
+    try {
+   //   console.log("Deleting room image with ID:", roomImageId);
+      await deleteImageFromStorage(imageUrl);
+      //toast.success("Delete Image Successful")
+    } catch (error) {
+      console.error("Error deleting room image:", error);
+      alert("Failed to delete room image");
+    }
+  };
 
   //Delete
   const handleDeleteHotel = async (hotelId: number) => {
@@ -171,7 +220,7 @@ const HotelListOfSupplier = () => {
   const indexOfFirstHotel = indexOfLastHotel - hotelPerPage;
   const currentHotel = hotelList.slice(indexOfFirstHotel, indexOfLastHotel);
 
-  const paginate = (pageNumber:number) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   const totalPages = Math.ceil(hotelList.length / hotelPerPage);
   const handlePrevPage = () => {
     if (currentPage > 1) {
@@ -210,7 +259,7 @@ const HotelListOfSupplier = () => {
               <div className="overflow-x-auto">
                 <table className="min-w-full text-start text-sm font-light text-surface dark:text-white border-solid">
                   <thead className="border-b border-neutral-200 font-medium dark:border-white/10 bk-top-table">
-                    <tr>
+                    <tr className="text-center">
                       <th scope="col" className="px-6 py-4">
                         HotelId
                       </th>
@@ -233,6 +282,12 @@ const HotelListOfSupplier = () => {
                         View Detail
                       </th>
                       <th scope="col" className="px-6 py-4">
+                        Manage Comment
+                      </th>
+                      <th scope="col" className="px-6 py-4">
+                        Manage Rate
+                      </th>
+                      <th scope="col" className="px-6 py-4">
                         Action
                       </th>
                     </tr>
@@ -242,7 +297,7 @@ const HotelListOfSupplier = () => {
                       currentHotel.map((item: IHotel, index) => (
                         <tr
                           key={index}
-                          className="border-b border-neutral-200 dark:border-white/10"
+                          className="text-center border-b border-neutral-200 dark:border-white/10"
                         >
                           <td className="whitespace-nowrap px-6 py-4 font-medium text-black">
                             {item.hotelId}
@@ -250,9 +305,35 @@ const HotelListOfSupplier = () => {
                           <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
                             {item.hotelName}
                           </td>
-                          <td className="whitespace-nowrap px-6 py-4">
-                            <Link href="#">
-                              <img src="/image/avatar.png" alt="Avatar" />
+                          <td className="whitespace-nowrap px-6 py-4 w-0 h-0">
+                            <Link href="#" className='flex justify-center'>
+                              {imageLoadErrors[item.hotelId] ? (
+                                <div
+                                  className="cursor-pointer"
+                                  onClick={() => {
+                                    setOldAvatarUrl(item.hotelAvatar);
+                                    setHotelId(item.hotelId);
+                                    setShowHotelAvatar(true);
+                                    console.log("HotelID: " + item.hotelId, item);
+                                  }}
+                                >
+                                  Upload Avatar
+                                </div>
+                              ) : (
+                                <img
+                                  src={item.hotelAvatar}
+                                  alt="Avatar"
+                                  className="cursor-pointer rounded-full"
+                                  style={{ width: "60px", height: "50px" }}
+                                  onClick={() => {
+                                    setOldAvatarUrl(item.hotelAvatar);
+                                    setHotelId(item.hotelId);
+                                    setShowHotelAvatar(true);
+                                    console.log("HotelID: " + item.hotelId, item);
+                                  }}
+                                  onError={() => handleImageError(item.hotelId)}
+                                />
+                              )}
                             </Link>
                           </td>
                           <td
@@ -263,7 +344,7 @@ const HotelListOfSupplier = () => {
                             {item.isVerify ? "Active" : "Stopped"}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link
+                            <Link className='flex justify-center'
                               href={`/supplier/hotel/voucher/${item.hotelId}`}
                             >
                               <img
@@ -273,7 +354,7 @@ const HotelListOfSupplier = () => {
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link href={`/supplier/hotel/room/${item.hotelId}`}>
+                            <Link className='flex justify-center' href={`/supplier/hotel/room/${item.hotelId}`}>
                               <img
                                 src="/image/managevoucher.png"
                                 alt="Manage Room"
@@ -281,7 +362,7 @@ const HotelListOfSupplier = () => {
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link href="#">
+                            <Link className='flex justify-center' href="#">
                               <img
                                 src="/image/viewdetail.png"
                                 alt="View Detail"
@@ -293,10 +374,21 @@ const HotelListOfSupplier = () => {
                               />
                             </Link>
                           </td>
-                          <td className="whitespace-nowrap px-6 py-4 flex">
-                            <Link href="#">
-                              <img
-                                className="w-5 h-5 cursor-pointer"
+                          <td className="whitespace-nowrap px-6 py-4">
+                            <Link className='flex justify-center' href={`/supplier/hotel/comment/${item.hotelId}`}>
+                              <img src="/image/managevoucher.png" alt="Manage Comment" />
+                            </Link>
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4">
+                            <Link className='flex justify-center' href={`/supplier/hotel/rate/${item.hotelId}`}>
+                              <img src="/image/managevoucher.png" alt="Manage Rate" />
+                            </Link>
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4 ">
+                         
+                            <Link href="#" className="flex">
+                            <img
+                                className="w-10 h-5 cursor-pointer"
                                 src="/image/pen.png"
                                 alt="Edit"
                                 onClick={() => {
@@ -306,7 +398,7 @@ const HotelListOfSupplier = () => {
                                   console.log("HotelID: " + item.hotelId, item);
                                 }}
                               />
-                            </Link>
+                   
                             <img
                               className="w-5 h-5 cursor-pointer ml-3"
                               onClick={() => handleImageClick(item)}
@@ -317,6 +409,7 @@ const HotelListOfSupplier = () => {
                               }
                               alt={item.isVerify ? "Ban" : "Unban"}
                             />
+                            </Link>
                             {showPopup &&
                               selectedHotel?.hotelId === item.hotelId && (
                                 <div className="fixed inset-0 z-10 flex items-center justify-center">
@@ -378,20 +471,34 @@ const HotelListOfSupplier = () => {
                 </table>
                 <div className="pagination mt-4 flex justify-between items-center font-semibold">
                   <div>
-                    <span className="ml-8">{currentPage} of {totalPages}</span>
+                    <span className="ml-8">
+                      {currentPage} of {totalPages}
+                    </span>
                   </div>
                   <div className="flex items-center mr-8">
-                    <img className="w-3 h-3 cursor-pointer" src="/image/left.png" alt="Previous" onClick={handlePrevPage} />
+                    <img
+                      className="w-3 h-3 cursor-pointer"
+                      src="/image/left.png"
+                      alt="Previous"
+                      onClick={handlePrevPage}
+                    />
                     {Array.from({ length: totalPages }, (_, index) => (
                       <p
                         key={index}
                         onClick={() => paginate(index + 1)}
-                        className={`mb-0 mx-2 cursor-pointer ${currentPage === index + 1 ? 'active' : ''}`}
+                        className={`mb-0 mx-2 cursor-pointer ${
+                          currentPage === index + 1 ? "active" : ""
+                        }`}
                       >
                         {index + 1}
                       </p>
                     ))}
-                    <img className="w-3 h-3 cursor-pointer" src="/image/right2.png" alt="Next" onClick={handleNextPage} />
+                    <img
+                      className="w-3 h-3 cursor-pointer"
+                      src="/image/right2.png"
+                      alt="Next"
+                      onClick={handleNextPage}
+                    />
                   </div>
                 </div>
               </div>
@@ -411,6 +518,13 @@ const HotelListOfSupplier = () => {
         ThishotelId={HotelId}
         hotel={Hotel}
         setHotel={setHotel}
+      />
+
+      <HotelAvatar
+        showHotelAvatar={showHotelAvatar}
+        setShowHotelAvatar={setShowHotelAvatar}
+        onUpdate={handleHotelAvatar} // Thêm callback để xử lý sau khi tạo
+        hotelId={HotelId}
       />
       <DetailHotel
         showHotelDetail={showHotelDetail}

@@ -32,7 +32,7 @@ const roomService: IRoomService = {
 
   
   async getRoomsByHotelId(hotelId) {
-      console.log(hotelId);
+    //  console.log(hotelId);
       try {
         const response = await fetch(
           `https://localhost:7132/getRoombyHotelId/${hotelId}`,
@@ -50,7 +50,7 @@ const roomService: IRoomService = {
           throw new Error("Failed to fetch room list");
         }
         const data = await response.json();
-        console.log(data); // Trigger refetch after fetching
+      //  console.log(data); // Trigger refetch after fetching
         return data;
       } 
       catch (error) {

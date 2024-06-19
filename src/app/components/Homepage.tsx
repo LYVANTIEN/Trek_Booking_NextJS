@@ -10,34 +10,7 @@ const Homepage = () => {
   return (
     <>
        <div>
-        <nav className="to-white pt-2 pb-2">
-          <ul className="flex ul-menu">
-            <li className="li-menu hover-bold">
-              <a
-                href=""
-                className="font-bold text-decoration-none link-style "
-                style={{ color: "#305A61" }}
-              >
-                Home
-              </a>
-            </li>
-            <li className="li-menu hover-bold">
-              <a href="" className="font-bold text-decoration-none" style={{ color: "#1F1C17" }}>
-                Hotel
-              </a>
-            </li>
-            <li className="li-menu hover-bold">
-              <a href="" className="font-bold text-decoration-none" style={{ color: "#1F1C17" }}>
-                Attractions
-              </a>
-            </li>
-            <li className="li-menu hover-bold none-t">
-              <a href="" className="font-bold text-decoration-none" style={{ color: "#1F1C17" }}>
-                Gift Voucher
-              </a>
-            </li>
-          </ul>
-        </nav>
+      
             <Searchcart/>
         <div className="slider p-12 backgr-home">
           <h1 className="pb-4 pl-6 font-bold">Plenty of hotel selections</h1>

@@ -7,10 +7,12 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import authenticateService from "../services/authenticateService"; // Adjust the path as needed
 import "../../../public/css/authen.css"; // Adjust the path as needed
+import { useSearchParams } from "next/navigation";
 
 export default function LoginClient() {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const searchParams = useSearchParams(); 
   const [password, setPassword] = useState("");
   const [isPassword, setIsPassword] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -26,8 +28,9 @@ export default function LoginClient() {
 
     if (result.success) {
       toast.success("Login Successful!..");
+      const redirectUrl = searchParams.get("redirect") || "/trekbooking";
       setTimeout(() => {
-        router.push("/trekbooking");
+        router.push(decodeURIComponent(redirectUrl)); // Chuyển hướng đến URL đã lưu trữ hoặc trang chủ nếu không có URL
       }, 2000);
     } else {
       setErrorMessage(result.errorMessage || "An unknown error occurred.");
@@ -40,6 +43,7 @@ export default function LoginClient() {
         <div className="image-bk">
           <div className="login">
             <div className="text-login">
+              
               <h3 className="text-center font-bold color-black">Log In</h3>
             </div>
             <form onSubmit={handleSubmit}>

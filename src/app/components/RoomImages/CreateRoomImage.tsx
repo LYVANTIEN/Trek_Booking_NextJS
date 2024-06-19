@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { analytics } from "../../../../public/firebase/firebase-config";
 import roomImageService from "@/app/services/roomImageService";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Iprops {
   showRoomImageCreate: boolean;
@@ -29,7 +30,8 @@ function CreateRoomImage(props: Iprops) {
 
   const uploadImages = async () => {
     const uploadPromises = fileUploads.map(file => {
-      const storageRef = ref(analytics, "Room_Image/" + file.name);
+      const uniqueFileName = `${uuidv4()}_${file.name}`;
+      const storageRef = ref(analytics, "Room_Image/" + uniqueFileName);
       return uploadBytes(storageRef, file)
         .then(async snapshot => {
           const downloadURL = await getDownloadURL(snapshot.ref);

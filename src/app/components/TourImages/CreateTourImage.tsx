@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { analytics } from "../../../../public/firebase/firebase-config";
 import tourImageService from "@/app/services/tourImageService";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Iprops {
   showTourImageCreate: boolean;
@@ -29,7 +30,8 @@ function CreateTourImage(props: Iprops) {
 
   const uploadImages = async () => {
     const uploadPromises = fileUploads.map(file => {
-      const storageRef = ref(analytics, "Trek_Image/" + file.name);
+      const uniqueFileName = `${uuidv4()}_${file.name}`;
+      const storageRef = ref(analytics, "Trek_Image/" + uniqueFileName);
       return uploadBytes(storageRef, file)
         .then(async snapshot => {
           const downloadURL = await getDownloadURL(snapshot.ref);
@@ -68,7 +70,6 @@ function CreateTourImage(props: Iprops) {
       toast.error("You can only add up to 6 images for this tour.");
       return;
     }
-
 
     try {
       const imageURLs = await uploadImages();
@@ -115,7 +116,6 @@ function CreateTourImage(props: Iprops) {
                   alt="Preview"
                   onClick={() => document.getElementById("fileInput")?.click()}
                 />
-                
               ))
             ) : (
               <img

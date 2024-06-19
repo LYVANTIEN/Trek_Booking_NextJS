@@ -182,7 +182,7 @@ return (
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 font-semibold flex justify-center">
                             <img
-                               className="w-[150px] h-[100px]"
+                               className="w-[150px] h-[65px]"
                               src={
                                 item.tourImageURL
                                   ? item.tourImageURL
@@ -214,7 +214,7 @@ return (
                               />
 
                           {showPopup &&
-                                selectedImageTour?.tourId === item.tourId && (
+                                selectedImageTour?.tourImageId === item.tourImageId && (
                                   <div className="fixed inset-0 z-10 flex items-center justify-center ">
                                     {/* Nền mờ */}
                                     <div
