@@ -16,15 +16,19 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
   };
   let currentTitle = title;
   if (pathname === "/supplier/hotel") {
-    currentTitle = "HOTEL";
+    currentTitle = "HOTELS";
   } else if (pathname === "/supplier/tour") {
-    currentTitle = "TOUR";
+    currentTitle = "TOURS";
   } else if (pathname === "/supplier/dashboard") {
     currentTitle = "DASHBOARD";
   } else if (pathname === "/supplier/staff") {
-    currentTitle = "STAFF";
+    currentTitle = "STAFFS";
   } else if (pathname.match(/^\/supplier\/hotel\/voucher\/\d+$/)) {
-    currentTitle = "VOUCHER";
+    currentTitle = "VOUCHERS";
+  } else if (pathname.match(/^\/supplier\/hotel\/comment\/\d+$/)) {
+    currentTitle = "COMMENTS";
+  } else if (pathname.match(/^\/supplier\/hotel\/rate\/\d+$/)) {
+    currentTitle = "RATES";
   } else if (pathname === "/supplier/roombooking") {
     currentTitle = "ROOM BOOKING";
   } else if (pathname === "/supplier/tourbooking") {
@@ -32,11 +36,15 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
   } else if (pathname === "/supplier/roomservice") {
     currentTitle = "ROOM SERVICE";
   } else if (pathname.match(/^\/supplier\/hotel\/room\/\d+$/)) {
-    currentTitle = "ROOM";
+    currentTitle = "ROOMS";
   } else if (pathname.match(/^\/supplier\/tour\/tourImage\/\d+$/)) {
     currentTitle = "TOUR IMAGE";
   } else if (pathname.match(/^\/supplier\/hotel\/room\/\d+\/roomImage\/\d+$/)) {
     currentTitle = "ROOM IMAGE";
+  } else if (
+    pathname.match(/^\/supplier\/hotel\/room\/\d+\/serviceOfRoom\/\d+$/)
+  ) {
+    currentTitle = "SERVICES";
   } else if (
     pathname.match(/^\/supplier\/hotel\/room\/\d+\/room3DImage\/\d+$/)
   ) {

@@ -5,15 +5,25 @@ import commentService from "@/app/services/commentService";
 import rateService from "@/app/services/rateService";
 import serviceOfRoom from "@/app/services/serviceOfRoom";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useSWR from "swr";
 import "../../../../../../../../public/css/tour.css";
-const ListServiceOfRoom = ({ params }: { params: { roomId: string } }) => {
+import hotelService from "@/app/services/hotelService";
+import roomService from "@/app/services/roomService";
+const ListServiceOfRoom = ({
+  params,
+}: {
+  params: { hotelId: string; roomId: string };
+}) => {
   const [showPopup, setShowPopup] = useState(false);
+  const [room, setRoom] = useState<IRoom | null>(null);
+  const [hotel, setHotel] = useState<IHotel | null>(null);
+
   //const [RoomService, setRoomService] = useState<IRoomService | null>(null);
-  const [selectedRoomService, setSelectedRoomService] = useState<IRoomService | null>(null);
-  
+  const [selectedRoomService, setSelectedRoomService] =
+    useState<IRoomService | null>(null);
+
   const [showServiceOfRoomCreate, setShowServiceOfRoomCreate] =
     useState<boolean>(false);
 
@@ -30,6 +40,24 @@ const ListServiceOfRoom = ({ params }: { params: { roomId: string } }) => {
     mutateServiceOfRoom(); // Revalidate lại danh sách nhân viên sau khi tạo mới
   };
 
+  useEffect(() => {
+    const fetchHotelandRoom = async () => {
+      try {
+        const hotelData = await hotelService.getHotelById(
+          Number(params.hotelId)
+        );
+        setHotel(hotelData);
+
+        const roomData = await roomService.getRoomById(Number(params.roomId));
+        setRoom(roomData);
+      } catch (error) {
+        console.error("Error fetching hotel and room details:", error);
+      }
+    };
+
+    fetchHotelandRoom();
+  }, [params.hotelId, params.roomId]);
+
   const handleRoomServiceClick = (service: IService) => {
     const roomService: IRoomService = {
       roomId: Number(params.roomId),
@@ -44,10 +72,10 @@ const ListServiceOfRoom = ({ params }: { params: { roomId: string } }) => {
   };
   const handleDeleteRoomService = async (service: IService) => {
     try {
-        const roomService: IRoomService = {
-            roomId: Number(params.roomId),
-            serviceId: service.serviceId,
-          };
+      const roomService: IRoomService = {
+        roomId: Number(params.roomId),
+        serviceId: service.serviceId,
+      };
       await serviceOfRoom.deleteRoomService(roomService);
       mutateServiceOfRoom();
       handleClosePopup();
@@ -69,6 +97,45 @@ const ListServiceOfRoom = ({ params }: { params: { roomId: string } }) => {
   return (
     <div className="relative">
       <div className="search-add ">
+        {hotel && room && (
+          <div className="fix-name">
+            <Link
+              href="/supplier/hotel"
+              style={{ color: "black", fontSize: "18px" }}
+            >
+              Hotel
+            </Link>
+            <span
+              style={{
+                color: "black",
+                fontSize: "18px",
+                marginLeft: "5px",
+                marginRight: "5px",
+              }}
+            >
+              {" > "}
+            </span>
+            <Link
+              href={`/supplier/hotel/room/${params.hotelId}`}
+              style={{ color: "black", fontSize: "18px" }}
+            >
+              {hotel.hotelName}
+            </Link>
+            <span
+              style={{
+                color: "black",
+                fontSize: "18px",
+                marginLeft: "5px",
+                marginRight: "5px",
+              }}
+            >
+              {" > "}
+            </span>
+            <span style={{ color: "#4c7cab", fontSize: "18px" }}>
+              {room.roomName}
+            </span>
+          </div>
+        )}
         <button
           className="ml-8 button-add ml-4rem"
           onClick={() => setShowServiceOfRoomCreate(true)}
@@ -106,25 +173,26 @@ const ListServiceOfRoom = ({ params }: { params: { roomId: string } }) => {
                             key={index}
                             className="border-b border-neutral-200 dark:border-white/10 text-center"
                           >
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
                               {item.serviceName}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
                               {item.serviceDescription}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
                               {item.serviceImage}
                             </td>
 
                             <td className="whitespace-nowrap px-6 py-4 flex justify-center">
-                            <img
+                              <img
                                 className="w-7 h-7 cursor-pointer ml-3"
                                 src="/image/bag.png"
                                 alt="Delete"
                                 onClick={() => handleRoomServiceClick(item)}
                               />
                               {showPopup &&
-                                selectedRoomService?.serviceId === item.serviceId && (
+                                selectedRoomService?.serviceId ===
+                                  item.serviceId && (
                                   <div className="fixed inset-0 z-10 flex items-center justify-center ">
                                     {/* Nền mờ */}
                                     <div
@@ -135,8 +203,8 @@ const ListServiceOfRoom = ({ params }: { params: { roomId: string } }) => {
                                     {/* Nội dung của popup */}
                                     <div className="relative bg-white p-8 rounded-lg">
                                       <p className="color-black font-bold text-2xl">
-                                        Do you want to delete Service: {item.serviceName} ?
-                                        
+                                        Do you want to delete Service:{" "}
+                                        {item.serviceName} ?
                                       </p>
                                       <div className="button-kichhoat pt-4">
                                         <button
@@ -148,9 +216,9 @@ const ListServiceOfRoom = ({ params }: { params: { roomId: string } }) => {
                                         <button
                                           className="button-yes cursor-pointer"
                                           onClick={() =>
-                                            handleDeleteRoomService(item)}
+                                            handleDeleteRoomService(item)
+                                          }
                                         >
-
                                           Yes
                                         </button>
                                       </div>

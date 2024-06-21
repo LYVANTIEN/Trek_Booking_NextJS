@@ -1,77 +1,72 @@
-import React from 'react'
-import '../../../../public/css/voucher.css'
-const page = () => {
+"use client";
+import React, { useEffect, useState } from "react";
+import "../../../../public/css/voucher.css";
+
+import useSWR from "swr";
+import voucherWalletService from "@/app/services/voucherWalletService";
+const VoucherWallet = () => {
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const id = localStorage.getItem("userId");
+    setUserId(id);
+  }, []);
+
+  const { data: voucherWalletList, error } = useSWR(
+    userId ? `voucherWalletList-${userId}` : null,
+    () => voucherWalletService.getVoucherUsageHistoryByUserId(Number(userId))
+  );
+
+  if (!voucherWalletList) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading voucher wallet</div>;
+  }
   return (
-    
     <div>
-    <nav className="to-white pt-2 pb-2">
-          <ul className="flex ul-menu">
-            <li className="li-menu hover-bold">
-              <a
-                href=""
-                className="font-bold text-decoration-none link-style "
-                style={{ color: "#305A61" }}
-              >
-                Home
-              </a>
-            </li>
-            <li className="li-menu hover-bold">
-              <a href="" className="font-bold text-decoration-none" style={{ color: "#1F1C17" }}>
-                Hotel
-              </a>
-            </li>
-            <li className="li-menu hover-bold">
-              <a href="" className="font-bold text-decoration-none" style={{ color: "#1F1C17" }}>
-                Attractions
-              </a>
-            </li>
-            <li className="li-menu hover-bold none-t">
-              <a href="" className="font-bold text-decoration-none" style={{ color: "#1F1C17" }}>
-                Gift Voucher
-              </a>
-            </li>
-          </ul>
-        </nav>
       <div className="payment-wallet">
-        <h3>Payment wallet</h3>
+        <h3>Voucher wallet</h3>
       </div>
       <div className="backgr-home ">
         <div className="voucher p-6">
-            <div className="flex justify-center pb-4">
+          {voucherWalletList.length > 0 ? (
+            voucherWalletList.map((item, index) => (
+              <div className="flex justify-center pb-4" key={index}>
                 <div className="border-wallet flex justify-between font-semibold">
-                <div >
-               <p className=''>voucher code:<br/> MuongThanhLuxury</p>
-               <p className='mb-0'>Discount: 30%</p>
-
+                  <div>
+                    <p>Voucher Code: {item.voucher.voucherCode}</p>
+                    <p className="mb-0">
+                      Discount: {item.voucher.discountPercent} %
+                    </p>
+                  </div>
+                  <div>
+                    <p className="pb-repon">
+                      Used Date:{" "}
+                      {new Date(item.booking.checkInDate).toLocaleDateString()}{" "}
+                      {new Date(item.booking.checkInDate).toLocaleTimeString()}
+                    </p>
+                    <p className="mb-0">
+                      Hotel: {item.booking.hotel.hotelName}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                    <p className='pb-repon'>Used date: 01/05/2024  10:12</p>
-                    <p className='mb-0 '>Hotel: Muong Thanh Can Tho</p>
-                    </div>
-                </div>
-
-                
+              </div>
+            ))
+          ) : (
+            <div className="not-found-form flex justify-center items-center h-full">
+              <div className="text-center">
+                <h2 className="text-xl font-semibold mb-4">
+                  No Vouchers Wallet Found
+                </h2>
+              </div>
             </div>
-            <div className="flex justify-center">
-                <div className="border-wallet flex justify-between font-semibold">
-                <div >
-               <p className=''>voucher code:<br/> MuongThanhLuxury</p>
-               <p className='mb-0'>Discount: 30%</p>
-
-                </div>
-                <div>
-                    <p className='pb-repon'>Used date: 01/05/2024  10:12</p>
-                    <p className='mb-0 '>Hotel: Muong Thanh Can Tho</p>
-                    </div>
-                </div>
-
-                
-            </div>
-            
+          )}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default VoucherWallet;

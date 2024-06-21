@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 const Profile = () => {
-  const userId = localStorage.getItem("userId");
+  const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -16,20 +16,24 @@ const Profile = () => {
   const [showUserUpdate, setShowUserUpdate] = useState<boolean>(false);
   const [User, setUser] = useState<IUser | null>(null);
 
-  const { data: user, error } = useSWR(
-    userId ? `user/${userId}` : null,
-    () => userService.getUserById(Number(userId)),
-    { revalidateOnFocus: false }
+  useEffect(() => {
+    const id = localStorage.getItem("userId");
+    setUserId(id);
+  }, []);
+
+  const { data: user, error } = useSWR(userId ? `user/${userId}` : null, () =>
+    userService.getUserById(Number(userId))
   );
 
   useEffect(() => {
     if (user) {
+      //setUserId(userId);
       setUserName(user.userName);
       setAvatar(user.avatar);
       setEmail(user.email);
       setPhone(user.phone);
       setAddress(user.address);
-      // setUser(user);
+      setUser(user);
     } else if (error) {
       console.error("Failed to fetch user:", error);
     }
@@ -82,12 +86,13 @@ const Profile = () => {
               <div style={{ marginTop: "20px", marginBottom: "20px" }}>
                 <div className="flex justify-center flex-wrap">
                   <img
-                    className="max-w-[300px] max-h-[300px] cursor-pointer m-2"
-                    src={avatar ? avatar : "/image/addpicture.png"}
+                    className="w-[150px] h-[150px] cursor-pointer m-2 rounded-full object-cover"
+                    src={avatar ? avatar : "/image/usersupplier.png"}
                     alt="Avatar"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.onerror = null; target.src = "/image/addpicture.png";
+                      target.onerror = null;
+                      target.src = "/image/usersupplier.png";
                     }}
                   />
                 </div>

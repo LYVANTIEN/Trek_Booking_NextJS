@@ -10,31 +10,27 @@ import { useRouter } from "../../../node_modules/next/navigation";
 import authenticateService from "../services/authenticateService";
 import { toast } from "react-toastify";
 
-
 interface NavbarProps {
   title: string;
 }
 
-
-const Navbar:  React.FC<NavbarProps>  = ({ title }) => {
-
+const Navbar: React.FC<NavbarProps> = ({ title }) => {
   const [user, setUser] = useState<IUser | null>(null);
-const router = useRouter();
+  const router = useRouter();
 
-useEffect(() => {
-  const storedUser = localStorage.getItem("user");
-  if (storedUser) {
-    setUser(JSON.parse(storedUser));
-  }
-}, []);
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
-
-const handleLogout = async () => {
-  await authenticateService.logOut();
-  toast.success("Logout Success..");
-  setUser(null);
-  router.push("/login_client");
-};
+  const handleLogout = async () => {
+    await authenticateService.logOut();
+    toast.success("Logout Success..");
+    setUser(null);
+    router.push("/login_client");
+  };
   const [showSubMenu, setShowSubMenu] = useState(false);
   const handleClick = () => {
     // Đảo ngược trạng thái của submenu
@@ -101,82 +97,82 @@ const handleLogout = async () => {
                 </Link>
               </li>
               <li className="flex hover-bold cursor-pointer dropdown relative z-10">
-          <div className="flex relative z-2 color-mess">
-          {user ? (
-                  <div className="flex">
-                    <div className="flex relative z-2 color-mess">
+                <div className="flex relative z-2 color-mess">
+                  {user ? (
+                    <div className="flex">
+                      <div className="flex relative z-2 color-mess">
+                        <img
+                          style={{ height: "25px" }}
+                          src="/image/usersupplier.png"
+                          alt=""
+                          className="pr-2"
+                        />
+                        <Link
+                          className="no-underline text-accent font-bold"
+                          href="#"
+                        >
+                          {`${user.userName}`}
+                        </Link>
+                      </div>
+
+                      <div className="backgourd-li  text-center">
+                        <Link
+                          className="no-underline text-accent font-bold block mt-3 mb-3 hover-nav-sub"
+                          href="/trekbooking/profile"
+                        >
+                          Manager profile
+                        </Link>
+                        <Link
+                          className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
+                          href="/trekbooking/payment_wallet"
+                        >
+                          Payment Wallet
+                        </Link>
+                        <Link
+                          className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
+                          href="/trekbooking/voucher"
+                        >
+                          Voucher Wallet
+                        </Link>
+                        <Link
+                          className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
+                          href="/trekbooking/booking_history"
+                        >
+                          History
+                        </Link>
+                        <Link
+                          className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
+                          href="signup_client"
+                          onClick={handleLogout}
+                        >
+                          Logout
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex ">
                       <img
-                        style={{ height: "25px" }}
-                        src="/image/usersupplier.png"
+                        style={{ width: "30px", height: "25px" }}
+                        src="/image/users.png"
                         alt=""
                         className="pr-2"
                       />
                       <Link
                         className="no-underline text-accent font-bold"
-                        href="#"
+                        href="/login_client"
                       >
-                        {`${user.userName}`}
+                        Log In /
+                      </Link>
+                      <Link
+                        className="no-underline text-accent font-bold"
+                        href="signup_client"
+                      >
+                        Register
                       </Link>
                     </div>
-
-                    <div className="backgourd-li  text-center">
-               <Link
-                  className="no-underline text-accent font-bold block mt-3 mb-3 hover-nav-sub"
-                  href="/trekbooking/profile"
-                >
-                 Manager profile 
-                </Link>
-                <Link
-                  className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
-                  href="signup_client"
-                >
-                 Payment Wallet 
-                </Link>
-                <Link
-                  className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
-                  href="signup_client"
-                >
-                 History 
-                </Link>
-                <Link
-                  className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
-                  href="signup_client"
-                 onClick={handleLogout}>
-                 Logout 
-                </Link>
-               </div>
-                  </div>
-                  
-                ) : (
-                  <div className="flex ">
-                    <img
-                      style={{ width: "30px", height: "25px" }}
-                      src="/image/users.png"
-                      alt=""
-                      className="pr-2"
-                    />
-                    <Link
-                      className="no-underline text-accent font-bold"
-                      href="/login_client"
-                    >
-                      Log In /
-                    </Link>
-                    <Link
-                      className="no-underline text-accent font-bold"
-                      href="signup_client"
-                    >
-                      Register
-                    </Link>
-                  </div>
-                )}
-                
-          </div>
-                
+                  )}
+                </div>
               </li>
-           
-           
-         
-              
             </ul>
           </div>
           <div
@@ -220,23 +216,27 @@ const handleLogout = async () => {
           )}
         </div>
 
-
         <nav className="to-white pt-2 pb-2">
           <ul className="flex ul-menu">
             <li className="li-menu hover-bold">
               <Link
                 href="/"
-                className={`font-bold text-decoration-none link-text ${pathname === "/trekbooking" ? "link-style" : ""}`}
-                
+                className={`font-bold text-decoration-none link-text ${
+                  pathname === "/trekbooking" ? "link-style" : ""
+                }`}
               >
                 Home
               </Link>
             </li>
             <li className="li-menu hover-bold">
-            <Link
+              <Link
                 href="/trekbooking/list_hotel"
-                className={`font-bold text-decoration-none link-text ${pathname === "/trekbooking/list_r hotel"  || pathname === "/trekbooking/search" ? "link-style" : ""}`}
-                
+                className={`font-bold text-decoration-none link-text ${
+                  pathname === "/trekbooking/list_r hotel" ||
+                  pathname === "/trekbooking/search"
+                    ? "link-style"
+                    : ""
+                }`}
               >
                 Hotel
               </Link>
@@ -244,7 +244,9 @@ const handleLogout = async () => {
             <li className="li-menu hover-bold">
               <Link
                 href="/trekbooking/tour"
-                className={`font-bold text-decoration-none link-text ${pathname === "/trekbooking/tour" ? "link-style" : ""}`}
+                className={`font-bold text-decoration-none link-text ${
+                  pathname === "/trekbooking/tour" ? "link-style" : ""
+                }`}
               >
                 Attractions
               </Link>
@@ -252,9 +254,11 @@ const handleLogout = async () => {
             <li className="li-menu hover-bold none-t">
               <Link
                 href="/"
-                className={`font-bold text-decoration-none link-text ${pathname === "/trekbooking/voucher" ? "link-style" : ""}`}
+                className={`font-bold text-decoration-none link-text ${
+                  pathname === "/trekbooking/voucher" ? "link-style" : ""
+                }`}
               >
-            Gift Voucher
+                Gift Voucher
               </Link>
             </li>
           </ul>
