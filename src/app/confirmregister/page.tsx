@@ -33,7 +33,7 @@ const page = () => {
                             </div>
                          
                                
-                              <Link className="let-start pt-4" href="signup_supplier">
+                              <Link className="let-start pt-4 text-decoration-none" href="signup_supplier">
                               <button className='btn-start-register'>Let's start</button>
                                 <img className='right-but' src="/image/right.png" alt="" />
                               </Link>

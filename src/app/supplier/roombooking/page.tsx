@@ -11,11 +11,10 @@ import BookingDetail from "./booking_detail";
 const BookingListOfSupplier = () => {
   const supplierId = localStorage.getItem("supplierId");
   const { data: bookingList, error } = useSWR("bookingList", () =>
-    bookingService.getBookingsBySupplierId(Number(supplierId))
+    bookingService.getBookingsBySupplierId()
   );
   const [showModalEdit, setShowModalEdit] = useState<boolean>(false);
-  const [showModalBookingDetail, setShowModalBookingDetail] =
-    useState<boolean>(false);
+  const [showModalBookingDetail, setShowModalBookingDetail] = useState<boolean>(false);
   const [booking, setBooking] = useState<IBooking | null>(null);
   if (!bookingList) {
     return <div>Loading...</div>;
@@ -87,15 +86,17 @@ const BookingListOfSupplier = () => {
                             key={index}
                             className="border-b border-neutral-200 dark:border-white/10 text-center"
                           >
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {item.bookingId}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {item.user?.email}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {item.hotel?.hotelName}
                             </td>
+
+                           
 
                             <td
                               className={`whitespace-nowrap px-6 py-4 ${
@@ -105,9 +106,8 @@ const BookingListOfSupplier = () => {
                               {item.isConfirmed ? "Confirmed" : "Pending..."}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4">
-                              <div className="flex justify-center">
-                                <img
-                                  className="w-5 h-5 cursor-pointer"
+                                <div className="flex justify-center">
+                                  <img className="w-5 h-5 cursor-pointer"
                                   src="/image/viewdetail.png"
                                   alt="View Detail"
                                   onClick={() => {
@@ -115,7 +115,8 @@ const BookingListOfSupplier = () => {
                                     setShowModalBookingDetail(true);
                                   }}
                                 />
-                              </div>
+                                </div>
+                                
                             </td>
                             <td className="whitespace-nowrap px-6 py-4 flex justify-center">
                               <img
@@ -127,6 +128,7 @@ const BookingListOfSupplier = () => {
                                   setShowModalEdit(true);
                                 }}
                               />
+                              
                             </td>
                           </tr>
                         );

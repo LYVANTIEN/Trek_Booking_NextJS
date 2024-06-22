@@ -1,7 +1,8 @@
 import { mutate } from "swr";
+import Cookies from 'js-cookie';
 
 interface IBookingService {
-    getBookingsBySupplierId(supplierId: number): Promise<IBooking[]>;
+    getBookingsBySupplierId(): Promise<IBooking[]>;
     updateBooking(booking: {
       bookingId: number;
       userId: number;
@@ -19,18 +20,18 @@ interface IBookingService {
   }
   
   const bookingService: IBookingService = {
-    async getBookingsBySupplierId(supplierId) {
+    async getBookingsBySupplierId() {
       // console.log(supplierId);
       try {
         const response = await fetch(
-          `https://localhost:7132/getBookingBySupplierId/${supplierId}`,
+          `https://localhost:7132/getBookingBySupplierId`,
           {
             method: "GET",
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Include the token in the headers
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
             },
           }
         );

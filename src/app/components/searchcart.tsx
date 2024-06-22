@@ -32,11 +32,20 @@ const searchcart = () => {
             <div className="search-main  p-12 relative">
               <div className="input-text-search pb-3">
                 <p className="text-left mb-0 font-bold pb-1">
-                  City, destination, or hotel name
+                  Country
                 </p>
                 <img className="map-input" src="/image/map.png" alt="" />
                 <input type="text" className="input-search" />
               </div>
+              <div className="input-text-search pb-3">
+                <p className="text-left mb-0 font-bold pb-1">
+                  City
+                </p>
+                <img className="map-input" src="/image/map.png" alt="" />
+                <input type="text" className="input-search" />
+              </div>
+
+              
 
               <div className="input-text-search pb-3 flex">
                 <div className="p-text  justify-between padding-reponsive">
@@ -46,7 +55,7 @@ const searchcart = () => {
                     src="/image/calendar.png"
                     alt=""
                   />
-                  <input type="text" className="input-search-in-out" />
+                  <input type="date" className="input-search-in-out" />
                 </div>
                 <div className="p-text  justify-between ml-8">
                   <p className="text-left mb-0 font-bold pb-1">Check-out</p>
@@ -55,20 +64,10 @@ const searchcart = () => {
                     src="/image/calendar.png"
                     alt=""
                   />
-                  <input type="text" className="input-search-in-out" />
+                  <input type="date" className="input-search-in-out" />
                 </div>
               </div>
-              <div className="input-text-search pb-4">
-                <p className="text-left mb-0 font-bold pb-1">
-                  Guests and Rooms
-                </p>
-                <img
-                  className="userplus-input"
-                  src="/image/userplus.png"
-                  alt=""
-                />
-                <input type="text" className="input-search" />
-              </div>
+             
               <div className="input-text-search pb-3 text-right">
                 <button className="btn-search-in mr-12">Search</button>
               </div>

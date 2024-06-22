@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-"use client";
+'use client'
 import commentService from "@/app/services/commentService";
 import hotelService from "@/app/services/hotelService";
 import Link from "next/link";
@@ -11,6 +11,7 @@ const ListCommentOfHotel = ({ params }: { params: { hotelId: string } }) => {
   const { data: listComment, error } = useSWR("listComment", () =>
     commentService.getCommentsByHotelId(Number(params.hotelId))
   );
+  
   useEffect(() => {
     const fetchHotel = async () => {
       try {
@@ -25,6 +26,7 @@ const ListCommentOfHotel = ({ params }: { params: { hotelId: string } }) => {
 
     fetchHotel();
   }, [params.hotelId]);
+
   if (!listComment) {
     return <div>Loading...</div>;
   }
@@ -35,7 +37,7 @@ const ListCommentOfHotel = ({ params }: { params: { hotelId: string } }) => {
   return (
     <div className="relative">
       <div className="search-add ">
-        {hotel && (
+      {hotel && (
           <div className="fix-name">
             <Link
               href="/supplier/hotel"
@@ -110,22 +112,22 @@ const ListCommentOfHotel = ({ params }: { params: { hotelId: string } }) => {
                             key={index}
                             className="border-b border-neutral-200 dark:border-white/10 text-center"
                           >
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {item.commentId}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {item.bookingId}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {item.hotel.hotelName}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {item.user.email}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {item.message}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {formattedCommentTime}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4 flex">

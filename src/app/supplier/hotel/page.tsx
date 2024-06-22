@@ -24,14 +24,12 @@ const HotelListOfSupplier = () => {
   const [showNoti, setShowNoti] = useState<boolean>(false);
   const [HotelId, setHotelId] = useState(0);
   const [Hotel, setHotel] = useState<IHotel | null>(null);
-  const [oldAvatarUrl, setOldAvatarUrl] = useState<string>("");
+  const [oldAvatarUrl, setOldAvatarUrl] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const [hotelPerPage] = useState(5);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [selectedHotel, setSelectedHotel] = useState<IHotel | null>(null);
-  const [imageLoadErrors, setImageLoadErrors] = useState<{
-    [key: number]: boolean;
-  }>({});
+  const [imageLoadErrors, setImageLoadErrors] = useState<{ [key: number]: boolean }>({});
 
   const [loadingPage, setLoadingPage] = useState(false);
 
@@ -161,12 +159,12 @@ const HotelListOfSupplier = () => {
     }
   };
 
-  //delete image from firebase
+//delete image from firebase
   const deleteImageFromStorage = async (imageUrl: string) => {
     try {
       const storageRef = ref(analytics, imageUrl);
       await deleteObject(storageRef);
-      //   console.log("Image deleted successfully from Firebase Storage");
+   //   console.log("Image deleted successfully from Firebase Storage");
     } catch (error) {
       console.error("Error deleting image from Firebase Storage:", error);
     }
@@ -174,7 +172,7 @@ const HotelListOfSupplier = () => {
   //Delete Hotel avatar in cloud storage after update new avatar
   const handleDeleteHotelAvatar = async (imageUrl: string) => {
     try {
-      //   console.log("Deleting room image with ID:", roomImageId);
+   //   console.log("Deleting room image with ID:", roomImageId);
       await deleteImageFromStorage(imageUrl);
       //toast.success("Delete Image Successful")
     } catch (error) {
@@ -308,11 +306,7 @@ const HotelListOfSupplier = () => {
                             {item.hotelName}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 w-0 h-0">
-                            <Link
-                              href="#"
-                              className="flex justify-center"
-                              style={{ color: "black" }}
-                            >
+                            <Link href="#" className='flex justify-center'>
                               {imageLoadErrors[item.hotelId] ? (
                                 <div
                                   className="cursor-pointer"
@@ -320,10 +314,7 @@ const HotelListOfSupplier = () => {
                                     setOldAvatarUrl(item.hotelAvatar);
                                     setHotelId(item.hotelId);
                                     setShowHotelAvatar(true);
-                                    console.log(
-                                      "HotelID: " + item.hotelId,
-                                      item
-                                    );
+                                    console.log("HotelID: " + item.hotelId, item);
                                   }}
                                 >
                                   Upload Avatar
@@ -338,10 +329,7 @@ const HotelListOfSupplier = () => {
                                     setOldAvatarUrl(item.hotelAvatar);
                                     setHotelId(item.hotelId);
                                     setShowHotelAvatar(true);
-                                    console.log(
-                                      "HotelID: " + item.hotelId,
-                                      item
-                                    );
+                                    console.log("HotelID: " + item.hotelId, item);
                                   }}
                                   onError={() => handleImageError(item.hotelId)}
                                 />
@@ -356,8 +344,7 @@ const HotelListOfSupplier = () => {
                             {item.isVerify ? "Active" : "Stopped"}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link
-                              className="flex justify-center"
+                            <Link className='flex justify-center'
                               href={`/supplier/hotel/voucher/${item.hotelId}`}
                             >
                               <img
@@ -367,10 +354,7 @@ const HotelListOfSupplier = () => {
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link
-                              className="flex justify-center"
-                              href={`/supplier/hotel/room/${item.hotelId}`}
-                            >
+                            <Link className='flex justify-center' href={`/supplier/hotel/room/${item.hotelId}`}>
                               <img
                                 src="/image/managevoucher.png"
                                 alt="Manage Room"
@@ -378,7 +362,7 @@ const HotelListOfSupplier = () => {
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link className="flex justify-center" href="#">
+                            <Link className='flex justify-center' href="#">
                               <img
                                 src="/image/viewdetail.png"
                                 alt="View Detail"
@@ -391,30 +375,19 @@ const HotelListOfSupplier = () => {
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link
-                              className="flex justify-center"
-                              href={`/supplier/hotel/comment/${item.hotelId}`}
-                            >
-                              <img
-                                src="/image/managevoucher.png"
-                                alt="Manage Comment"
-                              />
+                            <Link className='flex justify-center' href={`/supplier/hotel/comment/${item.hotelId}`}>
+                              <img src="/image/managevoucher.png" alt="Manage Comment" />
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link
-                              className="flex justify-center"
-                              href={`/supplier/hotel/rate/${item.hotelId}`}
-                            >
-                              <img
-                                src="/image/managevoucher.png"
-                                alt="Manage Rate"
-                              />
+                            <Link className='flex justify-center' href={`/supplier/hotel/rate/${item.hotelId}`}>
+                              <img src="/image/managevoucher.png" alt="Manage Rate" />
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 ">
+                         
                             <Link href="#" className="flex">
-                              <img
+                            <img
                                 className="w-10 h-5 cursor-pointer"
                                 src="/image/pen.png"
                                 alt="Edit"
@@ -425,17 +398,17 @@ const HotelListOfSupplier = () => {
                                   console.log("HotelID: " + item.hotelId, item);
                                 }}
                               />
-
-                              <img
-                                className="w-5 h-5 cursor-pointer ml-3"
-                                onClick={() => handleImageClick(item)}
-                                src={
-                                  item.isVerify
-                                    ? "/image/lock.png"
-                                    : "/image/unlock.png"
-                                }
-                                alt={item.isVerify ? "Ban" : "Unban"}
-                              />
+                   
+                            <img
+                              className="w-5 h-5 cursor-pointer ml-3"
+                              onClick={() => handleImageClick(item)}
+                              src={
+                                item.isVerify
+                                  ? "/image/lock.png"
+                                  : "/image/unlock.png"
+                              }
+                              alt={item.isVerify ? "Ban" : "Unban"}
+                            />
                             </Link>
                             {showPopup &&
                               selectedHotel?.hotelId === item.hotelId && (

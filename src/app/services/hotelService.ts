@@ -10,6 +10,11 @@ interface IHotelService {
   deleteHotel(hotelId: number): Promise<IHotel>;
   recoverHotelDeleted(hotelId: number): Promise<IHotel>;
 
+  searchHotelByCity(city: string): Promise<IHotel[]>;
+  searchHotelSchedule(checkInDate: string, checkOutDate: string, city: string): Promise<IHotel[]>;
+
+  convertDateFormat(dateStr: string): string;
+
 }
 
 const hotelService: IHotelService = {
@@ -33,6 +38,69 @@ const hotelService: IHotelService = {
       throw error;
     }
   },
+  /// search hotel by city
+
+
+  async searchHotelByCity(city: string): Promise<IHotel[]> {
+    // console.log(hotelId);
+     try {
+       const response = await fetch(
+         `https://localhost:7132/searchHotelByCity?city=${encodeURIComponent(city)}`,
+         {
+           method: "GET",
+           headers: {
+             Accept: "application/json, text/plain, */*",
+             "Content-Type": "application/json",
+             Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+           },
+         }
+       );
+       if (!response.ok) {
+         throw new Error("Failed to fetch hotel details");
+       }
+       const data: IHotel[] = await response.json();
+    return data;
+     } 
+     catch (error) {
+       console.error("Error fetching hotel details:", error);
+       throw error;
+     }
+   },
+
+   ///search hotel by schedule
+
+    convertDateFormat(dateStr: string): string {
+    const [day, month, year] = dateStr.split('/');
+    return `${year}/${month}/${day}`;
+  },
+
+  async searchHotelSchedule(checkInDateStr: string, checkOutDateStr: string, city: string): Promise<IHotel[]> {
+    const checkInDate = this.convertDateFormat(checkInDateStr);
+    const checkOutDate = this.convertDateFormat(checkOutDateStr);
+
+    try {
+      const response = await fetch(
+        `https://localhost:7132/searchHotelSchedule?checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&city=${encodeURIComponent(city)}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch hotel details");
+      }
+      const data: IHotel[] = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching hotel details:", error);
+      throw error;
+    }
+  },
+   
   
   async getHotelsBySuppierId(supplierId) {
     console.log(supplierId);

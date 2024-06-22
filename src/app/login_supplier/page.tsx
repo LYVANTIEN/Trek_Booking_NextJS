@@ -1,20 +1,30 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import authenticateService from "../services/authenticateService"; // Adjust the path as needed
 import "../../../public/css/authen.css"; // Adjust the path as needed
 
 export default function LoginSupplier() {
+
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPassword, setIsPassword] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
+  useEffect(() => {
+    const message = searchParams.get("message");
+    if (message === "missingCredentials") {
+      toast.error("Missing credentials. Please log in.");
+    } else if (message === "notAuthorized") {
+      toast.error("You are not authorized to access this page.");
+    }
+  }, [searchParams]);
   const togglePasswordVisibility = () => {
     setIsPassword((prevState) => !prevState);
   };

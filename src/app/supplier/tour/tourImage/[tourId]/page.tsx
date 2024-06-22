@@ -9,7 +9,6 @@ import "../../../../../../public/css/tour.css";
 import { toast } from "react-toastify";
 import { ITour } from "@/app/entities/tour";
 import Link from "next/link";
-import "../../../../../../public/css/tour.css";
 
 const ListTourImage = ({ params }: { params: { tourId: string } }) => {
   const [showTourImageCreate, setShowTourImageCreate] =
@@ -25,7 +24,6 @@ const ListTourImage = ({ params }: { params: { tourId: string } }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [tourImagePerPage] = useState(3);
   const [tour, setTour] = useState<ITour | null>(null);
-
   const handleImageClick = (imageTour: ITourImage) => {
     setSelectedImageTour(imageTour);
     setShowPopup(true);
@@ -34,6 +32,19 @@ const ListTourImage = ({ params }: { params: { tourId: string } }) => {
     setShowPopup(false);
     setSelectedImageTour(null);
   };
+
+  useEffect(() => {
+    const fetchTour = async () => {
+      try {
+        const tourData = await tourService.getTourById(Number(params.tourId));
+        setTour(tourData);
+      } catch (error) {
+        console.error("Error fetching hotel details:", error);
+      }
+    };
+
+    fetchTour();
+  }, [params.tourId]);
 
   const handleCreateTourImage = async () => {
     setShowTourImageCreate(false);
@@ -51,19 +62,6 @@ const ListTourImage = ({ params }: { params: { tourId: string } }) => {
         });
     }
   };
-
-  useEffect(() => {
-    const fetchTour = async () => {
-      try {
-        const tourData = await tourService.getTourById(Number(params.tourId));
-        setTour(tourData);
-      } catch (error) {
-        console.error("Error fetching hotel details:", error);
-      }
-    };
-
-    fetchTour();
-  }, [params.tourId]);
 
   useEffect(() => {
     if (params.tourId) {

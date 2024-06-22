@@ -11,22 +11,33 @@ import useSWR from "swr";
 import "../../../../../../../../public/css/tour.css";
 import hotelService from "@/app/services/hotelService";
 import roomService from "@/app/services/roomService";
-const ListServiceOfRoom = ({
-  params,
-}: {
-  params: { hotelId: string; roomId: string };
-}) => {
+const ListServiceOfRoom = ({ params }: { params: {hotelId:string, roomId: string } }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [room, setRoom] = useState<IRoom | null>(null);
   const [hotel, setHotel] = useState<IHotel | null>(null);
-
   //const [RoomService, setRoomService] = useState<IRoomService | null>(null);
-  const [selectedRoomService, setSelectedRoomService] =
-    useState<IRoomService | null>(null);
-
+  const [selectedRoomService, setSelectedRoomService] = useState<IRoomService | null>(null);
+  
   const [showServiceOfRoomCreate, setShowServiceOfRoomCreate] =
     useState<boolean>(false);
 
+    useEffect(() => {
+      const fetchHotelandRoom = async () => {
+        try {
+          const hotelData = await hotelService.getHotelById(
+            Number(params.hotelId)
+          );
+          setHotel(hotelData);
+  
+          const roomData = await roomService.getRoomById(Number(params.roomId));
+          setRoom(roomData);
+        } catch (error) {
+          console.error("Error fetching hotel and room details:", error);
+        }
+      };
+  
+      fetchHotelandRoom();
+    }, [params.hotelId, params.roomId]);
   const {
     data: listServiceOfRoom,
     error,
@@ -39,24 +50,6 @@ const ListServiceOfRoom = ({
     setShowServiceOfRoomCreate(false);
     mutateServiceOfRoom(); // Revalidate lại danh sách nhân viên sau khi tạo mới
   };
-
-  useEffect(() => {
-    const fetchHotelandRoom = async () => {
-      try {
-        const hotelData = await hotelService.getHotelById(
-          Number(params.hotelId)
-        );
-        setHotel(hotelData);
-
-        const roomData = await roomService.getRoomById(Number(params.roomId));
-        setRoom(roomData);
-      } catch (error) {
-        console.error("Error fetching hotel and room details:", error);
-      }
-    };
-
-    fetchHotelandRoom();
-  }, [params.hotelId, params.roomId]);
 
   const handleRoomServiceClick = (service: IService) => {
     const roomService: IRoomService = {
@@ -72,10 +65,10 @@ const ListServiceOfRoom = ({
   };
   const handleDeleteRoomService = async (service: IService) => {
     try {
-      const roomService: IRoomService = {
-        roomId: Number(params.roomId),
-        serviceId: service.serviceId,
-      };
+        const roomService: IRoomService = {
+            roomId: Number(params.roomId),
+            serviceId: service.serviceId,
+          };
       await serviceOfRoom.deleteRoomService(roomService);
       mutateServiceOfRoom();
       handleClosePopup();
@@ -97,7 +90,7 @@ const ListServiceOfRoom = ({
   return (
     <div className="relative">
       <div className="search-add ">
-        {hotel && room && (
+      {hotel && room && (
           <div className="fix-name">
             <Link
               href="/supplier/hotel"
@@ -173,26 +166,25 @@ const ListServiceOfRoom = ({
                             key={index}
                             className="border-b border-neutral-200 dark:border-white/10 text-center"
                           >
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {item.serviceName}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {item.serviceDescription}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {item.serviceImage}
                             </td>
 
                             <td className="whitespace-nowrap px-6 py-4 flex justify-center">
-                              <img
+                            <img
                                 className="w-7 h-7 cursor-pointer ml-3"
                                 src="/image/bag.png"
                                 alt="Delete"
                                 onClick={() => handleRoomServiceClick(item)}
                               />
                               {showPopup &&
-                                selectedRoomService?.serviceId ===
-                                  item.serviceId && (
+                                selectedRoomService?.serviceId === item.serviceId && (
                                   <div className="fixed inset-0 z-10 flex items-center justify-center ">
                                     {/* Nền mờ */}
                                     <div
@@ -203,8 +195,8 @@ const ListServiceOfRoom = ({
                                     {/* Nội dung của popup */}
                                     <div className="relative bg-white p-8 rounded-lg">
                                       <p className="color-black font-bold text-2xl">
-                                        Do you want to delete Service:{" "}
-                                        {item.serviceName} ?
+                                        Do you want to delete Service: {item.serviceName} ?
+                                        
                                       </p>
                                       <div className="button-kichhoat pt-4">
                                         <button
@@ -216,9 +208,9 @@ const ListServiceOfRoom = ({
                                         <button
                                           className="button-yes cursor-pointer"
                                           onClick={() =>
-                                            handleDeleteRoomService(item)
-                                          }
+                                            handleDeleteRoomService(item)}
                                         >
+
                                           Yes
                                         </button>
                                       </div>

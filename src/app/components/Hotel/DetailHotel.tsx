@@ -46,9 +46,9 @@ function DetailHotel(props: IProps) {
       setHotelPhone(hotel.hotelPhone);
       setHotelEmail(hotel.hotelEmail);
       setHotelFullDescription(hotel.hotelFulDescription);
-      setHotelDistrict(hotelDistrict);
-      setHotelCity(hotelCity);
-      setHotelInformation(hotelInformation);
+      setHotelDistrict(hotel.hotelDistrict);
+      setHotelCity(hotel.hotelCity);
+      setHotelInformation(hotel.hotelInformation);
     }
   }, [hotel]);
   console.log("List Hotel" + hotel);

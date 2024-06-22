@@ -1,15 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
-"use client";
+'use client'
 import commentService from "@/app/services/commentService";
-import hotelService from "@/app/services/hotelService";
 import rateService from "@/app/services/rateService";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import useSWR from "swr";
 import "../../../../../../public/css/rate.css";
+import { useEffect, useState } from "react";
+import hotelService from "@/app/services/hotelService";
 const ListRateOfHotel = ({ params }: { params: { hotelId: string } }) => {
   const [hotel, setHotel] = useState<IHotel | null>(null);
-
   const { data: listRate, error } = useSWR("listRate", () =>
     rateService.getRatesByHotelId(Number(params.hotelId))
   );
@@ -37,21 +36,14 @@ const ListRateOfHotel = ({ params }: { params: { hotelId: string } }) => {
   const renderStars = (rateValue: number) => {
     const stars = [];
     for (let i = 0; i < rateValue; i++) {
-      stars.push(
-        <img
-          key={i}
-          className="pr-1 inline-block"
-          src="/image/star.png"
-          alt="star"
-        />
-      );
+      stars.push(<img key={i} className="pr-1 inline-block" src="/image/star.png" alt="star" />);
     }
     return stars;
   };
   return (
     <div className="relative">
       <div className="search-add ">
-        {hotel && (
+      {hotel && (
           <div className="fix-name">
             <Link
               href="/supplier/hotel"
@@ -136,7 +128,7 @@ const ListRateOfHotel = ({ params }: { params: { hotelId: string } }) => {
                               {item.user.email}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              <div className="flex justify-center">
+                            <div className="flex justify-center">
                                 {renderStars(item.rateValue)}
                               </div>
                             </td>

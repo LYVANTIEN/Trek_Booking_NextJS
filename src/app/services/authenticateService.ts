@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 interface ILoginRequest {
   email: string;
   password: string;
@@ -6,26 +7,14 @@ interface ILoginRequest {
 interface ILoginResponse {
   toKen: string;
   roleId: string;
+  roleName: string;
+  userName: string;
+  supplierName: string;
   supplier: {
     supplierId: number;
     supplierName: string;
     email: string;
     phone: string;
-    status: boolean;
-    isVerify: boolean;
-    roleId: number;
-    role: {
-      roleId: number;
-      roleName: string;
-      roleDescription: string;
-    };
-  };
-  user: {
-    userId: number;
-    userName: string;
-    email: string;
-    phone: string;
-    address: string;
   };
 }
 
@@ -85,16 +74,15 @@ const authenticateService: IAuthenticateService = {
       if (response.ok) {
         const data: ILoginResponse = await response.json();
         const token = data.toKen;
-        const role = data.roleId;
-        const user = data.user;
-        const userId = data.user.userId;
+        const userName = data.userName;
+        const roleName = data.roleName;
         // Save token to local storage or cookies for future requests
         localStorage.setItem("token", token);
-        localStorage.setItem("roleId", role);
-        localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("userId", userId.toString());
-
-        return { success: true, token, role, user };
+        localStorage.setItem("userName", userName);
+        Cookies.set('token', token, { expires: 1 });
+        Cookies.set('userName', userName, { expires: 1 });
+        Cookies.set('roleName', roleName, { expires: 1 });
+        return { success: true, token };
       } else {
         const errorData = await response.json();
         return { success: false, errorMessage: errorData.errorMessage };
@@ -116,7 +104,7 @@ const authenticateService: IAuthenticateService = {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(user),
-});
+      });
 
       if (!response.ok) {
         throw new Error("Sign Up unsuccessful!");
@@ -140,17 +128,15 @@ const authenticateService: IAuthenticateService = {
       if (response.ok) {
         const data: ILoginResponse = await response.json();
         const token = data.toKen;
-        const role = data.roleId;
-        const supplier = data.supplier;
+        const supplierName = data.supplierName;
         const supplierId = data.supplier.supplierId;
-
+        const roleName = data.roleName;
         // Save token to local storage or cookies for future requests
-        localStorage.setItem("token", token);
-        localStorage.setItem("roleId", role);
-        localStorage.setItem("supplier", JSON.stringify(supplier));
         localStorage.setItem("supplierId", supplierId.toString());
-
-        return { success: true, token, role, supplier };
+        Cookies.set('tokenSupplier', token, { expires: 1 });
+        Cookies.set('supplierName', supplierName, { expires: 1 });
+        Cookies.set('roleName', roleName, { expires: 1 });
+        return { success: true, token };
       } else {
         const errorData = await response.json();
         return { success: false, errorMessage: errorData.errorMessage };
@@ -159,7 +145,7 @@ const authenticateService: IAuthenticateService = {
       console.error("Error:", error);
       return {
         success: false,
-        errorMessage: "An error occurred while signing in.",
+        errorMessage: "The email or password is wrong!",
       };
     }
   },
@@ -187,16 +173,25 @@ const authenticateService: IAuthenticateService = {
     try {
       // Clear the local storage
       localStorage.removeItem("token");
+      localStorage.removeItem("tokenSupplier");
       localStorage.removeItem("roleId");
       localStorage.removeItem("supplier");
       localStorage.removeItem("supplierId");
       localStorage.removeItem("user");
+      localStorage.removeItem("userName");
       localStorage.removeItem("userId");
+      localStorage.removeItem("roleName");
+      Cookies.remove("token");
+      Cookies.remove("tokenSupplier");
+      Cookies.remove("roleName");
+      Cookies.remove("userName");
+      Cookies.remove("supplierName");
       console.log("User logged out successfully.");
     } catch (error) {
       console.error("Error logging out:", error);
       throw error;
     }
   },
+  
 };
 export default authenticateService;

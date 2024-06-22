@@ -364,7 +364,7 @@ const booking_cart = () => {
               const room = roomDetails[item.roomId] || {} as IRoom;
               const hotel = hotelDetails[item.hotelId] || {} as IHotel;
               const images = roomImages[item.roomId] || [];
-              const totalPrice = calculateTotalPrice(item.totalPrice, 3); // Tính tổng giá cho 3 ngày
+              const totalPrice = item.totalPrice; // Tính tổng giá cho 3 ngày
 
               return (
                 <div key={index} className="border rounded-xl mt-3 pb-6" style={{ boxShadow: "0 4px 4px 0 #7F7F7F" }}>

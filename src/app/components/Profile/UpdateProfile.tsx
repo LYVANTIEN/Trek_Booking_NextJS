@@ -81,8 +81,7 @@ function UpdateProfile(props: IProps) {
     const cityCode = event.target.value;
     setSelectedCity(cityCode);
   };
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const file = event.target.files ? event.target.files[0] : null;
     if (file) {
@@ -174,7 +173,7 @@ function UpdateProfile(props: IProps) {
         // Xử lý khi user.address là null hoặc undefined
         setSelectedCity("");
         setSelectedCountry("");
-        setCitiesList([]);
+setCitiesList([]);
       }
     }
   }, [user]); // Được khuyến khích bổ sung tất cả các định ngĩa
@@ -273,7 +272,7 @@ function UpdateProfile(props: IProps) {
                     </option>
                   ))}
                 </Form.Control>
-                <Form.Control
+<Form.Control
                   as="select"
                   value={selectedCity}
                   onChange={handleEvent<HTMLSelectElement>(handleCityChange)}
@@ -355,7 +354,7 @@ function UpdateProfile(props: IProps) {
                   color: "black",
                   background: "white",
                 }}
-                onClick={handleCloseModal}
+onClick={handleCloseModal}
               >
                 Exit
               </Button>

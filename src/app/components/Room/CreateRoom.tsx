@@ -2,7 +2,7 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import roomService from "@/app/services/roomService";
 import { mutate } from "swr";
@@ -25,20 +25,128 @@ function CreateRoom(props: IProps) {
   const [roomCapacity, setCapacity] = useState<string>("");
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isTouched, setIsTouched] = useState<{ [key: string]: boolean }>({
+    roomName: false,
+    roomNote: false,
+    discountPercent: false,
+    roomDescription: false,
+    roomAvailable: false,
+    roomPrice: false,
+    roomCapacity: false,
+  });
 
-  const validate = () => {
-    const newErrors: { [key: string]: string } = {};
-
-    if (!roomName) newErrors.roomName = "Room Name is required";
-    if (!roomAvailable || isNaN(parseInt(roomAvailable)))
-      newErrors.roomAvailable = "Available must be a number";
-    if (!roomPrice || isNaN(parseFloat(roomPrice)))
-      newErrors.roomPrice = "Price must be a number";
-    if (!roomCapacity || isNaN(parseInt(roomCapacity)))
-      newErrors.roomCapacity = "Capacity must be a number";
-    return newErrors;
+  // Validate input //
+  const validateRoomName = (name: string) => {
+    if (!name) return "Room Name is required";
+    return "";
   };
 
+  const validateRoomNote = (note: string) => {
+    if (!note) return "Room Note is required";
+    return "";
+  };
+
+  const validateRoomDiscount = (discount: string) => {
+    if (!discount) return "Room Discount is required";
+    if (isNaN(parseFloat(discount)) || parseFloat(discount) <= 0)
+      return "Room Discount must be a positive number";
+    return "";
+  };
+
+  const validateRoomDiscription = (discription: string) => {
+    if (!discription) return "Room Discription is required";
+    return "";
+  };
+
+  const validateRoomAvailable = (available: string) => {
+    if (!available) return "Room Available is required";
+    if (isNaN(parseInt(available)) || parseInt(available) <= 0)
+      return "Room Available must be a positive number";
+    return "";
+  };
+
+  const validateRoomPrice = (price: string) => {
+    if (!price) return "Room Price is required";
+    if (isNaN(parseFloat(price)) || parseFloat(price) <= 0)
+      return "Room Price must be a positive number";
+    return "";
+  };
+
+  const validateRoomCapacity = (capacity: string) => {
+    if (!capacity) return "Room Capacity is required";
+    if (isNaN(parseInt(capacity)) || parseInt(capacity) <= 0)
+      return "Room Capacity must be a positive number";
+    return "";
+  };
+
+  useEffect(() => {
+    if (isTouched.roomName) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        roomName: validateRoomName(roomName),
+      }));
+    }
+  }, [roomName, isTouched.roomName]);
+
+  useEffect(() => {
+    if (isTouched.roomNote) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        roomNote: validateRoomNote(roomNote),
+      }));
+    }
+  }, [roomNote, isTouched.roomNote]);
+
+  useEffect(() => {
+    if (isTouched.discountPercent) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        discountPercent: validateRoomDiscount(discountPercent),
+      }));
+    }
+  }, [discountPercent, isTouched.discountPercent]);
+
+  useEffect(() => {
+    if (isTouched.roomDescription) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        roomDescription: validateRoomDiscription(roomDescription),
+      }));
+    }
+  }, [roomDescription, isTouched.roomDescription]);
+
+  useEffect(() => {
+    if (isTouched.roomAvailable) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        roomAvailable: validateRoomAvailable(roomAvailable),
+      }));
+    }
+  }, [roomAvailable, isTouched.roomAvailable]);
+
+  useEffect(() => {
+    if (isTouched.roomPrice) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        roomPrice: validateRoomPrice(roomPrice),
+      }));
+    }
+  }, [roomPrice, isTouched.roomPrice]);
+
+  useEffect(() => {
+    if (isTouched.roomCapacity) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        roomCapacity: validateRoomCapacity(roomCapacity),
+      }));
+    }
+  }, [roomCapacity, isTouched.roomCapacity]);
+
+  const handleBlur = (field: string) => {
+    setIsTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
+  };
+  // End validate input // 
+  
   const handleCloseModal = async () => {
     setRoomName("");
     setNote("");
@@ -49,29 +157,44 @@ function CreateRoom(props: IProps) {
     setCapacity("");
     setErrors({});
     setShowRoomCreate(false);
+    setIsTouched({
+      roomName: false,
+      roomNote: false,
+      discountPercent: false,
+      roomDescription: false,
+      roomAvailable: false,
+      roomPrice: false,
+      roomCapacity: false,
+    });
   };
 
   const handleSubmit = async () => {
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    const validationErrors = {
+      roomName: validateRoomName(roomName),
+      roomNote: validateRoomNote(roomNote),
+      discountPercent: validateRoomDiscount(discountPercent),
+      roomDescription: validateRoomDiscription(roomDescription),
+      roomAvailable: validateRoomAvailable(roomAvailable),
+      roomPrice: validateRoomPrice(roomPrice),
+      roomCapacity: validateRoomCapacity(roomCapacity),
+    };
+
+    setErrors(validationErrors);
+
+    if (Object.values(validationErrors).some((error) => error)) {
       return;
     }
-    const discount = discountPercent ? parseFloat(discountPercent) : 0;
-    const note = roomNote ? roomNote : "";
-    const description = roomDescription ? roomDescription : "";
-
     try {
       const room: IRoom = {
         roomId: 0,
         roomName,
-        roomNote: note,
+        roomNote,
         roomStatus: true,
         roomAvailable: parseInt(roomAvailable),
         roomPrice: parseFloat(roomPrice),
         roomCapacity: parseInt(roomCapacity),
-        discountPercent: discount,
-        roomDescription: description,
+        discountPercent: parseFloat(discountPercent),
+        roomDescription,
         hotelId: Number(hotelId),
       };
 
@@ -112,6 +235,7 @@ function CreateRoom(props: IProps) {
                   type="text"
                   value={roomName}
                   onChange={(e) => setRoomName(e.target.value)}
+                  onBlur={() => handleBlur("roomName")}
                   isInvalid={!!errors.roomName}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -126,6 +250,7 @@ function CreateRoom(props: IProps) {
                   type="text"
                   value={roomAvailable}
                   onChange={(e) => setAvailable(e.target.value)}
+                  onBlur={() => handleBlur("roomAvailable")}
                   isInvalid={!!errors.roomAvailable}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -142,7 +267,8 @@ function CreateRoom(props: IProps) {
                   type="text"
                   value={roomNote}
                   onChange={(e) => setNote(e.target.value)}
-                  // isInvalid={!!errors.roomNote}
+                  onBlur={() => handleBlur("roomNote")}
+                  isInvalid={!!errors.roomNote}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.roomNote}
@@ -156,6 +282,7 @@ function CreateRoom(props: IProps) {
                   type="text"
                   value={roomPrice}
                   onChange={(e) => setPrice(e.target.value)}
+                  onBlur={() => handleBlur("roomPrice")}
                   isInvalid={!!errors.roomPrice}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -172,7 +299,8 @@ function CreateRoom(props: IProps) {
                   type="text"
                   value={discountPercent}
                   onChange={(e) => setDiscount(e.target.value)}
-                  //isInvalid={!!errors.discountPercent}
+                  onBlur={() => handleBlur("discountPercent")}
+                  isInvalid={!!errors.discountPercent}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.discountPercent}
@@ -186,6 +314,7 @@ function CreateRoom(props: IProps) {
                   type="text"
                   value={roomCapacity}
                   onChange={(e) => setCapacity(e.target.value)}
+                  onBlur={() => handleBlur("roomCapacity")}
                   isInvalid={!!errors.roomCapacity}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -203,7 +332,8 @@ function CreateRoom(props: IProps) {
                   rows={3}
                   value={roomDescription}
                   onChange={(e) => setDescription(e.target.value)}
-                  //isInvalid={!!errors.roomDescription}
+                  onBlur={() => handleBlur("roomDescription")}
+                  isInvalid={!!errors.roomDescription}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.roomDescription}
