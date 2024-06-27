@@ -21,6 +21,9 @@
   font-weight: bold;
   margin-left: 12px;
 }
+.buyagain:hover{
+  opacity: 0.8;
+}
 .send{
   background-color: #305A61;
   color: #ffffff;

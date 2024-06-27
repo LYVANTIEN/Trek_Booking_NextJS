@@ -7,6 +7,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Oval } from 'react-loader-spinner'; // Import spinner
+import { useRouter } from "next/router";
+
+
 const ListHotels = () => {
   const [hotelList, setHotelList] = useState<IHotel[]>([]);
   const [roomList, setRoomList] = useState<IRoom[]>([]);
@@ -15,7 +18,45 @@ const ListHotels = () => {
   const [commentsCount, setCommentsCount] = useState<{ [key: number]: number }>(
     {}
   );
+  ///search
+  const [city, setCity] = useState<string | null>(null);
+  const [checkInDate, setCheckInDate] = useState<string | null>(null);
+  const [checkOutDate, setCheckOutDate] = useState<string | null>(null);
 
+  useEffect(() => {
+    // This effect will run only once when the component mounts
+    const searchParams = new URLSearchParams(window.location.search);
+    const cityParam = searchParams.get("city");
+    const checkInDateParam = searchParams.get("checkInDate");
+    const checkOutDateParam = searchParams.get("checkOutDate");
+
+    setCity(cityParam);
+    setCheckInDate(checkInDateParam);
+    setCheckOutDate(checkOutDateParam);
+  }, []);
+
+  useEffect(() => {
+    if (city && checkInDate && checkOutDate) {
+      searchHotels(checkInDate, checkOutDate, city);
+    } else {
+      //fetchHotelsAndRooms();
+    }
+  }, [city, checkInDate, checkOutDate]);
+
+  const searchHotels = async (checkInDate: string, checkOutDate: string, city: string) => {
+    try {
+      setLoading(true);
+      const hotelSchedule = await hotelService.searchHotelSchedule(checkInDate, checkOutDate, city);
+      setHotelList(hotelSchedule);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error searching hotels:", error);
+      setError(error instanceof Error ? error : new Error("An unexpected error occurred"));
+    }
+  };
+
+  //
   useEffect(() => {
     const fetchHotelsAndRooms = async () => {
       setLoading(true);
@@ -352,7 +393,7 @@ const ListHotels = () => {
                     <img
                       src={item.hotelAvatar}
                       alt="hotel"
-                      className="p-3 w-100 h-64"
+                      className="p-3 h-285"
                       style={{ border: "1px", borderRadius: "36px" }}
                     />
                     <p className="text-base font-semibold">{item.hotelName}</p>

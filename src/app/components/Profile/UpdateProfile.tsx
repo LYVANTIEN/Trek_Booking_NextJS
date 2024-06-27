@@ -2,7 +2,7 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, use, useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import roomService from "@/app/services/roomService";
 import { mutate } from "swr";
@@ -11,13 +11,14 @@ import userService from "@/app/services/userService";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { analytics } from "../../../../public/firebase/firebase-config";
 import { countries, cities } from "country-cities";
-
+import { v4 as uuidv4 } from 'uuid';
 interface IProps {
   showUserUpdate: boolean;
   setShowUserUpdate: (value: boolean) => void;
   user: IUser | null;
   userId: number;
   setUser: (value: IUser | null) => void;
+  onUpdate: () => void;
 }
 
 type FormControlElement =
@@ -34,14 +35,16 @@ const handleEvent = <T extends HTMLElement>(
 };
 
 function UpdateProfile(props: IProps) {
-  const { showUserUpdate, setShowUserUpdate, user, setUser } = props;
-  const userId = localStorage.getItem("userId");
+  const { showUserUpdate, setShowUserUpdate, user, userId, setUser, onUpdate } = props;
+  //const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [roleId, setRoleId] = useState<number>();
+
   const [fileUpload, setFileUpload] = useState<File | null>(null);
   const [previewImageURL, setPreviewImageURL] = useState<string | null>(null);
   const [uploadedImageURLs, setUploadedImageURLs] = useState<string[]>([]);
@@ -57,7 +60,6 @@ function UpdateProfile(props: IProps) {
       const allCountries = await countries.all();
       setCountriesList(allCountries);
     };
-
     loadCountries();
   }, []);
 
@@ -77,7 +79,6 @@ function UpdateProfile(props: IProps) {
     const cityCode = event.target.value;
     setSelectedCity(cityCode);
   };
-
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const file = event.target.files ? event.target.files[0] : null;
@@ -99,7 +100,8 @@ function UpdateProfile(props: IProps) {
     }
 
     try {
-      const storageRef = ref(analytics, "User_Image/" + fileUpload.name);
+      const uniqueFileName = `${uuidv4()}_${fileUpload.name}`;
+      const storageRef = ref(analytics, "User_Image/" + uniqueFileName);
       const snapshot = await uploadBytes(storageRef, fileUpload);
       const downloadURL = await getDownloadURL(snapshot.ref);
       setUploadedImageURLs([downloadURL]);
@@ -147,18 +149,34 @@ function UpdateProfile(props: IProps) {
       setUserName(user.userName);
       setAvatar(user.avatar || "/image/addpicture.png");
       setPhone(user.phone);
+      setPassword(user.password);
       setEmail(user.email);
+      setRoleId(user.roleId);
       setAddress(user.address);
-      const addressParts = user.address.split(", ");
-      if (addressParts.length === 2) {
-        setSelectedCity(addressParts[0]);
-        setSelectedCountry(addressParts[1]);
-        // Load cities for the selected country
-        const city = cities.getByCountry(addressParts[1]);
-        setCitiesList(city || []);
+
+      // Kiểm tra nếu user.address không phải là null hoặc undefined
+      if (user.address) {
+        const addressParts = user.address.split(", ");
+        if (addressParts.length === 2) {
+          setSelectedCity(addressParts[0]);
+          setSelectedCountry(addressParts[1]);
+          // Load cities for the selected country
+          const city = cities.getByCountry(addressParts[1]);
+          setCitiesList(city || []);
+        } else {
+          // Xử lý khi địa chỉ không có đúng định dạng mong muốn
+          setSelectedCity("");
+          setSelectedCountry("");
+          setCitiesList([]);
+        }
+      } else {
+        // Xử lý khi user.address là null hoặc undefined
+        setSelectedCity("");
+        setSelectedCountry("");
+        setCitiesList([]);
       }
     }
-  }, [user]);
+  }, [user]); // Được khuyến khích bổ sung tất cả các định ngĩa
 
   const handleSubmit = async () => {
     const validationErrors = validate();
@@ -168,7 +186,7 @@ function UpdateProfile(props: IProps) {
     }
 
     try {
-      let imageURLs = "";
+      let imageURLs = avatar; // Use existing avatar URL
       if (fileUpload) {
         imageURLs = await uploadImages();
       }
@@ -176,14 +194,14 @@ function UpdateProfile(props: IProps) {
       const user: IUser = {
         userId: Number(userId),
         userName,
-        avatar: imageURLs || avatar,
+        avatar: imageURLs,
         phone,
         email,
         address: `${selectedCity}, ${selectedCountry}`,
-        password,
+        password: password,
         status: true,
         isVerify: true,
-        roleId: 1,
+        roleId: Number(roleId),
       };
 
       const updateUser = await userService.updateUser(user);
@@ -194,7 +212,9 @@ function UpdateProfile(props: IProps) {
         toast.success("Update Profile Success");
       }
       handleCloseModal();
-      mutate(userId, false);
+      onUpdate();
+      mutate("profile");
+      mutate("user");
     } catch (error) {
       toast.error("Failed to update profile");
       console.error(error);
@@ -267,12 +287,7 @@ function UpdateProfile(props: IProps) {
                     </option>
                   ))}
                 </Form.Control>
-                {/* <Form.Control
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  isInvalid={!!errors.address}
-                /> */}
+
                 <Form.Control.Feedback type="invalid">
                   {errors.address}
                 </Form.Control.Feedback>
@@ -312,6 +327,12 @@ function UpdateProfile(props: IProps) {
                     />
                   </div>
                 </Form.Label>
+                {/* <Form.Control
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  isInvalid={!!errors.address}
+                /> */}
               </Form.Group>
             </Col>
           </Row>

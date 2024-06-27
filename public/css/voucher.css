@@ -1,3 +1,11 @@
+.fix-name{
+    position: absolute;
+    left: 11px;
+    top: 7px;
+    font-size: 19px;
+
+    font-weight: 700;
+}
 .payment-wallet{
     background: #305A61;
     padding-bottom: 32px;

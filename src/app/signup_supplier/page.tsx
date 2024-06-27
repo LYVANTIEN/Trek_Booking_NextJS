@@ -11,7 +11,7 @@ const signUpSupplier = () => {
   const [isPassword, setIsPassword] = useState(true);
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [roleId, setRoleId] = useState(1);
+  const [roleId, setRoleId] = useState(2);
   const [password, setPassword] = useState("");
   const togglePasswordVisibility = () => {
     setIsPassword((prevState) => !prevState);

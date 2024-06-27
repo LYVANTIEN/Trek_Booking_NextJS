@@ -22,13 +22,13 @@ const ListRoomImage = ({ params }: { params: {hotelId:string, roomId: string } }
   const [roomId, setRoomId] = useState(0);
 
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedImageRoom, setSelectedImageRoom] = useState<IRoomImage | null>(null);
+  const [selectedImageRoom, setSelectedImageRoom] = useState<IRoom3DImage | null>(null);
   const [room, setRoom] = useState<IRoom | null>(null);
   const [hotel, setHotel] = useState<IHotel | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [roomImagePerPage] = useState(3);
 
-  const handleImageClick = (imageRoom: IRoomImage) => {
+  const handleImageClick = (imageRoom: IRoom3DImage) => {
     setSelectedImageRoom(imageRoom);
     setShowPopup(true);
   };
@@ -160,12 +160,44 @@ const ListRoomImage = ({ params }: { params: {hotelId:string, roomId: string } }
     <div className="relative">
       <div className="search-add">
         <div className="search-hotel flex">
-          {hotel && room && (
-            <span className="fix-name">
-              <span style={{ color: "#0cc560", fontSize: "18px" }}>
-                {hotel.hotelName} {" > "} {room.roomName}
+        {hotel && room && (
+            <div className="fix-name">
+              <Link
+                href="/supplier/hotel"
+                style={{ color: "black", fontSize: "18px" }}
+              >
+                Hotel
+              </Link>
+              <span
+                style={{
+                  color: "black",
+                  fontSize: "18px",
+                  marginLeft: "5px",
+                  marginRight: "5px",
+                }}
+              >
+                {" > "}
               </span>
-            </span>
+              <Link
+                href={`/supplier/hotel/room/${params.hotelId}`}
+                style={{ color: "black", fontSize: "18px" }}
+              >
+                {hotel.hotelName}
+              </Link>
+              <span
+                style={{
+                  color: "black",
+                  fontSize: "18px",
+                  marginLeft: "5px",
+                  marginRight: "5px",
+                }}
+              >
+                {" > "}
+              </span>
+              <span style={{ color: "#4c7cab", fontSize: "18px" }}>
+                {room.roomName}
+              </span>
+            </div>
           )}
           <input
             type="text"

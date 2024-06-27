@@ -120,11 +120,31 @@ const ListRoom = ({ params }: { params: { hotelId: string } }) => {
      
         <div className="search-hotel flex">
         {hotel && (
-
-<span  className="fix-name">
-     Hotel {" > "} <span     style={{ color: "#0cc560", fontSize: "18px" }}>{hotel.hotelName}</span>
-</span>
-)}
+            <div className="fix-name">
+              <Link
+                href="/supplier/hotel"
+                style={{ color: "black", fontSize: "18px" }}
+              >
+                Hotel
+              </Link>
+              <span
+                style={{
+                  color: "black",
+                  fontSize: "18px",
+                  marginLeft: "5px",
+                  marginRight: "5px",
+                }}
+              >
+                {" > "}
+              </span>
+              <Link
+                href={`/supplier/hotel/room/${params.hotelId}`}
+                style={{ color: "#4c7cab", fontSize: "18px" }}
+              >
+                {hotel.hotelName}
+              </Link>
+            </div>
+          )}
           <input
             type="text"
             placeholder="Search........."

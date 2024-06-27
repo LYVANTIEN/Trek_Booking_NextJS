@@ -1,4 +1,5 @@
 
+import Cookies from 'js-cookie';
 import useSWR, { mutate } from 'swr';
 import { ITour } from '../entities/tour';
 interface ITourService {
@@ -34,7 +35,6 @@ export const tourService: ITourService = {
     }
   },
   async getTourById(tourId) {
-    console.log(tourId);
     try {
       const response = await fetch(`https://localhost:7132/getTourById/${tourId}`, {
         method: "GET",
@@ -49,7 +49,6 @@ export const tourService: ITourService = {
         throw new Error("Failed to fetch tour detail");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
       return data;
     } 
     catch (error) {
@@ -59,7 +58,6 @@ export const tourService: ITourService = {
   },
 
   async getTourImageByTourId(tourId) {
-    console.log(tourId);
     try {
       const response = await fetch(
         `https://localhost:7132/getTourImageByTourId/${tourId}`,
@@ -69,7 +67,8 @@ export const tourService: ITourService = {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
             // Include the token in the headers
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${Cookies.get("tokenUser")}`
+
           },
         }
       );
@@ -77,7 +76,6 @@ export const tourService: ITourService = {
         throw new Error("Failed to fetch room list");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
       return data;
     } 
     catch (error) {

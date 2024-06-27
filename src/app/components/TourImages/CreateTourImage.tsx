@@ -62,6 +62,7 @@ function CreateTourImage(props: Iprops) {
   };
 
   const handleSubmit = async () => {
+    handleCloseModal();
     if (fileUploads.length === 0) {
       toast.error("Please choose at least one image!!!");
       return;
@@ -84,7 +85,6 @@ function CreateTourImage(props: Iprops) {
 
       await Promise.all(tourImagePromises);
       toast.success("Tour Images created successfully");
-      handleCloseModal();
       onCreate();
     } catch (error) {
       toast.error("Failed to create tour images");

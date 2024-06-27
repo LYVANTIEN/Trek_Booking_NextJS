@@ -34,7 +34,7 @@ const BookingInfo = () => {
     const searchParams = useSearchParams();
     const roomId = Number(searchParams.get('roomId'));
     const hotelId = Number(searchParams.get('hotelId'));
-    const userId = localStorage.getItem('userId'); // Lấy userId từ localStorage
+    //const userId = localStorage.getItem('userId'); // Lấy userId từ localStorage
     const [user, setUser] = useState<IUser | null>(null);
 
 
@@ -45,7 +45,7 @@ const BookingInfo = () => {
     useEffect(() => {
         const fetchBookingInfo = async () => {
             try {
-                const bookingCartItems = await getBookingCartByUserId(Number(userId));
+                const bookingCartItems = await getBookingCartByUserId();
                 setBookingCart(bookingCartItems);
                 const room = await getRoomById(roomId);
                 const hotel = await getHotelById(hotelId);
@@ -56,7 +56,7 @@ const BookingInfo = () => {
                 setRoomImages(images);
                 const fetchedVouchers = await voucherService.getVouchersByHotelId(hotelId);
                 setVouchers(fetchedVouchers);
-                const userData = await userService.getUserById(Number(userId));
+                const userData = await userService.getUserById();
                 setUser(userData);
                 setFullName(userData.userName || '');
                 setEmail(userData.email || '');
@@ -68,7 +68,7 @@ const BookingInfo = () => {
             }
         };
         fetchBookingInfo();
-    }, [roomId, hotelId, userId]);
+    }, [roomId, hotelId]);
 
     const calculateNights = (checkInDate: string, checkOutDate: string) => {
         const checkIn = new Date(checkInDate);
@@ -87,36 +87,58 @@ const BookingInfo = () => {
 
     const handlePayment = async () => {
         if (!item) {
-            toast.error('No booking item found!');
-            return;
+          toast.error('No booking item found!');
+          return;
         }
+      
         const paymentData = {
-            Order: {
-                orderHeader: {
-                    userId: user?.userId,
-                    fullName: fullName, // Sử dụng giá trị từ trạng thái
-                    email: email,       // Sử dụng giá trị từ trạng thái
-                    phone: phone,   
-                    totalPrice: finalTotalPrice,
-                    checkInDate: item?.checkInDate,
-                    checkOutDate: item?.checkOutDate,
-                    requirement: requirement,
-                },
-                orderDetails: bookingCart.map(cartItem => ({
-                    roomId: cartItem.roomId,
-                    hotelId: cartItem.hotelId,
-                    price: cartItem.totalPrice,
-                    roomQuantity: cartItem.roomQuantity,
-                    roomName: roomDetails?.roomName,
-                    hotelName: hotelDetails?.hotelName,
-                })),
+          Order: {
+            orderHeader: {
+              userId: user?.userId,
+              fullName: fullName, // Sử dụng giá trị từ trạng thái
+              email: email,       // Sử dụng giá trị từ trạng thái
+              phone: phone,   
+              totalPrice: finalTotalPrice,
+              checkInDate: item?.checkInDate,
+              checkOutDate: item?.checkOutDate,
+              requirement: requirement,
             },
-            successUrl: '', // Thay thế bằng URL thành công thực tế của bạn
-            cancelUrl: 'trekbooking/booking_cart', // Thay thế bằng URL hủy thực tế của bạn
+            orderDetails: bookingCart.map(cartItem => ({
+              roomId: cartItem.roomId,
+              hotelId: cartItem.hotelId,
+              price: cartItem.totalPrice,
+              roomQuantity: cartItem.roomQuantity,
+              roomName: roomDetails?.roomName,
+              hotelName: hotelDetails?.hotelName,
+            })),
+          },
+          successUrl: '', // Thay thế bằng URL thành công thực tế của bạn
+          cancelUrl: 'trekbooking/booking_cart', // Thay thế bằng URL hủy thực tế của bạn
         };
-
-        await paymentService.handlePayment(paymentData, item);
-    };
+        const bookingData = {
+            bookingId: 0,
+            userId: user?.userId,
+            hotelId: item.hotelId,
+            roomId: item.roomId,
+            checkInDate: item?.checkInDate,
+            checkOutDate: item?.checkOutDate,
+            totalPrice: finalTotalPrice,
+            roomQuantity: item.roomQuantity,
+            voucherCode: "string", // Thay thế bằng mã voucher nếu có
+            userNote: requirement, // Sử dụng ghi chú của người dùng nếu có
+            status: true,
+            isConfirmed: true,
+          };
+      
+        try {
+            await paymentService.createBooking(bookingData);
+          await paymentService.handlePayment(paymentData, item);
+          toast.success('Payment and booking created successfully!');
+        } catch (error) {
+          console.error('Error during payment and booking:', error);
+          toast.error('Failed to complete payment and create booking.');
+        }
+      };
  
     const buttonStyleEnabled = {
         backgroundColor: '#305A61', // Màu nền ban đầu

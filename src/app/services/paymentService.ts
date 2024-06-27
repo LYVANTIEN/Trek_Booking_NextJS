@@ -1,6 +1,7 @@
 // services/paymentService.js
 import stripePromise from './stripe';
 import { toast } from "react-toastify";
+import Cookies from 'js-cookie';
 
 const handlePayment = async (paymentData:any, item:any) => {
     try {
@@ -36,6 +37,38 @@ const handlePayment = async (paymentData:any, item:any) => {
     }
 };
 
+
+// paymentService.js
+const createBooking = async (bookingData:any) => {
+    try {
+      const response = await fetch('https://localhost:7132/createBooking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Cookies.get("tokenUser")}` // Thêm token nếu cần thiết
+        },
+        body: JSON.stringify(bookingData),
+      });
+  
+   
+      if (!response.ok) {
+        throw new Error('Failed to create booking');
+      }
+  
+      // Kiểm tra nếu phản hồi không phải JSON
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return await response.json();
+      } else {
+        return await response.text(); // Nếu không phải JSON, trả về văn bản
+      }
+  
+    } catch (error) {
+      console.error('Error creating booking:', error);
+      throw error;
+    }
+  };
 export default {
-    handlePayment
+    handlePayment,
+    createBooking
 };

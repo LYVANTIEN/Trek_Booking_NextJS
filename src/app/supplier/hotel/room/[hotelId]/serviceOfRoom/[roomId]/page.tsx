@@ -5,18 +5,39 @@ import commentService from "@/app/services/commentService";
 import rateService from "@/app/services/rateService";
 import serviceOfRoom from "@/app/services/serviceOfRoom";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useSWR from "swr";
 import "../../../../../../../../public/css/tour.css";
-const ListServiceOfRoom = ({ params }: { params: { roomId: string } }) => {
+import hotelService from "@/app/services/hotelService";
+import roomService from "@/app/services/roomService";
+const ListServiceOfRoom = ({ params }: { params: {hotelId:string, roomId: string } }) => {
   const [showPopup, setShowPopup] = useState(false);
+  const [room, setRoom] = useState<IRoom | null>(null);
+  const [hotel, setHotel] = useState<IHotel | null>(null);
   //const [RoomService, setRoomService] = useState<IRoomService | null>(null);
   const [selectedRoomService, setSelectedRoomService] = useState<IRoomService | null>(null);
   
   const [showServiceOfRoomCreate, setShowServiceOfRoomCreate] =
     useState<boolean>(false);
 
+    useEffect(() => {
+      const fetchHotelandRoom = async () => {
+        try {
+          const hotelData = await hotelService.getHotelById(
+            Number(params.hotelId)
+          );
+          setHotel(hotelData);
+  
+          const roomData = await roomService.getRoomById(Number(params.roomId));
+          setRoom(roomData);
+        } catch (error) {
+          console.error("Error fetching hotel and room details:", error);
+        }
+      };
+  
+      fetchHotelandRoom();
+    }, [params.hotelId, params.roomId]);
   const {
     data: listServiceOfRoom,
     error,
@@ -69,6 +90,45 @@ const ListServiceOfRoom = ({ params }: { params: { roomId: string } }) => {
   return (
     <div className="relative">
       <div className="search-add ">
+      {hotel && room && (
+          <div className="fix-name">
+            <Link
+              href="/supplier/hotel"
+              style={{ color: "black", fontSize: "18px" }}
+            >
+              Hotel
+            </Link>
+            <span
+              style={{
+                color: "black",
+                fontSize: "18px",
+                marginLeft: "5px",
+                marginRight: "5px",
+              }}
+            >
+              {" > "}
+            </span>
+            <Link
+              href={`/supplier/hotel/room/${params.hotelId}`}
+              style={{ color: "black", fontSize: "18px" }}
+            >
+              {hotel.hotelName}
+            </Link>
+            <span
+              style={{
+                color: "black",
+                fontSize: "18px",
+                marginLeft: "5px",
+                marginRight: "5px",
+              }}
+            >
+              {" > "}
+            </span>
+            <span style={{ color: "#4c7cab", fontSize: "18px" }}>
+              {room.roomName}
+            </span>
+          </div>
+        )}
         <button
           className="ml-8 button-add ml-4rem"
           onClick={() => setShowServiceOfRoomCreate(true)}

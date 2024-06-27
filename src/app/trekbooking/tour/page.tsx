@@ -62,33 +62,7 @@ const TourList = () => {
   }  
   return (
     <div>
-      <nav className="to-white pt-2 pb-2">
-        <ul className="flex ul-menu">
-          <li className="li-menu hover-bold">
-            <a href="" className="font-bold text-decoration-none  color-black">
-              Home
-            </a>
-          </li>
-          <li className="li-menu hover-bold">
-            <a href="" className="font-bold text-decoration-none color-black">
-              Hotel
-            </a>
-          </li>
-          <li className="li-menu hover-bold">
-            <a
-              href=""
-              className="font-bold text-decoration-none link-style color-primary"
-            >
-              Attractions
-            </a>
-          </li>
-          <li className="li-menu hover-bold none-t">
-            <a href="" className="font-bold text-decoration-none color-black">
-              Gift Voucher
-            </a>
-          </li>
-        </ul>
-      </nav>
+     
       <div className="container">
         <div className="container">
           <p className="color-primary font-bold cursor-pointer">

@@ -56,13 +56,14 @@ function CreateRoom3DImage(props: Iprops) {
   };
 
   const handleCloseModal = () => {
+    setShowRoomImageCreate(false);
     setFileUploads([]);
     setPreviewImageURLs([]);
     setUploadedImageURLs([]);
-    setShowRoomImageCreate(false);
   };
 
   const handleSubmit = async () => {
+    handleCloseModal();
     if (fileUploads.length === 0) {
       toast.error("Please choose at least one image!!!");
       return;
@@ -85,7 +86,6 @@ function CreateRoom3DImage(props: Iprops) {
 
       await Promise.all(roomImagePromises);
       toast.success("Room 3D Images created successfully");
-      handleCloseModal();
       onCreate();
     } catch (error) {
       toast.error("Failed to create room images");

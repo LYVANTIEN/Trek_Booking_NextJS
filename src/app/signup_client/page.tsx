@@ -11,7 +11,7 @@ const signUpClient = () => {
   const [isPassword, setIsPassword] = useState(true);
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [roleId, setRoleId] = useState(1);
+  const [roleId, setRoleId] = useState(4);
   const [password, setPassword] = useState("");
   const togglePasswordVisibility = () => {
     setIsPassword((prevState) => !prevState);

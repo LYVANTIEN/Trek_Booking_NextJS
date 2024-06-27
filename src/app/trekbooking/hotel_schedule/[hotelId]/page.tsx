@@ -9,13 +9,13 @@ import useSWR from "swr";
 import React from "react";
 import Slider from "react-slick";
 import { addToBookingCart, getBookingCartByUserId } from "@/app/services/bookingCartService";
+
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+
 import commentService from "@/app/services/commentService";
 import rateService from "@/app/services/rateService";
 import { Oval } from 'react-loader-spinner'; // Import spinner
-import Cookies from "js-cookie";
-import userService from "@/app/services/userService";
 
 
 const formatRoomDescription = (description: string) => {
@@ -32,7 +32,7 @@ const formatRoomDescription = (description: string) => {
 };
 
 const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
-  const token = Cookies.get("tokenUser");
+  const userId = localStorage.getItem("userId");
   const [commentList, setCommentList] = useState<IComment[]>([]);
   const [rateList, setRateList] = useState<IRate[]>([]);
   const [combinedList, setCombinedList] = useState<(IComment & { rateValue?: number })[]>([]);
@@ -83,7 +83,6 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
       setCombinedList(combined);
     }
   }, [listComment, listRate]);
-  const userData =  userService.getUserById();
   const fetchRoomImages = async (rooms: IRoom[]) => {
     const imagesMap: { [key: number]: IRoomImage[] } = {};
     for (const room of rooms) {
@@ -153,14 +152,14 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
     try {
 
 
-      const existingCart = await getBookingCartByUserId();
+      const existingCart = await getBookingCartByUserId(Number(userId));
       const roomExists = existingCart.some((item: any) => item.roomId === room.roomId);
       if (roomExists) {
         toast.error('Room is already in the cart');
         return;
       }
   
-      if(!token){
+      if(!userId){
         toast.error('You must login to book the room!');
        setTimeout(()=> {
         router.push(`/login_client?redirect=/trekbooking/list_hotel/${params.hotelId}`); 
@@ -170,7 +169,7 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
       }
     const bookingData = {
       bookingCartId: 0,
-      userId: (await userData).userId, // Thay bằng giá trị thực tế
+      userId: userId, // Thay bằng giá trị thực tế
       hotelId: room.hotelId,
       roomId: room.roomId,
       checkInDate: new Date(checkInDate).toISOString(),

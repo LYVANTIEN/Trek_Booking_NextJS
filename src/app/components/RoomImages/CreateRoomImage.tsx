@@ -62,6 +62,8 @@ function CreateRoomImage(props: Iprops) {
   };
 
   const handleSubmit = async () => {
+    handleCloseModal();
+
     if (fileUploads.length === 0) {
       toast.error("Please choose at least one image!!!");
       return;
@@ -84,7 +86,6 @@ function CreateRoomImage(props: Iprops) {
 
       await Promise.all(roomImagePromises);
       toast.success("Room Images created successfully");
-      handleCloseModal();
       onCreate();
     } catch (error) {
       toast.error("Failed to create room images");

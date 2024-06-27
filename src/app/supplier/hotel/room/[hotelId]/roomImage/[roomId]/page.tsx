@@ -165,35 +165,45 @@ const ListRoomImage = ({ params }: { params: { hotelId: string, roomId: string }
   return (
     <div className="relative">
       <div className="search-add">
-      {hotel  && room &&(
-      
-      <span  className="fix-name">
-         <span     style={{ color: "#0cc560", fontSize: "18px" }}>{hotel.hotelName}     {" > "}    {room.roomName}
-           
-           </span>
-    </span>
-     )}
-
-{/* 
-        {hotel && room && (
-          <div className="breadcrumb">
-            <Link href="/supplier/hotel" style={{ color: "black", fontSize: "18px" }}>
-              Hotel
-            </Link>
-            <span style={{ color: "black", fontSize: "18px", marginLeft: "5px", marginRight: "5px" }}>
-              {" > "}
-            </span>
-            <Link href={`/supplier/hotel/room/${params.hotelId}`} style={{ color: "black", fontSize: "18px" }}>
-              {hotel.hotelName}
-            </Link>
-            <span style={{ color: "black", fontSize: "18px", marginLeft: "5px", marginRight: "5px" }}>
-              {" > "}
-            </span>
-            <span style={{ color: "#4c7cab", fontSize: "18px" }}>
-              {room.roomName}
-            </span>
-          </div>
-        )} */}
+      {hotel && room && (
+            <div className="fix-name">
+              <Link
+                href="/supplier/hotel"
+                style={{ color: "black", fontSize: "18px" }}
+              >
+                Hotel
+              </Link>
+              <span
+                style={{
+                  color: "black",
+                  fontSize: "18px",
+                  marginLeft: "5px",
+                  marginRight: "5px",
+                }}
+              >
+                {" > "}
+              </span>
+              <Link
+                href={`/supplier/hotel/room/${params.hotelId}`}
+                style={{ color: "black", fontSize: "18px" }}
+              >
+                {hotel.hotelName}
+              </Link>
+              <span
+                style={{
+                  color: "black",
+                  fontSize: "18px",
+                  marginLeft: "5px",
+                  marginRight: "5px",
+                }}
+              >
+                {" > "}
+              </span>
+              <span style={{ color: "#4c7cab", fontSize: "18px" }}>
+                {room.roomName}
+              </span>
+            </div>
+          )}
         <div className="search-hotel flex">
           <input type="text" placeholder="Search........." className="input-hotel pl-3" />
           <img src="/image/search.png" alt="" />

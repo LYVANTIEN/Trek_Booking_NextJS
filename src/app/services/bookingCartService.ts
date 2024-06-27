@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 export async function addToBookingCart(data:any) {
     const response = await fetch('https://localhost:7132/createBookingCart', {
         method: 'POST',
@@ -21,11 +23,12 @@ export async function addToBookingCart(data:any) {
     }
 }
 
-export async function getBookingCartByUserId(userId:number) {
-    const response = await fetch(`https://localhost:7132/getBookingCartByUserId/${userId}`, {
+export async function getBookingCartByUserId() {
+    const response = await fetch(`https://localhost:7132/getBookingCartByUserId`, {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${Cookies.get("tokenUser")}`
         }
     });
 

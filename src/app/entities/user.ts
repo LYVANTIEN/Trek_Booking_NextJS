@@ -9,9 +9,5 @@ interface IUser{
     status: boolean;
     isVerify: boolean;
     roleId: number;
-    // role:{
-    //     roleId: number;
-    //     roleName: string;
-    //     roleDescription: string
-    // }
+    
 }
