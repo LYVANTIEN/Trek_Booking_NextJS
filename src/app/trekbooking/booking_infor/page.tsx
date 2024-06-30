@@ -102,6 +102,8 @@ const BookingInfo = () => {
               checkInDate: item?.checkInDate,
               checkOutDate: item?.checkOutDate,
               requirement: requirement,
+              process: "Not",
+              completed: false
             },
             orderDetails: bookingCart.map(cartItem => ({
               roomId: cartItem.roomId,

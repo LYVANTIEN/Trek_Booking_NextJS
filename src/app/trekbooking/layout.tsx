@@ -31,8 +31,9 @@ export default function RootLayout({
         />
       </head>
       <body className={roboto.className}>
-      <Navbar title=""></Navbar> 
       <ToastContainer/>
+      <Navbar title=""></Navbar> 
+   
         {children}
          <Footer/>
        

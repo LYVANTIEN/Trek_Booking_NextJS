@@ -67,10 +67,7 @@ const BookingCart = () => {
         const tours = await getCartTourByUserId();
         setCartTours(tours);
 
-        if (tours.length === 0) {
-          toast.info('No cart tours found.');
-      }
-
+      
         const imagesPromises = tours.map(tour => tourService.getTourImageByTourId(tour.tourId));
         const namesPromises = tours.map(tour => tourService.getTourById(tour.tourId));
 

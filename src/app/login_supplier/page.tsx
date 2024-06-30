@@ -77,7 +77,7 @@ export default function LoginSupplier() {
                 />
                 <img
                   src="/image/hide.png"
-                  className="inout-hide cursor-pointer"
+                  className="inout-hide1 cursor-pointer"
                   onClick={togglePasswordVisibility}
                   alt=""
                 />

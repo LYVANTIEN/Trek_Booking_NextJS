@@ -19,12 +19,22 @@ align-items: center;
     padding: 24px;
 }
 .inout-hide{
-    top: 143px;
+    top: 138px;
+    position: absolute;
+    left: 326px;
+}
+.inout-hide1{
+    top: 144px;
+    position: absolute;
+    left: 326px;
+}
+.input-hide1{
+    top: 239px;
     position: absolute;
     left: 326px;
 }
 .input-hide{
-    top: 239px;
+    top: 226px;
     position: absolute;
     left: 326px;
 }

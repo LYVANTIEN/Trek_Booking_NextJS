@@ -241,7 +241,7 @@ const Homepage = () => {
         </div>
 
         <div className="w-full row">
-          <div className="col-md-4 h-full ">
+          <div className="col-md-4 h-full pb-4">
             <div className="h-full rounded-20">
               <p className="title-whatbook pl-4 mt-3 text-lg">
                 Lorem ipsum dolor sit
@@ -252,7 +252,7 @@ const Homepage = () => {
               </div>
             </div>
           </div>
-          <div className="col-md-4  h-full ">
+          <div className="col-md-4  h-full pb-4">
             <div className="h-full rounded-20">
               <p className="title-whatbook pl-4 mt-3 text-lg">
                 Lorem ipsum dolor sit
@@ -263,7 +263,7 @@ const Homepage = () => {
               </div>
             </div>
           </div>
-          <div className="col-md-4  h-full ">
+          <div className="col-md-4  h-full  pb-4">
             <div className="h-full rounded-20">
               <p className="title-whatbook pl-4 mt-3 text-lg">
                 Lorem ipsum dolor sit

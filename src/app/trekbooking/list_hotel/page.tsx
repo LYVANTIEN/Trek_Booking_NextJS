@@ -107,7 +107,7 @@ const ListHotels = () => {
           style={{ borderRadius: "20px", boxShadow: "0 6px 6px #0000004d" }}
         >
           <div className="row mx-3">
-            <div className="col-2">
+            <div className="col-lg-2 col-4">
               <Link href="#" className="text-white no-underline zoom-effect-container">
                 <div className="relative image-card">
                   <img
@@ -125,7 +125,7 @@ const ListHotels = () => {
                       borderBottomRightRadius: "20px",
                     }}
                   >
-                    <span className="text-white font-semibold text-base">
+                    <span className="text-white font-semibold text-base max-[375px]:text-xs text-center">
                       Da Lat
                     </span>
                   </div>
@@ -133,7 +133,7 @@ const ListHotels = () => {
               </Link>
               <div className="flex justify-center my-3">
                 <Link
-                  className="no-underline text-white border px-3 font-medium text-sm"
+                  className="no-underline text-white border px-3 font-medium text-sm text-center  py-1"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
                   href=""
                 >
@@ -141,7 +141,7 @@ const ListHotels = () => {
                 </Link>
               </div>
             </div>
-            <div className="col-2">
+            <div className="col-lg-2 col-4">
               <Link href="#" className="text-white no-underline zoom-effect-container">
                 <div className="relative image-card">
                   <img
@@ -159,7 +159,7 @@ const ListHotels = () => {
                       borderBottomRightRadius: "20px",
                     }}
                   >
-                    <span className="text-white font-semibold text-base">
+                    <span className="text-white font-semibold text-base max-[375px]:text-xs text-center">
                       Phu Quoc
                     </span>
                   </div>
@@ -167,7 +167,7 @@ const ListHotels = () => {
               </Link>
               <div className="flex justify-center my-3">
                 <Link
-                  className="no-underline text-white border px-3 font-medium text-sm"
+                  className="no-underline text-white border px-3 font-medium text-sm text-center  py-1"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
                   href=""
                 >
@@ -175,7 +175,7 @@ const ListHotels = () => {
                 </Link>
               </div>
             </div>
-            <div className="col-2">
+            <div className="col-lg-2 col-4">
               <Link href="#" className="text-white no-underline zoom-effect-container">
                 <div className="relative image-card">
                   <img
@@ -193,7 +193,7 @@ const ListHotels = () => {
                       borderBottomRightRadius: "20px",
                     }}
                   >
-                    <span className="text-white font-semibold text-base">
+                    <span className="text-white font-semibold text-base max-[375px]:text-xs ">
                       Ha Long
                     </span>
                   </div>
@@ -201,7 +201,7 @@ const ListHotels = () => {
               </Link>
               <div className="flex justify-center my-3">
                 <Link
-                  className="no-underline text-white border px-3 font-medium text-sm"
+                  className="no-underline text-white border px-3 font-medium text-sm text-center  py-1"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
                   href=""
                 >
@@ -209,7 +209,7 @@ const ListHotels = () => {
                 </Link>
               </div>
             </div>
-            <div className="col-2">
+            <div className="col-lg-2 col-4">
               <Link href="#" className="text-white no-underline zoom-effect-container">
                 <div className="relative image-card">
                   <img
@@ -227,7 +227,7 @@ const ListHotels = () => {
                       borderBottomRightRadius: "20px",
                     }}
                   >
-                    <span className="text-white font-semibold text-base">
+                    <span className="text-white font-semibold text-base max-[375px]:text-xs text-center">
                       Ho Chi Minh
                     </span>
                   </div>
@@ -235,7 +235,7 @@ const ListHotels = () => {
               </Link>
               <div className="flex justify-center my-3">
                 <Link
-                  className="no-underline text-white border px-3 font-medium text-sm"
+                  className="no-underline text-white border px-3 font-medium text-sm text-center  py-1"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
                   href=""
                 >
@@ -243,7 +243,7 @@ const ListHotels = () => {
                 </Link>
               </div>
             </div>
-            <div className="col-2">
+            <div className="col-lg-2 col-4">
               <Link href="#" className="text-white no-underline zoom-effect-container">
                 <div className="relative image-card">
                   <img
@@ -261,7 +261,7 @@ const ListHotels = () => {
                       borderBottomRightRadius: "20px",
                     }}
                   >
-                    <span className="text-white font-semibold text-base">
+                    <span className="text-white font-semibold text-base max-[375px]:text-xs text-center">
                      Ha Noi
                     </span>
                   </div>
@@ -269,7 +269,7 @@ const ListHotels = () => {
               </Link>
               <div className="flex justify-center my-3">
                 <Link
-                  className="no-underline text-white border px-3 font-medium text-sm"
+                  className="no-underline text-white border px-3 font-medium text-sm text-center py-1"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
                   href=""
                 >
@@ -277,7 +277,7 @@ const ListHotels = () => {
                 </Link>
               </div>
             </div>
-            <div className="col-2">
+            <div className="col-lg-2 col-4">
               <Link href="#" className="text-white no-underline zoom-effect-container">
                 <div className="relative image-card">
                   <img
@@ -295,7 +295,7 @@ const ListHotels = () => {
                       borderBottomRightRadius: "20px",
                     }}
                   >
-                    <span className="text-white font-semibold text-base">
+                    <span className="text-white font-semibold text-base max-[375px]:text-xs text-center">
                      Nghe An
                     </span>
                   </div>
@@ -303,7 +303,7 @@ const ListHotels = () => {
               </Link>
               <div className="flex justify-center my-3">
                 <Link
-                  className="no-underline text-white border px-3 font-medium text-sm"
+                  className="no-underline text-white border px-3 font-medium text-sm text-center  py-1"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
                   href=""
                 >
@@ -314,9 +314,9 @@ const ListHotels = () => {
           </div>
         </div>
         <div className="text-center">
-          <p className="font-bold text-4xl">Hotels near home</p>
+          <p className="font-bold text-4xl pb-2">Hotels near home</p>
         </div>
-        <div className="row">
+        <div className="row text-center">
           {/* Links to locations */}
           {[
             "Ho Chi Minh",
@@ -328,7 +328,7 @@ const ListHotels = () => {
           ].map((city) => (
             <div key={city} className="col-lg-2 col-sm-4 col-6 col-md-4 pb-2">
               <a
-                className="no-underline px-4 py-1 border text-sm font-semibold listA"
+                className="no-underline  border text-sm font-semibold listA  py-1 block"
                 href="#"
                 style={{ borderRadius: "10px" }}
               >
@@ -343,10 +343,11 @@ const ListHotels = () => {
               hotelList.map((item: IHotel) => (
                 <div key={item.hotelId} className="col-md-4 col-lg-3 mb-4">
                   <div
-                    className="border grid justify-items-center pb-3 card1"
+                    className="border grid justify-items-center pb-3 card1 "
                     style={{
                       borderRadius: "20px",
                       boxShadow: "0 4px 4px rgba(0, 0, 0, 0.25)",
+                      height: "460px",
                     }}
                   >
                     <img
@@ -355,7 +356,7 @@ const ListHotels = () => {
                       className="p-3 w-100 h-64"
                       style={{ border: "1px", borderRadius: "36px" }}
                     />
-                    <p className="text-base font-semibold">{item.hotelName}</p>
+                    <p className="text-base font-semibold text-center">{item.hotelName}</p>
                     <p className="text-sm font-semibold">
                       9.0 Excellent _{" "}
                       <span style={{ color: "#2cc92c" }}>
@@ -398,7 +399,7 @@ const ListHotels = () => {
             { img: "/image/schedule.png", text: "EASY RESCHEDULE" },
             { img: "/image/payment.png", text: "PAY UPON CHECK-IN" },
           ].map((feature, idx) => (
-            <div key={idx} className="col-md-3 card1">
+            <div key={idx} className="col-lg-3 col-6 card1 pb-3">
               <a href="#" className="no-underline text-black">
                 <div
                   className="border grid justify-items-center"
@@ -413,7 +414,7 @@ const ListHotels = () => {
                     style={{ width: "67px", height: "67px" }}
                     alt=""
                   />
-                  <p className="font-bold text-xl pb-4">{feature.text}</p>
+                  <p className="font-bold pb-4" >{feature.text}</p>
                 </div>
               </a>
             </div>

@@ -62,7 +62,7 @@ const signUpSupplier = () => {
                 />
                 <img
                   src="/image/hide.png"
-                  className="inout-hide cursor-pointer"
+                  className="inout-hide1 cursor-pointer"
                   onClick={togglePasswordVisibility}
                   alt=""
                 />
@@ -78,7 +78,7 @@ const signUpSupplier = () => {
                 />
                 <img
                   src="/image/hide.png"
-                  className="input-hide cursor-pointer"
+                  className="input-hide1 cursor-pointer"
                   onClick={togglePasswordVisibility}
                   alt=""
                 />

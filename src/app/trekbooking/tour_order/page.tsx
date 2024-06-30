@@ -6,9 +6,15 @@ import { ITour } from '@/app/entities/tour';
 import { useRouter, useSearchParams } from "next/navigation";
 import { Oval } from 'react-loader-spinner'; 
 import userService from '@/app/services/userService';
+import { toast } from "react-toastify";
+import { BookingCartTour } from '@/app/entities/BookingCartTour';
+import { BookingTourItem } from '@/app/entities/BookingTourItem';
+import { getCartTourByUserId } from '@/app/services/bookingCartTourService';
+import paymentService from '@/app/services/paymentService';
 
 const TourOrder = () => {
-
+  const [bookingCart, setBookingCart] = useState<BookingCartTour[]>([]);
+  const [tourDetails, setTourDetails] = useState<ITour | null>(null);
   const searchParams = useSearchParams();
   const tourId = Number(searchParams.get('tourId'));
   const quantity = Number(searchParams.get('quantity'));
@@ -22,6 +28,15 @@ const TourOrder = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
   useEffect(() => {
     if (!tourId || !quantity) {
       setLoading(false);
@@ -30,9 +45,12 @@ const TourOrder = () => {
 
     const fetchTour = async () => {
       try {
+
+        const bookingCartItems = await getCartTourByUserId();
+        setBookingCart(bookingCartItems);
         const fetchedTour = await tourService.getTourById(tourId);
         setTour(fetchedTour);
-
+        setTourDetails(fetchedTour);
         const userData = await userService.getUserById();
         setUser(userData);
         setFullName(userData.userName || '');
@@ -48,6 +66,42 @@ const TourOrder = () => {
     fetchTour();
   }, [tourId, quantity]);
 
+
+
+
+  
+  const handlePayment = async () => {
+    if (!item) {
+      toast.error('No booking item found!');
+      return;
+    }
+  
+    const paymentData = {
+      Order: {
+        orderHeader: {
+          userId: user?.userId,
+          fullName: fullName, // Sử dụng giá trị từ trạng thái
+          email: email,       // Sử dụng giá trị từ trạng thái
+          phone: phone,   
+          totalPrice: finalPrice,
+          tourOrderDate: getCurrentDate(),
+          process: "Not",
+          completed: false
+        },
+        orderDetails: bookingCart.map(cartItem => ({
+          tourId: cartItem.tourId,
+          tourName: tourDetails?.tourName,
+          tourOrderQuantity: quantity,
+          tourTotalPrice: finalPrice,
+        })),
+      },
+      successUrl: '', // Thay thế bằng URL thành công thực tế của bạn
+      cancelUrl: 'trekbooking/booking_cart', // Thay thế bằng URL hủy thực tế của bạn
+    };
+   
+      await paymentService.handleTourPayment(paymentData);
+
+  };
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -63,6 +117,11 @@ const TourOrder = () => {
         />
       </div>
     );
+  }
+
+  const item = bookingCart.find(item => item.tourId === tourId );
+  if (!item) {
+      return <div className='container py-8'>No booking Tour information found.</div>;
   }
 
   if (!tour) {
@@ -139,6 +198,7 @@ const TourOrder = () => {
                   <button
                     className=" text-white font-medium py-2 px-6 text-lg border"
                     style={{ backgroundColor: "#305A61", borderRadius: "20px" }}
+                    onClick={handlePayment}
                   >
                     Continue
                   </button>
