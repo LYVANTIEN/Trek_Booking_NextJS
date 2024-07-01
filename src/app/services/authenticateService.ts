@@ -88,8 +88,8 @@ const authenticateService: IAuthenticateService = {
         const userName = data.userName;
         const roleName = data.roleName;
         // Save token to local storage or cookies for future requests
-        localStorage.setItem("token", token);
-        localStorage.setItem("userName", userName);
+        // localStorage.setItem("token", token);
+        // localStorage.setItem("userName", userName);
         Cookies.set("tokenUser", token, { expires: 1 });
         Cookies.set("userName", userName, { expires: 1 });
         Cookies.set("roleName", roleName, { expires: 1 });

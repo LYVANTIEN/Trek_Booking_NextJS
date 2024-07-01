@@ -1,421 +1,474 @@
-'use client'
-import React from 'react'
-import Searchcart from '../../components/searchcart'
+/* eslint-disable @next/next/no-img-element */
+"use client";
+import React, { useCallback, useEffect, useState } from "react";
+import Searchcart from "../../components/searchcart";
 import "../../../../public/css/search.css";
+import { Oval } from "react-loader-spinner";
+import commentService from "@/app/services/commentService";
+import hotelService from "@/app/services/hotelService";
+import roomService from "@/app/services/roomService";
+import rateService from "@/app/services/rateService";
 
-const page = () => {
-  return (
- <div className="">
-     <nav className="to-white pt-2 pb-2">
-          <ul className="flex ul-menu">
-            <li className="li-menu hover-bold">
-              <a
-                href=""
-                className="font-bold text-decoration-none  "
-                style={{ color: "#1F1C17" }}
-              >
-                Home
-              </a>
-            </li>
-            <li className="li-menu hover-bold">
-              <a href="" className="font-bold text-decoration-none link-style" style={{ color: "" }}>
-                Hotel
-              </a>
-            </li>
-            <li className="li-menu hover-bold">
-              <a href="" className="font-bold text-decoration-none" style={{ color: "#1F1C17" }}>
-                Attractions
-              </a>
-            </li>
-            <li className="li-menu hover-bold none-t">
-              <a href="" className="font-bold text-decoration-none" style={{ color: "#1F1C17" }}>
-                Gift Voucher
-              </a>
-            </li>
-          </ul>
-        </nav>
-      <div className="img-bk-search">
-       
-        <Searchcart />
-       
+const SearchPage = () => {
+  const [hotelList, setHotelList] = useState<IHotel[]>([]);
+  const [averageRatings, setAverageRatings] = useState<{
+    [key: number]: number;
+  }>({});
+  const [roomList, setRoomList] = useState<IRoom[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [commentsCount, setCommentsCount] = useState<{ [key: number]: number }>(
+    {}
+  );
+
+  //------------------ Fetch RateValue ---------------------//
+  useEffect(() => {
+    const fetchRates = async () => {
+      const averages: { [key: number]: number } = {};
+      for (const hotel of hotelList) {
+        try {
+          const rates = await rateService.getRatesByHotelId(hotel.hotelId);
+          const averageRate =
+            rates.reduce((sum, rate) => sum + rate.rateValue, 0) / rates.length;
+          averages[hotel.hotelId] = Math.round(averageRate); // Round to the nearest whole number
+        } catch (error) {
+          console.error(
+            `Error fetching rates for hotel ${hotel.hotelId}:`,
+            error
+          );
+          averages[hotel.hotelId] = 0;
+        }
+      }
+      setAverageRatings(averages);
+    };
+    if (hotelList.length > 0) {
+      fetchRates();
+    }
+  }, [hotelList]);
+
+  //------------------ Fetch Hotel List ---------------------//
+
+  useEffect(() => {
+    const fetchHotelsAndRooms = async () => {
+      setLoading(true);
+      try {
+        const [hotels, rooms] = await Promise.all([
+          hotelService.getHotels(),
+          roomService.getRooms(),
+        ]);
+        setHotelList(hotels);
+        setRoomList(rooms);
+        setLoading(false);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error("Error fetching hotel or room list:", error);
+          setError(error);
+        } else {
+          console.error("Unexpected error:", error);
+          setError(new Error("An unexpected error occurred"));
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchHotelsAndRooms();
+  }, []);
+
+  //------------------ Fetch Comment List ---------------------//
+
+  const fetchCommentsCount = useCallback(async () => {
+    const counts: { [key: number]: number } = {};
+    for (const hotel of hotelList) {
+      try {
+        const comments = await commentService.getCommentsByHotelId(
+          hotel.hotelId
+        );
+        counts[hotel.hotelId] = comments.length;
+      } catch (error) {
+        console.error(
+          `Error fetching comments for hotel ${hotel.hotelId}:`,
+          error
+        );
+        counts[hotel.hotelId] = 0;
+      }
+    }
+    setCommentsCount(counts);
+  }, [hotelList]);
+
+  useEffect(() => {
+    if (hotelList.length > 0) {
+      fetchCommentsCount();
+    }
+  }, [hotelList, fetchCommentsCount]);
+
+  //------------------ Get lowest price due to the room of Hotel List ---------------------//
+
+  const getLowestPrice = useCallback(
+    (hotelId: number) => {
+      const rooms = roomList.filter((room) => room.hotelId === hotelId);
+      if (rooms.length > 0) {
+        return Math.min(...rooms.map((room) => room.roomPrice));
+      }
+      return null;
+    },
+    [roomList]
+  );
+  //------------------ Get 2 rooms of the Hotel ---------------------//
+
+  const getRoomsByHotelId = (hotelId: number) => {
+    return roomList.filter((room) => room.hotelId === hotelId).slice(0, 2);
+  };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Oval
+          height={80}
+          width={80}
+          color="#305A61"
+          visible={true}
+          ariaLabel="oval-loading"
+          secondaryColor="#4f9a94"
+          strokeWidth={2}
+          strokeWidthSecondary={2}
+        />
       </div>
-        <div className="content-search backgr-home pb-12 pt-20">
-          <div className="container">
-            <div className="row pb-10">
-              <div className="col-3">
-
-              </div>
-              <div className="col-9">
-                <button className='villa-button padding ml-3' >Villas</button>
-                <button className='apartment-button ml-3 padding' >Apartments</button>
-                <button className='xtra-button ml-3 padding  dis0none'>Xtra Deals</button>
-    
-                </div>
-            </div>
-            <div className="row ">
-              <div className="col-lg-3  col-md-4 col-12  border-filter">
-                <p className='text-center text-2xl  pb-8 font-bold color-black' >Filters</p>
+    );
+  }
+  return (
+    <div className="">
+      <div className="img-bk-search">
+        <Searchcart />
+      </div>
+      <div className="content-search backgr-home pb-12 pt-20">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-3  col-md-4 col-12  ">
+              <div className="border-filter">
+                <p className="text-center text-2xl  pb-8 font-bold color-black">
+                  Filters
+                </p>
                 <div className="range">
-                  <p className='font-bold color-black'  >Price Range</p>
-                  <p  className='color-black'>0 US$ - 170 US$</p>
+                  <p className="font-bold color-black">Price Range</p>
+                  <p className="color-black">0 US$ - 170 US$</p>
                   <div className="search-filter  pb-4">
                     <img src="/image/searchfilter.png" alt="" />
                   </div>
                   <div className="start flex justify-between ">
-                    <p className='font-bold '>Star Rating</p>
-                    <img className='h-5 w-5 cursor-pointer'  src="/image/down.png " alt="" />
+                    <p className="font-bold ">Star Rating</p>
+                    <img
+                      className="h-5 w-5 cursor-pointer"
+                      src="/image/down.png "
+                      alt=""
+                    />
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                    <img  className=' input-star' src="/image/star.png" alt="" />
+                    <input type="checkbox" className="h-5" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
                   </div>
                   <div className="input-star flex  pb-8">
-                    <input type="checkbox" className='h-5' />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
+                    <input type="checkbox" className="h-5" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5' />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
+                    <input type="checkbox" className="h-5" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5' />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
+                    <input type="checkbox" className="h-5" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox"  className='h-5' />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
-                    <img  className=' input-star' src="/image/star.png" alt="" />
-
+                    <input type="checkbox" className="h-5" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
+                    <img className=" input-star" src="/image/star.png" alt="" />
                   </div>
                 </div>
                 <div className="pb-4">
-                <div className="start flex justify-between ">
-                    <p className='font-bold '>Facilities</p>
-                    <img className='h-5 w-5 cursor-pointer'  src="/image/down.png " alt="" />
+                  <div className="start flex justify-between ">
+                    <p className="font-bold ">Facilities</p>
+                    <img
+                      className="h-5 w-5 cursor-pointer"
+                      src="/image/down.png "
+                      alt=""
+                    />
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                   <p className='text-faci'>Parking</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Parking</p>
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                   <p className='text-faci'>Elevator</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Elevator</p>
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                   <p className='text-faci'>Restaurant</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Restaurant</p>
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                   <p className='text-faci'>Fitness</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Fitness</p>
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox"  className='h-5'/>
-                   <p className='text-faci'>Wifi</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Wifi</p>
                   </div>
                 </div>
                 <div className="pb-4">
-                <div className="start flex justify-between ">
-                    <p className='font-bold '>Facilities</p>
-                    <img className='h-5 w-5 cursor-pointer'  src="/image/down.png " alt="" />
+                  <div className="start flex justify-between ">
+                    <p className="font-bold ">Facilities</p>
+                    <img
+                      className="h-5 w-5 cursor-pointer"
+                      src="/image/down.png "
+                      alt=""
+                    />
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                   <p className='text-faci'>Parking</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Parking</p>
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                   <p className='text-faci'>Elevator</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Elevator</p>
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                   <p className='text-faci'>Restaurant</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Restaurant</p>
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                   <p className='text-faci'>Fitness</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Fitness</p>
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox"  className='h-5'/>
-                   <p className='text-faci'>Wifi</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Wifi</p>
                   </div>
                 </div>
                 <div className="pb-4">
-                <div className="start flex justify-between ">
-                    <p className='font-bold '>Facilities</p>
-                    <img className='h-5 w-5 cursor-pointer'  src="/image/down.png " alt="" />
+                  <div className="start flex justify-between ">
+                    <p className="font-bold ">Facilities</p>
+                    <img
+                      className="h-5 w-5 cursor-pointer"
+                      src="/image/down.png "
+                      alt=""
+                    />
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                   <p className='text-faci'>Parking</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Parking</p>
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                   <p className='text-faci'>Elevator</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Elevator</p>
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                   <p className='text-faci'>Restaurant</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Restaurant</p>
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox" className='h-5'/>
-                   <p className='text-faci'>Fitness</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Fitness</p>
                   </div>
                   <div className="input-star flex pb-8">
-                    <input type="checkbox"  className='h-5'/>
-                   <p className='text-faci'>Wifi</p>
+                    <input type="checkbox" className="h-5" />
+                    <p className="text-faci">Wifi</p>
                   </div>
                 </div>
               </div>
-              <div className="col-lg-9 col-md-8 col-12  pl-32px">
-                <div className="row  pb-8">
-                  <div className="col-4 bk-white">
-                  <div className="img-big pb-2">
-            <img src="/image/imgcart1.png" alt="" />
-          </div>
-          <div className="img-small flex">
-          <img className='w-100-768' src="/image/imgcart2.png" alt="" />
-          <img className='ml-2  none-768' src="/image/imgcart3.png" alt="" />
-          <img className='ml-2 w992-none' src="/image/imagecart4.png" alt="" />
-          </div>
-                  </div>
-                  <div className="col-5 bk-white">
-                    <p className='font-bold pt-6 color-black'>Cereja Hotel & Resort Dalat</p>
-                    <div className="review flex">
-                      <p className=' color-primary disnone'>Hotels</p>
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <p style={{color:"#8E8D8A"}} className='ml-3 disnone'>1k reviews</p>
+            </div>
+            <div className="col-lg-9 col-md-8 col-12">
+              {hotelList.length > 0 ? (
+                hotelList.map((item: IHotel) => (
+                  <>
+                    <div
+                      key={item.hotelId}
+                      className="row bg-white py-3 px-2 mb-4"
+                      style={{
+                        borderRadius: "20px",
+                        boxShadow: "0 4px 4px 0 #7F7F7F",
+                      }}
+                    >
+                      <div className="col-4 ">
+                        <div className="">
+                          <img
+                            className="w-full h-full"
+                            style={{ borderRadius: "10px" }}
+                            src={item.hotelAvatar}
+                            alt=""
+                          />
+                        </div>
+                        <div className="flex justify-between mt-2">
+                          <div className="">
+                            <img
+                              className=""
+                              style={{ borderRadius: "10px" }}
+                              src="/image/imgcart2.png"
+                              alt=""
+                            />
+                          </div>
+                          <div className="">
+                            <img
+                              className=""
+                              style={{ borderRadius: "10px" }}
+                              src="/image/imgcart2.png"
+                              alt=""
+                            />
+                          </div>
+                          <div className="">
+                            <img
+                              className=""
+                              style={{ borderRadius: "10px" }}
+                              src="/image/imgcart2.png"
+                              alt=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-5 ">
+                        <div className="px-3">
+                          <span className="font-bold text-lg pt-2 color-black">
+                            {item.hotelName}
+                          </span>
+                          <div className="review flex items-center py-3">
+                            <span className=" color-primary disnone">
+                              Hotels
+                            </span>
+                            {averageRatings[item.hotelId] > 0 ? (
+                              [...Array(averageRatings[item.hotelId])].map(
+                                (_, index) => (
+                                  <img
+                                    key={index}
+                                    className="inline ml-2"
+                                    src="/image/star.png"
+                                    alt=""
+                                  />
+                                )
+                              )
+                            ) : (
+                              <span className="ml-2">No rating</span>
+                            )}
+                            <span
+                              style={{ color: "#8E8D8A" }}
+                              className="ml-3 disnone"
+                            >
+                              {" "}
+                              {commentsCount[item.hotelId] === 0 ||
+                              commentsCount[item.hotelId] === 1
+                                ? `${commentsCount[item.hotelId] || 0} review`
+                                : `${commentsCount[item.hotelId] || 0} reviews`}
+                            </span>
+                          </div>
+                          <div className="flex">
+                            <img
+                              className="w-5 h-5"
+                              src="/image/map.png"
+                              alt=""
+                            />
+                            <p className="ml-3 color-black">
+                              {" "}
+                              {item.hotelCity}
+                            </p>
+                          </div>
+                          <p className="font-bold color-primary">
+                            {getRoomsByHotelId(item.hotelId).map((room) => (
+                              <p key={room.roomId}>{room.roomName}</p>
+                            ))}
+                          </p>
+                          <div className="flex">
+                            <img
+                              className="w-3 h-3 mt-2"
+                              src="/image/check1.png"
+                              alt=""
+                            />
+                            <p className="ml-2 color-black">
+                              Lorem ipsum dolor sit
+                            </p>
+                          </div>
+                          <div className="flex">
+                            <img
+                              className="w-3 h-3 mt-2"
+                              src="/image/check1.png"
+                              alt=""
+                            />
+                            <p className="ml-2 color-black">
+                              Lorem ipsum dolor sit
+                            </p>
+                          </div>
+                          <div className="flex">
+                            <img
+                              className="w-3 h-3 mt-2"
+                              src="/image/check1.png"
+                              alt=""
+                            />
+                            <p className="ml-2 color-black">
+                              Lorem ipsum dolor sit
+                            </p>
+                          </div>
+                          <div className="flex">
+                            <img
+                              className="w-3 h-3 mt-2"
+                              src="/image/check1.png"
+                              alt=""
+                            />
+                            <p className="ml-2 color-black">
+                              Lorem ipsum dolor sit
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        className="col-3"
+                        style={{
+                          borderRadius: "10px",
+                          backgroundColor: "#F5F5F5",
+                        }}
+                      >
+                        <div className="text-center pt-8">
+                          <p className="text-xl color-primary font-bold ">
+                            Holiday sale
+                          </p>
+                          <p style={{ color: "#8E8D8A" }}>1 night, 2 adults</p>
+                          <p
+                            className="font-bold decor text-2xl"
+                            style={{ color: "#8E8D8A" }}
+                          >
+                            ${Number(getLowestPrice(item.hotelId) || "N/A") * 1.5}US$
+                          </p>
+                          <p className="color-black font-bold text-2xl">
+                            ${getLowestPrice(item.hotelId) || "N/A"}US$
+                          </p>
+                          <p style={{ color: "#8E8D8A" }}>
+                            Exclude taxes & fees
+                          </p>
+                          <button className="button-success">
+                            Select room
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex">
-                      <img className='w-5 h-5' src="/image/map.png" alt="" />
-                      <p className='ml-3 color-black'>Ward 3, Da Lat</p>
-                    </div>
-                    <p className='font-bold color-primary' >Economy Double Room</p>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    </div> 
-                    <div className="col-3 bk-white bk-en">
-                     <div className="text-center pt-8">
-                       <p className='text-xl color-primary font-bold '>Holiday sale</p>
-                        <p style={{color:"#8E8D8A"}}>1 night, 2 adults</p>
-                        <p className='font-bold decor text-2xl' style={{color: "#8E8D8A"}}>45US$</p>
-                        <p className='color-black font-bold text-2xl'>35US$</p>
-                        <p style={{color:"#8E8D8A"}}>Exclude taxes & fees</p>
-                        <button className='button-success'>Select room</button>
-                     </div>
-                    </div>
+                  </>
+                ))
+              ) : (
+                <div className="col-12">
+                  <p className="text-center py-4 text-red-600 font-bold">
+                    No hotel found
+                  </p>
                 </div>
-                 
-
-                 {/* --text--- */}
-                 <div className="row  pb-8">
-                  <div className="col-4 bk-white">
-                  <div className="img-big pb-2">
-            <img src="/image/imgcart1.png" alt="" />
-          </div>
-          <div className="img-small flex">
-          <img className='w-100-768' src="/image/imgcart2.png" alt="" />
-          <img className='ml-2  none-768' src="/image/imgcart3.png" alt="" />
-          <img className='ml-2 w992-none' src="/image/imagecart4.png" alt="" />
-          </div>
-                  </div>
-                  <div className="col-5 bk-white">
-                    <p className='font-bold pt-6 color-black'>Cereja Hotel & Resort Dalat</p>
-                    <div className="review flex">
-                      <p className=' color-primary disnone'>Hotels</p>
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <p style={{color:"#8E8D8A"}} className='ml-3 disnone'>1k reviews</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-5 h-5' src="/image/map.png" alt="" />
-                      <p className='ml-3 color-black'>Ward 3, Da Lat</p>
-                    </div>
-                    <p className='font-bold color-primary' >Economy Double Room</p>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    </div> 
-                    <div className="col-3 bk-white bk-en">
-                     <div className="text-center pt-8">
-                       <p className='text-xl color-primary font-bold '>Holiday sale</p>
-                        <p style={{color:"#8E8D8A"}}>1 night, 2 adults</p>
-                        <p className='font-bold decor text-2xl' style={{color: "#8E8D8A"}}>45US$</p>
-                        <p className='color-black font-bold text-2xl'>35US$</p>
-                        <p style={{color:"#8E8D8A"}}>Exclude taxes & fees</p>
-                        <button className='button-success'>Select room</button>
-                     </div>
-                    </div>
-                </div>
-
-   {/* --text--- */}
-   <div className="row  pb-8">
-                  <div className="col-4 bk-white">
-                  <div className="img-big pb-2">
-            <img src="/image/imgcart1.png" alt="" />
-          </div>
-          <div className="img-small flex">
-          <img className='w-100-768' src="/image/imgcart2.png" alt="" />
-          <img className='ml-2  none-768' src="/image/imgcart3.png" alt="" />
-          <img className='ml-2 w992-none' src="/image/imagecart4.png" alt="" />
-          </div>
-                  </div>
-                  <div className="col-5 bk-white">
-                    <p className='font-bold pt-6 color-black'>Cereja Hotel & Resort Dalat</p>
-                    <div className="review flex">
-                      <p className=' color-primary disnone'>Hotels</p>
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <p style={{color:"#8E8D8A"}} className='ml-3 disnone'>1k reviews</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-5 h-5' src="/image/map.png" alt="" />
-                      <p className='ml-3 color-black'>Ward 3, Da Lat</p>
-                    </div>
-                    <p className='font-bold color-primary' >Economy Double Room</p>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    </div> 
-                    <div className="col-3 bk-white bk-en">
-                     <div className="text-center pt-8">
-                       <p className='text-xl color-primary font-bold '>Holiday sale</p>
-                        <p style={{color:"#8E8D8A"}}>1 night, 2 adults</p>
-                        <p className='font-bold decor text-2xl' style={{color: "#8E8D8A"}}>45US$</p>
-                        <p className='color-black font-bold text-2xl'>35US$</p>
-                        <p style={{color:"#8E8D8A"}}>Exclude taxes & fees</p>
-                        <button className='button-success'>Select room</button>
-                     </div>
-                    </div>
-                </div>
-
-
-
-    <div className="row  pb-8">
-                  <div className="col-4 bk-white">
-                  <div className="img-big pb-2">
-            <img src="/image/imgcart1.png" alt="" />
-          </div>
-          <div className="img-small flex">
-          <img className='w-100-768' src="/image/imgcart2.png" alt="" />
-          <img className='ml-2  none-768' src="/image/imgcart3.png" alt="" />
-          <img className='ml-2 w992-none' src="/image/imagecart4.png" alt="" />
-          </div>
-                  </div>
-                  <div className="col-5 bk-white">
-                    <p className='font-bold pt-6 color-black'>Cereja Hotel & Resort Dalat</p>
-                    <div className="review flex">
-                      <p className=' color-primary disnone'>Hotels</p>
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <img  className=' star' src="/image/star.png" alt="" />
-                      <p style={{color:"#8E8D8A"}} className='ml-3 disnone'>1k reviews</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-5 h-5' src="/image/map.png" alt="" />
-                      <p className='ml-3 color-black'>Ward 3, Da Lat</p>
-                    </div>
-                    <p className='font-bold color-primary' >Economy Double Room</p>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    <div className="flex">
-                      <img className='w-3 h-3 mt-2' src="/image/check1.png" alt="" />
-                      <p className='ml-2 color-black'>Lorem ipsum dolor sit</p>
-                    </div>
-                    </div> 
-                    <div className="col-3 bk-white bk-en">
-                     <div className="text-center pt-8">
-                       <p className='text-xl color-primary font-bold '>Holiday sale</p>
-                        <p style={{color:"#8E8D8A"}}>1 night, 2 adults</p>
-                        <p className='font-bold decor text-2xl' style={{color: "#8E8D8A"}}>45US$</p>
-                        <p className='color-black font-bold text-2xl'>35US$</p>
-                        <p style={{color:"#8E8D8A"}}>Exclude taxes & fees</p>
-                        <button className='button-success'>Select room</button>
-                     </div>
-                    </div>
-                </div>
-
-
-                </div>
-
-
-                
+              )}
             </div>
           </div>
         </div>
- </div>
-  )
-}
+      </div>
+    </div>
+  );
+};
 
-export default page
+export default SearchPage;
