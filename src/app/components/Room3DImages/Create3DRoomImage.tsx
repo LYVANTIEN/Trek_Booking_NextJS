@@ -5,6 +5,8 @@ import Button from "react-bootstrap/Button";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { analytics } from "../../../../public/firebase/firebase-config";
 import room3DImageService from "@/app/services/room3DImageService";
+//tao ten file doc nhat
+import { v4 as uuidv4 } from 'uuid';
 
 interface Iprops {
   showRoomImageCreate: boolean;
@@ -29,7 +31,8 @@ function CreateRoom3DImage(props: Iprops) {
 
   const uploadImages = async () => {
     const uploadPromises = fileUploads.map(file => {
-      const storageRef = ref(analytics, "Room_3D_Image/" + file.name);
+      const uniqueFileName = `${uuidv4()}_${file.name}`;
+      const storageRef = ref(analytics, "Room_3D_Image/" + uniqueFileName);
       return uploadBytes(storageRef, file)
         .then(async snapshot => {
           const downloadURL = await getDownloadURL(snapshot.ref);
@@ -53,19 +56,20 @@ function CreateRoom3DImage(props: Iprops) {
   };
 
   const handleCloseModal = () => {
+    setShowRoomImageCreate(false);
     setFileUploads([]);
     setPreviewImageURLs([]);
     setUploadedImageURLs([]);
-    setShowRoomImageCreate(false);
   };
 
   const handleSubmit = async () => {
+    handleCloseModal();
     if (fileUploads.length === 0) {
       toast.error("Please choose at least one image!!!");
       return;
     }
-    if (fileUploads.length + listRoomImage > 6) {
-      toast.error("You can only add up to 6 images for this tour.");
+    if (fileUploads.length + listRoomImage > 5) {
+      toast.error("You can only add up to 5 images for this tour.");
       return;
     }
 
@@ -82,7 +86,6 @@ function CreateRoom3DImage(props: Iprops) {
 
       await Promise.all(roomImagePromises);
       toast.success("Room 3D Images created successfully");
-      handleCloseModal();
       onCreate();
     } catch (error) {
       toast.error("Failed to create room images");
@@ -103,7 +106,7 @@ function CreateRoom3DImage(props: Iprops) {
       <Modal show={showRoomImageCreate} onHide={handleCloseModal} size="lg" centered>
         <Modal.Body className="p-4">
           <h2 className="font-bold pb-4">Add 3D Image Pictures</h2>
-          <h4 className="font-bold pb-4">Room 3D Image: {listRoomImage}/6 </h4>
+          <h4 className="font-bold pb-4">Room 3D Image: {listRoomImage}/5 </h4>
           <div className="flex justify-center flex-wrap">
             {previewImageURLs.length > 0 ? (
               previewImageURLs.map((url, index) => (

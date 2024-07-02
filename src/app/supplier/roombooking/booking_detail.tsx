@@ -1,8 +1,9 @@
+"use client";
 import hotelService from "@/app/services/hotelService";
 import roomService from "@/app/services/roomService";
 import userService from "@/app/services/userService";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import useSWR from "swr";
 
@@ -20,33 +21,38 @@ const BookingDetail = (props: IProps) => {
     booking,
     setBooking,
   } = props;
-  const [bookingId, setBookingId] = useState<number>(0);
-  const [userId, setUserId] = useState<number>(0);
-  const [hotelId, setHotelId] = useState<number>(0);
-  const [roomId, setRoomId] = useState<number>(0);
-  const [checkInDate, setCheckInDate] = useState<string | Date>("");
-  const [checkOutDate, setCheckOutDate] = useState<string | Date>("");
-  const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [voucherCode, setVoucherCode] = useState<string>("");
-  const [roomQuantity, setRoomQuantity] = useState<number>(0);
-  const [userNote, setUserNote] = useState<string>("");
-  const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
-  const [status, setStatus] = useState<boolean>(false);
+
+  const [bookingDetails, setBookingDetails] = useState({
+    bookingId: 0,
+    userId: 0,
+    hotelId: 0,
+    roomId: 0,
+    checkInDate: "",
+    checkOutDate: "",
+    totalPrice: 0,
+    voucherCode: "",
+    roomQuantity: 0,
+    userNote: "",
+    isConfirmed: false,
+    status: false,
+  });
 
   useEffect(() => {
     if (booking && booking.bookingId) {
-      setBookingId(booking.bookingId);
-      setUserId(booking.userId);
-      setHotelId(booking.hotelId);
-      setRoomId(booking.roomId);
-      setCheckInDate(booking.checkInDate);
-      setCheckOutDate(booking.checkOutDate);
-      setTotalPrice(booking.totalPrice);
-      setVoucherCode(booking.voucherCode);
-      setRoomQuantity(booking.roomQuantity);
-      setUserNote(booking.userNote);
-      setIsConfirmed(booking.isConfirmed);
-      setStatus(booking.status);
+      setBookingDetails({
+        bookingId: booking.bookingId,
+        userId: booking.userId,
+        hotelId: booking.hotelId,
+        roomId: booking.roomId,
+        checkInDate: new Date(booking.checkInDate).toISOString().substr(0, 10),
+        checkOutDate: new Date(booking.checkOutDate).toISOString().substr(0, 10),
+        totalPrice: booking.totalPrice,
+        voucherCode: booking.voucherCode,
+        roomQuantity: booking.roomQuantity,
+        userNote: booking.userNote,
+        isConfirmed: booking.isConfirmed,
+        status: booking.status,
+      });
     }
   }, [booking]);
 
@@ -57,20 +63,35 @@ const BookingDetail = (props: IProps) => {
   const handleCloseModal = () => {
     setShowModalBookingDetail(false);
   };
-  const getItemName = (
-    list: any[] | undefined,
-    id: number,
-    idField: string,
-    nameField: string
-  ) => {
-    const item = list?.find((item: any) => item[idField] === id);
-    return item ? item[nameField] : "N/A";
-  };
+
+  const getItemName = useMemo(
+    () => (list: any[] | undefined, id: number, idField: string, nameField: string) => {
+      const item = list?.find((item: any) => item[idField] === id);
+      return item ? item[nameField] : "N/A";
+    },
+    []
+  );
+
+  const userName = useMemo(
+    () => getItemName(listUser, bookingDetails.userId, "userId", "email"),
+    [listUser, bookingDetails.userId, getItemName]
+  );
+
+  const hotelName = useMemo(
+    () => getItemName(listHotel, bookingDetails.hotelId, "hotelId", "hotelName"),
+    [listHotel, bookingDetails.hotelId, getItemName]
+  );
+
+  const roomName = useMemo(
+    () => getItemName(listRoom, bookingDetails.roomId, "roomId", "roomName"),
+    [listRoom, bookingDetails.roomId, getItemName]
+  );
+
   return (
     <>
       <Modal
         show={showModalBookingDetail}
-        onHide={() => handleCloseModal()}
+        onHide={handleCloseModal}
         keyboard={false}
         size="lg"
       >
@@ -81,26 +102,24 @@ const BookingDetail = (props: IProps) => {
             <div className="row">
               <Form.Group className="mb-3 col-6" controlId="userName">
                 <Form.Label className="font-bold text-xl">User Name</Form.Label>
-                <p>{getItemName(listUser, userId, "userId", "email")}</p>
+                <p>{userName}</p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="hotelName">
                 <Form.Label className="font-bold text-xl">
                   Hotel Name
                 </Form.Label>
-                <p>{getItemName(listHotel, hotelId, "hotelId", "hotelName")}</p>
+                <p>{hotelName}</p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="roomName">
                 <Form.Label className="font-bold text-xl">Room Name</Form.Label>
-                <p>{getItemName(listRoom, roomId, "roomId", "roomName")}</p>
+                <p>{roomName}</p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="checkInDate">
                 <Form.Label className="font-bold text-xl">
                   Check In Date
                 </Form.Label>
                 <p>
-                  {checkInDate
-                    ? new Date(checkInDate).toISOString().substr(0, 10)
-                    : ""}
+                  {bookingDetails.checkInDate}
                 </p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="checkOutDate">
@@ -108,32 +127,30 @@ const BookingDetail = (props: IProps) => {
                   Check Out Date
                 </Form.Label>
                 <p>
-                  {checkOutDate
-                    ? new Date(checkOutDate).toISOString().substr(0, 10)
-                    : ""}
+                  {bookingDetails.checkOutDate}
                 </p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="totalPrice">
                 <Form.Label className="font-bold text-xl">
                   Total Price
                 </Form.Label>
-                <p>{totalPrice}</p>
+                <p>{bookingDetails.totalPrice}</p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="roomQuantity">
                 <Form.Label className="font-bold text-xl">
                   Room Quantity
                 </Form.Label>
-                <p>{roomQuantity}</p>
+                <p>{bookingDetails.roomQuantity}</p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="voucherCode">
                 <Form.Label className="font-bold text-xl">
                   Voucher Code
                 </Form.Label>
-                <p>{voucherCode}</p>
+                <p>{bookingDetails.voucherCode}</p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="userNote">
                 <Form.Label className="font-bold text-xl">User Note</Form.Label>
-                <p>{userNote}</p>
+                <p>{bookingDetails.userNote}</p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="isConfirmed">
                 <Form.Label className="font-bold text-xl">
@@ -141,10 +158,10 @@ const BookingDetail = (props: IProps) => {
                 </Form.Label>
                 <p
                   className={`whitespace-nowrap ${
-                    isConfirmed ? "color-active" : "color-stop"
+                    bookingDetails.isConfirmed ? "color-active" : "color-stop"
                   }`}
                 >
-                  {isConfirmed ? "Confirmed" : "Pending..."}
+                  {bookingDetails.isConfirmed ? "Confirmed" : "Pending..."}
                 </p>
               </Form.Group>
             </div>
@@ -154,4 +171,5 @@ const BookingDetail = (props: IProps) => {
     </>
   );
 };
+
 export default BookingDetail;

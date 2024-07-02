@@ -1,118 +1,253 @@
-'use client'
-import React, { useState } from 'react';
-import { CiMenuBurger } from 'react-icons/ci';
-import Link from 'next/link';
-import { FaRegTimesCircle } from 'react-icons/fa';
-import { usePathname } from 'next/navigation';
+/* eslint-disable @next/next/no-img-element */
+"use client";
+import React, { useEffect, useState } from "react";
+import { CiMenuBurger } from "react-icons/ci";
+import Link from "next/link";
+import { FaRegTimesCircle } from "react-icons/fa";
+import { usePathname } from "next/navigation";
+import authenticateService from "../services/authenticateService";
+import { toast } from "react-toastify";
+import router from "next/router";
+import Cookies from "js-cookie";
+import supplierService from "../services/supplierService";
+import useSWR from "swr";
 interface HeaderSupplierProps {
   title: string;
 }
 
 const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
+  const [supplierName, setSupplierName] = useState<string | null>(null);
+  const [role, setRole] = useState<string>("");
   const [isDivVisible, setDivVisible] = useState(false);
   const pathname = usePathname();
   const handleMenuClick = () => {
     setDivVisible(!isDivVisible);
   };
+  const { data: supplier, error } = useSWR("supplier", () =>
+    supplierService.getSupplierById()
+  );
   let currentTitle = title;
-  if (pathname === '/supplier/hotel') {
-    currentTitle = 'Hotel';
-  } else if (pathname === '/supplier/tour') {
-    currentTitle = 'Tour';
+  if (pathname === "/supplier/hotel") {
+    currentTitle = "HOTEL";
+  } else if (pathname === "/supplier/tour") {
+    currentTitle = "TOUR";
+  } else if (pathname === "/supplier/profile") {
+    currentTitle = "PROFILE";
+  } else if (pathname === "/supplier/dashboard") {
+    currentTitle = "DASHBOARD";
+  } else if (pathname === "/supplier/staff") {
+    currentTitle = "STAFF";
+  } else if (pathname.match(/^\/supplier\/hotel\/voucher\/\d+$/)) {
+    currentTitle = "VOUCHER";
+  } else if (pathname === "/supplier/roombooking") {
+    currentTitle = "ROOM BOOKING";
+  } else if (pathname === "/supplier/tourbooking") {
+    currentTitle = "TOUR BOOKING";
+  } else if (pathname === "/supplier/roomservice") {
+    currentTitle = "ROOM SERVICE";
+  } else if (pathname.match(/^\/supplier\/hotel\/room\/\d+$/)) {
+    currentTitle = "ROOM";
+  } else if (pathname.match(/^\/supplier\/tour\/tourImage\/\d+$/)) {
+    currentTitle = "TOUR IMAGE";
+  } else if (pathname.match(/^\/supplier\/hotel\/room\/\d+\/roomImage\/\d+$/)) {
+    currentTitle = "ROOM IMAGE";
+  } else if (
+    pathname.match(/^\/supplier\/hotel\/room\/\d+\/room3DImage\/\d+$/)
+  ) {
+    currentTitle = "ROOM 3D IMAGE";
   }
-  else if (pathname === '/supplier/staff') {
-    currentTitle = 'Staff';
-  }
-  else if (pathname === '/supplier/voucher') {
-    currentTitle = 'Voucher';
-  }
-  else if (pathname === '/supplier/roombooking') {
-    currentTitle = 'Room Booking';
-  }
-  else if (pathname === '/supplier/tourbooking') {
-    currentTitle = 'Tour Booking';
-  }
-  else if (pathname === '/supplier/roomservice') {
-    currentTitle = 'Room Service';
-  }
-  else if (pathname === '/supplier/room') {
-    currentTitle = 'Room';
-  }
- else if (pathname.match(/^\/supplier\/tour\/tourImage\/\d+$/)) {
-  currentTitle = 'Tour Image';
-}
   const handleCloseMenuClick = () => {
     setDivVisible(false);
   };
 
+  useEffect(() => {
+    const cookieSupplierName = Cookies.get("supplierName");
+    setSupplierName(cookieSupplierName ?? null);
+  }, []);
+  useEffect(() => {
+    const roleName = Cookies.get("roleName") || ""; // Thêm giá trị mặc định là chuỗi rỗng nếu roleName là undefined
+    setRole(roleName);
+  }, []);
+
+  const handleLogoutSupplier = async () => {
+    await authenticateService.logOutSupplier();
+    toast.success("Logout Success..");
+    router.push("/login_supplier");
+  };
+  const handleLogoutStaff = async () => {
+    await authenticateService.logOutStaff();
+    toast.success("Logout Success..");
+    router.push("/login_supplier_staff");
+  };
   return (
-    <div className='fix-border flex justify-between ml-96 p-8 pr-11'>
-      <div className={`overlay ${isDivVisible ? 'show' : ''}`} onClick={handleMenuClick}></div>
+    <div className="fix-border flex justify-between ml-96 p-8 pr-11">
+      <div
+        className={`overlay ${isDivVisible ? "show" : ""}`}
+        onClick={handleMenuClick}
+      ></div>
       <CiMenuBurger
-        className='cursor-pointer mobi-supplier'
-        style={{ float: 'right', fontSize: '22px' }}
+        className="cursor-pointer mobi-supplier"
+        style={{ float: "right", fontSize: "22px" }}
         onClick={handleMenuClick}
       />
-      <span className='ml-4 color-black font-semibold text-2xl'>{currentTitle}</span>
+      <span className="ml-4 color-black font-semibold text-2xl">
+        {currentTitle}
+      </span>
 
-      <div className='icon-user flex items-center'>
-        <img className='h-5 w-5 mr-3 cursor-pointer' src='/image/bell.png' alt='Bell Icon' />
-        <img className='h-10 w-10 cursor-pointer' src='/image/usersupplier.png' alt='User Icon' />
+      <div className="icon-user flex items-center">
+        <img
+          className="h-5 w-5 mr-3 cursor-pointer"
+          src="/image/bell.png"
+          alt="Bell Icon"
+        />
+        <li className="flex hover-bold cursor-pointer dropdown relative z-10">
+          <div className="flex relative z-2 color-mess">
+            {supplier && (
+              <div className="flex">
+                <div className="flex items-center relative z-2 color-mess">
+                  <img
+                    src={supplier.avatar ? supplier.avatar : "/image/usersupplier.png"}
+                    alt=""
+                    className="h-7 w-7 rounded-full cursor-pointer m-2 object-cover"
+                  />
+                  <Link className="no-underline text-accent font-bold" href="#">
+                    {supplier.supplierName}
+                  </Link>
+                </div>
+                <div className="backgourd-li text-center space-y-1">
+                  <Link
+                    className="no-underline text-accent font-bold block mt-3 hover-nav-sub"
+                    href="/supplier/profile"
+                  >
+                    Manager profile
+                  </Link>
+                  {role === "supplier" ? (
+                    <Link
+                      href="/login_supplier"
+                      className="no-underline text-accent font-bold block hover-nav-sub"
+                      onClick={handleLogoutSupplier}
+                    >
+                      Log out
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/login_supplier_staff"
+                      className="no-underline text-accent font-bold block hover-nav-sub"
+                      onClick={handleLogoutStaff}
+                    >
+                      Log out
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </li>
       </div>
       {isDivVisible && (
-        <div className='pc-none' >
-          <header className='nav-supllier-mobi'>
-            <FaRegTimesCircle className='times-close' onClick={handleCloseMenuClick} />
-            <div className='logo'>
-              <p className='text-white text-center font-bold text-2xl pt-4'>Trek Booking</p>
+        <div className="pc-none">
+          <header className="nav-supllier-mobi">
+            <FaRegTimesCircle
+              className="times-close"
+              onClick={handleCloseMenuClick}
+            />
+            <div className="logo">
+              <p className="text-white text-center font-bold text-2xl pt-4">
+                Trek Booking
+              </p>
             </div>
-            <div className='list-choose pt-10 px-4 pb-14'>
-              <ul className='pl-0'>
-                <div className='py-2'>
-                  <li className='flex items-center pb-6 pl-3'>
-                    <img className='w-7 h-7' src='/image/darhboard.png' alt='Dashboard' />
-                    <span className='text-white ml-2 text-xl font-semibold'>Dashboard</span>
+            <div className="list-choose pt-10 px-4 pb-14">
+              <ul className="pl-0">
+                <div className="py-2">
+                  <li className="flex items-center pb-6 pl-3">
+                    <img
+                      className="w-7 h-7"
+                      src="/image/darhboard.png"
+                      alt="Dashboard"
+                    />
+                    <span className="text-white ml-2 text-xl font-semibold">
+                      Dashboard
+                    </span>
                   </li>
                 </div>
-                <li className='flex items-center pb-6'>
-                  <Link className='flex no-underline nav-i-hover py-2 pl-3 pr-40' href='/supplier/hotel'>
-                    <img className='w-7 h-7' src='/image/home.png' alt='Hotel' />
-                    <span className='text-white ml-2 text-xl font-semibold'>Hotel</span>
+                <li className="flex items-center pb-6">
+                  <Link
+                    className="flex no-underline nav-i-hover py-2 pl-3 pr-40"
+                    href="/supplier/hotel"
+                  >
+                    <img
+                      className="w-7 h-7"
+                      src="/image/home.png"
+                      alt="Hotel"
+                    />
+                    <span className="text-white ml-2 text-xl font-semibold">
+                      Hotel
+                    </span>
                   </Link>
                 </li>
-                
-                <li className='flex items-center pb-6'>
-                  <Link className='flex no-underline nav-i-hover py-2 pl-3 pr-40' href='/supplier/tour'>
-                    <img className='w-7 h-7' src='/image/suitcase.png' alt='Tour' />
-                    <span className='text-white ml-2 text-xl font-semibold'>Tour</span>
+
+                <li className="flex items-center pb-6">
+                  <Link
+                    className="flex no-underline nav-i-hover py-2 pl-3 pr-40"
+                    href="/supplier/tour"
+                  >
+                    <img
+                      className="w-7 h-7"
+                      src="/image/suitcase.png"
+                      alt="Tour"
+                    />
+                    <span className="text-white ml-2 text-xl font-semibold">
+                      Tour
+                    </span>
                   </Link>
                 </li>
-                <li className='flex items-center pb-6'>
-                  <Link className='flex no-underline nav-i-hover py-2 pl-3 pr-40' href='/supplier/staff'>
-                    <img className='w-7 h-7' src='/image/staff.png' alt='Staff' />
-                    <span className='text-white ml-2 text-xl font-semibold'>Staff</span>
+                <li className="flex items-center pb-6">
+                  <Link
+                    className="flex no-underline nav-i-hover py-2 pl-3 pr-40"
+                    href="/supplier/staff"
+                  >
+                    <img
+                      className="w-7 h-7"
+                      src="/image/staff.png"
+                      alt="Staff"
+                    />
+                    <span className="text-white ml-2 text-xl font-semibold">
+                      Staff
+                    </span>
                   </Link>
                 </li>
-              
-                <li className='flex items-center pb-6'>
-                  <Link className='flex no-underline nav-i-hover py-2 pl-3 pr-40' href='/supplier/roombooking'>
-                    <img className='w-7 h-7' src='/image/chart.png' alt='Room booking' />
-                    <span className='text-white ml-2 text-xl font-semibold'>Room booking</span>
+
+                <li className="flex items-center pb-6">
+                  <Link
+                    className="flex no-underline nav-i-hover py-2 pl-3 pr-40"
+                    href="/supplier/roombooking"
+                  >
+                    <img
+                      className="w-7 h-7"
+                      src="/image/chart.png"
+                      alt="Room booking"
+                    />
+                    <span className="text-white ml-2 text-xl font-semibold">
+                      Room booking
+                    </span>
                   </Link>
                 </li>
-                <li className='flex items-center pb-6'>
-                  <Link className='flex no-underline nav-i-hover py-2 pl-3 pr-40' href='/supplier/tourbooking'>
-                    <img className='w-7 h-7' src='/image/dock.png' alt='Tour booking' />
-                    <span className='text-white ml-2 text-xl font-semibold'>Tour booking</span>
+                <li className="flex items-center pb-6">
+                  <Link
+                    className="flex no-underline nav-i-hover py-2 pl-3 pr-40"
+                    href="/supplier/tourbooking"
+                  >
+                    <img
+                      className="w-7 h-7"
+                      src="/image/dock.png"
+                      alt="Tour booking"
+                    />
+                    <span className="text-white ml-2 text-xl font-semibold">
+                      Tour booking
+                    </span>
                   </Link>
                 </li>
               </ul>
-            </div>
-            <div className='border-t-2 border-white pt-3'>
-              <Link href='/' className='bottom-logout flex justify-center items-center no-underline text-white'>
-                <img className='w-7 h-7' src='/image/out.png' alt='Log out' />
-                <p className='color-white mb-0 ml-1 font-semibold text-xl'>Log out</p>
-              </Link>
             </div>
           </header>
         </div>

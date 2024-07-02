@@ -1,60 +1,48 @@
+import Cookies from "js-cookie";
 interface ILoginRequest {
   email: string;
   password: string;
+  staffEmail: string;
+  staffPassword: string;
 }
 
 interface ILoginResponse {
   toKen: string;
-  roleId: string;
-  supplier: {
-    supplierId: number;
-    supplierName: string;
-    email: string;
-    phone: string;
-    status: boolean;
-    isVerify: boolean;
-    roleId: number;
-    role:{
-        roleId: number;
-        roleName: string;
-        roleDescription: string
-    }
-  }
+  tokenSupplier: string;
+  roleName: string;
+  userName: string;
+  supplierName: string;
+  staffName: string;
+  
 }
-
 interface ILoginResult {
   success: boolean;
   token?: string;
   role?: string;
   errorMessage?: string;
-  supplier?: {
-    supplierId: number;
-    supplierName: string;
-    email: string;
-    phone: string;
-    status: boolean;
-    isVerify: boolean;
-    roleId: number;
-    role:{
-        roleId: number;
-        roleName: string;
-        roleDescription: string
-    }
-  }
 }
 interface IAuthenticateService {
   loginClient(email: string, password: string): Promise<ILoginResult>;
+  logOutClient(): Promise<void>;
+  logOutSupplier(): Promise<void>;
+  logOutStaff(): Promise<void>;
   signUpClient(user: {
-        email: string;
-        password: string;
-        roleId: number;
+    email: string;
+    userName: string;
+    password: string;
+    roleId: number;
   }): Promise<void>;
   loginSupplier(email: string, password: string): Promise<ILoginResult>;
   signUpSupplier(supplier: {
-        email: string;
-        password: string;
-        roleId: number;
+    email: string;
+    supplierName: string;
+    password: string;
+    roleId: number;
   }): Promise<void>;
+  loginSupplierStaff(
+    staffEmail: string,
+    staffPassword: string
+  ): Promise<ILoginResult>;
   // Other methods if needed
 }
 
@@ -72,12 +60,15 @@ const authenticateService: IAuthenticateService = {
       if (response.ok) {
         const data: ILoginResponse = await response.json();
         const token = data.toKen;
-        const role = data.roleId;
+        const userName = data.userName;
+        const roleName = data.roleName;
         // Save token to local storage or cookies for future requests
-        localStorage.setItem("token", token);
-        localStorage.setItem("roleId", role);
-
-        return { success: true, token, role };
+        // localStorage.setItem("token", token);
+        // localStorage.setItem("userName", userName);
+        Cookies.set("tokenUser", token, { expires: 1 });
+        Cookies.set("userName", userName, { expires: 1 });
+        Cookies.set("roleName", roleName, { expires: 1 });
+        return { success: true, token };
       } else {
         const errorData = await response.json();
         return { success: false, errorMessage: errorData.errorMessage };
@@ -86,7 +77,7 @@ const authenticateService: IAuthenticateService = {
       console.error("Error:", error);
       return {
         success: false,
-        errorMessage: "An error occurred while signing in.",
+        errorMessage: "The email or password is wrong!",
       };
     }
   },
@@ -112,7 +103,7 @@ const authenticateService: IAuthenticateService = {
 
   async loginSupplier(email: string, password: string): Promise<ILoginResult> {
     try {
-      const response = await fetch("https://localhost:7132/loginSupplier", {
+const response = await fetch("https://localhost:7132/loginSupplier", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -123,17 +114,14 @@ const authenticateService: IAuthenticateService = {
       if (response.ok) {
         const data: ILoginResponse = await response.json();
         const token = data.toKen;
-        const role = data.roleId;
-        const supplier = data.supplier;
-        const supplierId = data.supplier.supplierId;
-
+        const supplierName = data.supplierName;
+        const roleName = data.roleName;
         // Save token to local storage or cookies for future requests
-        localStorage.setItem("token", token);
-        localStorage.setItem("roleId", role);
-        localStorage.setItem("supplier", JSON.stringify(supplier));
-        localStorage.setItem("supplierId", supplierId.toString());
-        
-        return { success: true, token, role, supplier };
+        // localStorage.setItem("supplierId", supplierId.toString());
+        Cookies.set("tokenSupplier", token, { expires: 1 });
+        Cookies.set("supplierName", supplierName, { expires: 1 });
+        Cookies.set("roleName", roleName, { expires: 1 });
+        return { success: true, token };
       } else {
         const errorData = await response.json();
         return { success: false, errorMessage: errorData.errorMessage };
@@ -142,7 +130,7 @@ const authenticateService: IAuthenticateService = {
       console.error("Error:", error);
       return {
         success: false,
-        errorMessage: "An error occurred while signing in.",
+        errorMessage: "The email or password is wrong!",
       };
     }
   },
@@ -164,6 +152,84 @@ const authenticateService: IAuthenticateService = {
       console.error("Error sign up user:", error);
       throw error;
     }
-  }
+  },
+  async loginSupplierStaff(
+    staffEmail: string,
+    staffPassword: string
+  ): Promise<ILoginResult> {
+    try {
+      const response = await fetch(
+        "https://localhost:7132/loginSupplierStaff",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ staffEmail, staffPassword } as ILoginRequest),
+        }
+      );
+
+      if (response.ok) {
+        const data: ILoginResponse = await response.json();
+        const token = data.toKen;
+        const tokenSupplier = data.tokenSupplier;
+        const staffName = data.staffName;
+        const roleName = data.roleName;
+        // Save token to local storage or cookies for future requests
+        Cookies.set("tokenSupplierStaff", token, { expires: 1 });
+        Cookies.set("tokenSupplier", tokenSupplier, { expires: 1 });
+        Cookies.set("staffName", staffName, { expires: 1 });
+        Cookies.set("roleName", roleName, { expires: 1 });
+        return { success: true, token };
+      } else {
+        const errorData = await response.json();
+        return { success: false, errorMessage: errorData.errorMessage };
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      return {
+        success: false,
+errorMessage: "The email or password is wrong!",
+      };
+    }
+  },
+  async logOutClient() {
+    try {
+      // Clear the local storage
+      Cookies.remove("tokenUser");
+      Cookies.remove("roleName");
+      Cookies.remove("userName");
+      console.log("User logged out successfully.");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      throw error;
+    }
+  },
+  async logOutSupplier() {
+    try {
+      // Clear the local storage
+      // localStorage.removeItem("supplierId");
+      Cookies.remove("tokenSupplier");
+      Cookies.remove("roleName");
+      Cookies.remove("supplierName");
+      console.log("User logged out successfully.");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      throw error;
+    }
+  },
+  async logOutStaff() {
+    try {
+      // Clear the local storage
+      Cookies.remove("tokenSupplierStaff");
+      Cookies.remove("tokenSupplier");
+      Cookies.remove("roleName");
+      Cookies.remove("staffName");
+      console.log("User logged out successfully.");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      throw error;
+    }
+  },
 };
 export default authenticateService;

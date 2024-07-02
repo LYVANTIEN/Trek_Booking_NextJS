@@ -1,3 +1,89 @@
+.history-title{
+  background: #305A61;
+}
+.backgr-fffff{
+  background: #ffffff;
+}
+.rated{
+  background-color: #ffffff;
+  color: #000;
+  padding: 2px 18px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-weight: bold;
+}
+.buyagain{
+  background-color: #305A61;
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-weight: bold;
+  margin-left: 12px;
+}
+.send{
+  background-color: #305A61;
+  color: #ffffff;
+  padding: 4px 24px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-left: 12px;
+}
+.review-text{
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding-left: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+
+  padding-right: 6px;
+width: 100%;
+}
+.input-full-rate{
+  outline: none;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding-left: 8px;
+  padding-right: 8px;
+  width: 97%;
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+.hotel-date-input{
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding-left: 8px;
+  padding-right: 8px;
+  
+}
+.slick-next {
+  z-index: 10;
+  right: 0 !important;
+
+
+}
+.slick-next:before, .slick-prev:before {
+  font-size: 20px;
+  line-height: 1;
+  opacity: .75;
+  color: #a55d33c9 !important;
+}
+.slick-prev {
+  z-index: 10;
+  left: 0 !important;
+
+}
+.slick-dots {
+  bottom: -15px !important;
+}
+.fix-logo{
+  width: 200px;
+  height: 130px;
+}
+.image-fix-link{
+  margin-left: -8px;
+  margin-top: -39px;
+}
 .rounded-20 {
   border: 1px solid rgba(217, 217, 217, 1);
   border-radius: 20px;
@@ -17,6 +103,11 @@
 .h-550 {
   height: 550px;
 }
+.h-285{
+  height: 285px;
+  width: 100%;
+}
+
 .card1 {
   transition: transform 0.3s ease;
 }
@@ -31,10 +122,12 @@ a {
   text-decoration: none;
 }
 .link-style {
-  color: #305a61;
+  color: #305a61 !important;
   position: relative; /* Thiết lập vị trí tương đối để chứa phần gạch chân */
 }
-
+.link-text{
+  color: #1F1C17;
+}
 .link-style::after {
   content: "";
   position: absolute;
@@ -50,13 +143,13 @@ a {
 .hover-bold {
   border: none;
   border-radius: 10px;
-  padding: 10px 20px;
+  padding: 10px 8px;
+  border: 1px solid #ffffff; 
 }
 .hover-bold:hover {
   background-color: #ffe2e27d;
-  border: 1px solid #ffffff;
+
   border-radius: 20px;
-  padding: 10px 20px;
 }
 .background-img {
   background-image: url("/image/home1.png");
@@ -326,6 +419,9 @@ a {
     opacity: 0.8;
     
   }
+  .underline_hv:hover{
+    text-decoration: underline;
+  }
   .btn-exit-modal{
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -341,10 +437,33 @@ a {
     opacity: 0.8;
     background: #ccc;
   }
-.fix-link{
-  text-decoration: none !important;
-    color: black !important;
+
+
+  
+  .backgourd-li{
+    z-index: 0;
+    padding: 40px 6px;
+    padding-bottom: 4px;
+    width: 165px;
+    position: absolute;
+    right: -44px;
+    top: -16px;
+    background-color: white;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    display: none;
 }
+.dropdown:hover .color-mess .color-mon{
+  color: #305a61 !important;
+}
+.dropdown:hover .backgourd-li{
+  display: block;
+}
+.hover-nav-sub:hover{
+  border-radius: 14px;
+color: #ffffff;
+background-color: #305A61;
+}
+ 
 @media all and (max-width: 1100px) {
   .cham {
     left: 48.6%;
@@ -369,6 +488,10 @@ a {
   }
 }
 @media all and (max-width: 1024px) {
+  .image-fix-link{
+
+    margin-top: -48px;
+  }
   .buttonrepon {
     padding: 2px 2px;
   }
@@ -513,7 +636,7 @@ a {
   .text-small {
     font-size: 19px;
   }
-  .pright-repon{
+  .pright-repon {
     padding-right: 5rem;
   }
 }

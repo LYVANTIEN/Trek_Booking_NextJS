@@ -1,13 +1,52 @@
-const profile = () => {
+"use client";
+import UpdateProfile from "@/app/components/Profile/UpdateProfile";
+import userService from "@/app/services/userService";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
+
+const Profile = () => {
+  const [userName, setUserName] = useState<string>("");
+  const [avatar, setAvatar] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+
+  const [showUserUpdate, setShowUserUpdate] = useState<boolean>(false);
+  const [User, setUser] = useState<IUser | null>(null);
+
+  const { data: user, error } = useSWR("profile", () =>
+    userService.getUserById()
+  );
+
+  useEffect(() => {
+    if (user) {
+      setUserName(user.userName);
+      setAvatar(user.avatar);
+      setEmail(user.email);
+      setPhone(user.phone);
+      setAddress(user.address);
+      setUser(user);
+    } else if (error) {
+      console.error("Failed to fetch user:", error);
+    }
+  }, [user, error]);
+
+  if (!user) {
+    return <div>User ID not found in localStorage</div>;
+  }
+
   return (
     <>
       <div className="container mt-10">
         <p className="text-center font-bold text-4xl">Manage Profile</p>
-        <div className="flex w-3/4 m-auto pt-10"
-        style={{borderBottom: "2px solid #D2D2D2"}}>
+        <div
+          className="flex w-3/4 m-auto pt-10"
+          style={{ borderBottom: "2px solid #D2D2D2" }}
+        >
           <div className="flex items-start pr-10">
-            <img src="/image/user.png" alt="" />
-            <a href="#"
+            <img src="/image/user.png" alt="User" />
+            <a
+              href="#"
               className="text-hv font-semibold no-underline text-xl pl-2"
               style={{ color: "#305A61" }}
             >
@@ -15,12 +54,15 @@ const profile = () => {
             </a>
           </div>
           <div className="flex items-start">
-            <img src="/image/lock.png" alt="" />
-            <a href="#" className="text-hv no-underline font-semibold text-black text-xl pl-2">Change password</a>
+            <img src="/image/lock.png" alt="Lock" />
+            <a
+              href="#"
+              className="text-hv no-underline font-semibold text-black text-xl pl-2"
+            >
+              Change password
+            </a>
           </div>
         </div>
-        
-        
 
         <div className="my-10">
           <div
@@ -30,45 +72,115 @@ const profile = () => {
               boxShadow: "1px 1px 8px 4px rgba(0, 0, 0, 0.25)",
             }}
           >
-            <div className="w-4/5 m-auto" >
-                <span className="text-xl font-semibold">Account information</span>
-                <div style={{borderBottom: "2px solid #D2D2D2"}}></div>
-                <div className="row pt-5">
-                    <div className="col-md-6">
-                        <p className="font-semibold">First name</p>
-                        <input type="text" className="border w-full py-2" style={{borderRadius: "10px", borderColor: "#D2D2D2"}}/>
-                    </div>
-                    <div className="col-md-6">
-                        <p className="font-semibold">Last name</p>
-                        <input type="text" className="border w-full py-2" style={{borderRadius: "10px", borderColor: "#D2D2D2"}}/>
-                    </div>
+            <div className="w-4/5 m-auto">
+              <span className="text-xl font-semibold">Account information</span>
+              <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
+              <div style={{ marginTop: "20px", marginBottom: "20px" }}>
+                <div className="flex justify-center flex-wrap">
+                  <img
+                    className="w-[150px] h-[150px] cursor-pointer m-2 rounded-full object-cover"
+                    src={avatar ? avatar : "/image/usersupplier.png"}
+                    alt="Avatar"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = "/image/usersupplier.png";
+                    }}
+                  />
                 </div>
-                <div className="pt-5">
-                    <p className="font-semibold">Username</p>
-                    <input type="text" className="border w-full py-2" style={{borderRadius: "10px", borderColor: "#D2D2D2"}}/>
+              </div>
+              <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
+
+              <div
+                className="mb-3 col-6"
+                style={{
+                  display: "flex",
+                  marginTop: "20px",
+                }}
+              >
+                <div className="col-md-5">
+                  <label className="font-bold text-xl">User Name</label>
                 </div>
-                <div className="row pt-5">
-                    <div className="col-md-6">
-                        <p className="font-semibold">Phone number</p>
-                        <input type="text" className="border w-full py-2" style={{borderRadius: "10px", borderColor: "#D2D2D2"}}/>
-                    </div>
-                    <div className="col-md-6">
-                        <p className="font-semibold">Email</p>
-                        <input type="text" className="border w-full py-2" style={{borderRadius: "10px", borderColor: "#D2D2D2"}}/>
-                    </div>
+                <div className="flex-1">
+                  <label className="font-bold text-xl text-gray-400">
+                    {userName}
+                  </label>
                 </div>
-                <div className="pt-5">
-                    <p className="font-semibold">Address</p>
-                    <input type="text" className="border w-full py-2" style={{borderRadius: "10px", borderColor: "#D2D2D2"}}/>
+              </div>
+              <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
+
+              <div
+                className="mb-3 col-6"
+                style={{ display: "flex", marginTop: "20px" }}
+              >
+                <div className="col-md-5">
+                  <label className="font-bold text-xl">Phone</label>
                 </div>
-                <div className="flex justify-end pt-5 pb-4">
-                    <button className=" text-white font-medium py-2 px-6 text-lg border" style={{backgroundColor: "#305A61", borderRadius: "20px"}}>Save</button>
+                <div className="flex-1">
+                  <label className="font-bold text-xl text-gray-400">
+                    {phone}
+                  </label>
                 </div>
+              </div>
+              <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
+
+              <div
+                className="mb-3 col-6"
+                style={{ display: "flex", marginTop: "20px" }}
+              >
+                <div className="col-md-5">
+                  <label className="font-bold text-xl">Email</label>
+                </div>
+                <div className="flex-1">
+                  <label className="font-bold text-xl text-gray-400">
+                    {email}
+                  </label>
+                </div>
+              </div>
+              <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
+
+              <div
+                className="mb-3 col-6"
+                style={{ display: "flex", marginTop: "20px" }}
+              >
+                <div className="col-md-5">
+                  <label className="font-bold text-xl">Address</label>
+                </div>
+                <div className="flex-1">
+                  <label className="font-bold text-xl text-gray-400">
+                    {address}
+                  </label>
+                </div>
+              </div>
+              <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
+
+              <div
+                className="flex justify-end pt-5 pb-4"
+                style={{ marginTop: "-20px" }}
+              >
+                <button
+                  className="text-white font-medium py-2 px-6 text-lg border"
+                  style={{ backgroundColor: "#305A61", borderRadius: "20px" }}
+                  onClick={() => {
+                    setShowUserUpdate(true);
+                  }}
+                >
+                  Update
+                </button>
+              </div>
             </div>
+            <UpdateProfile
+              showUserUpdate={showUserUpdate}
+              setShowUserUpdate={setShowUserUpdate}
+              user={User}
+              userId={Number(user.userId)}
+              setUser={setUser}
+            />
           </div>
         </div>
       </div>
     </>
   );
 };
-export default profile;
+
+export default Profile;

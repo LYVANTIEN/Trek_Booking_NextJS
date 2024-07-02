@@ -235,7 +235,7 @@ function CreateVoucher(props: IProps) {
               <Form.Group className="mb-3">
                 <Form.Label>Voucher Quantity</Form.Label>
                 <Form.Control
-                  type="text"
+                  type="number"
                   value={voucherQuantity}
                   onChange={(e) => setVoucherQuantity(e.target.value)}
                   onBlur={() => handleBlur("voucherQuantity")}
@@ -268,7 +268,7 @@ function CreateVoucher(props: IProps) {
               <Form.Group className="mb-3">
                 <Form.Label>Discount Percent</Form.Label>
                 <Form.Control
-                  type="text"
+                  type="number"
                   value={discountPercent}
                   onChange={(e) => setDiscountPercent(e.target.value)}
                   onBlur={() => handleBlur("discountPercent")}

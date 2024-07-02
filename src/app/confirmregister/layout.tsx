@@ -1,6 +1,5 @@
 'use client'
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from "react-toastify";
 
 import NavbarRegisterSupplier from '../components/NavbarRegisterSupplier';
 export default function RootLayout({
@@ -13,7 +12,6 @@ export default function RootLayout({
       <body>
         <NavbarRegisterSupplier />
                 {children}
-        <ToastContainer/>
         </body>
     </html>
   );

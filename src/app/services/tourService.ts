@@ -8,7 +8,10 @@ interface ITourService {
     getTours(): Promise<any[]>;
   }
 
+
+
 export const tourService: ITourService = {
+
 
   async getTours() {
     try {
@@ -26,7 +29,7 @@ export const tourService: ITourService = {
       // console.log(data); // Trigger refetch after fetching
       return data;
     } catch (error) {
-      console.error("Error fetching tour list:", error);
+      console.error("Error fetching user list:", error);
       throw error;
     }
   },
@@ -54,8 +57,8 @@ export const tourService: ITourService = {
       throw error;
     }
   },
+
   async getTourImageByTourId(tourId) {
-    console.log(tourId);
     try {
       const response = await fetch(
         `https://localhost:7132/getTourImageByTourId/${tourId}`,
@@ -73,7 +76,6 @@ export const tourService: ITourService = {
         throw new Error("Failed to fetch room list");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
       return data;
     } 
     catch (error) {
@@ -104,7 +106,7 @@ export const tourService: ITourService = {
       console.error("Error fetching tour list:", error);
       throw error;
     }
-  },  
+  },
 };
 
 export const revalidateTours = () => mutate(tourService.getToursBySuppierId);
@@ -144,6 +146,8 @@ export const revalidateTours = () => mutate(tourService.getToursBySuppierId);
       throw new Error('Failed to update tour');
     }
 
+
+    // mutate("tourList")
     const contentType = response.headers.get('Content-Type');
     if (contentType && contentType.includes('application/json')) {
       return response.json();

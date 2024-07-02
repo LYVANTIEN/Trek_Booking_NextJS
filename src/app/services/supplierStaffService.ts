@@ -1,25 +1,24 @@
 import { mutate } from "swr";
-
+import Cookies from 'js-cookie';
 interface ISupplierStaffService {
-  getStaffsBySuppierId(supplierId: number): Promise<ISupplierStaff[]>;
+  getStaffsBySuppierId(): Promise<ISupplierStaff[]>;
   createStaff(supplierStaff: ISupplierStaff): Promise<ISupplierStaff>;
   updateStaff(supplierStaff: ISupplierStaff): Promise<ISupplierStaff>;
   deleteStaff(staffId: number): Promise<void>;
   }
   
   const supplierStaffService: ISupplierStaffService = {
-    async getStaffsBySuppierId(supplierId) {
-      console.log(supplierId);
+    async getStaffsBySuppierId() {
       try {
         const response = await fetch(
-          `https://localhost:7132/getSupplierStaffBySupplierId/${supplierId}`,
+          `https://localhost:7132/getSupplierStaffBySupplierId`,
           {
             method: "GET",
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Include the token in the headers
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
             },
           }
         );
@@ -42,7 +41,7 @@ interface ISupplierStaffService {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
           },
           body: JSON.stringify(supplierStaff),
         });
@@ -85,9 +84,8 @@ interface ISupplierStaffService {
         const response = await fetch(
           `https://localhost:7132/deleteSupplierStaff/${staffId}`,
           {
-            method: "PUT",
-            headers: {
-              Accept: "application/json, text/plain, */*",
+            method: "PUT",headers: {
+Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
             },
@@ -123,4 +121,3 @@ interface ISupplierStaffService {
     }
   };
   export default supplierStaffService;
-  

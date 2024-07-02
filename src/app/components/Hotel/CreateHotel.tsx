@@ -4,12 +4,26 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import hotelService from "@/app/services/hotelService";
 import { Button, Form, Modal } from "react-bootstrap";
+import { cities, countries } from "country-cities";
 
 interface Iprops {
   showHotelCreate: boolean;
   setShowHotelCreate: (value: boolean) => void;
   onCreate: () => void;
 }
+
+type FormControlElement =
+  | HTMLInputElement
+  | HTMLSelectElement
+  | HTMLTextAreaElement;
+
+const handleEvent = <T extends HTMLElement>(
+  handler: (event: React.ChangeEvent<T>) => void
+) => {
+  return (event: React.ChangeEvent<FormControlElement>) => {
+    handler(event as unknown as React.ChangeEvent<T>);
+  };
+};
 
 function CreateHotel(props: Iprops) {
   const { showHotelCreate, setShowHotelCreate, onCreate } = props;
@@ -23,7 +37,12 @@ function CreateHotel(props: Iprops) {
   const [hotelDistrict, setHotelDistrict] = useState<string>("");
   const [hotelCity, setHotelCity] = useState<string>("");
   const [hotelInformation, setHotelInformation] = useState<string>("");
-
+  //
+  const [countriesList, setCountriesList] = useState<any[]>([]);
+  const [citiesList, setCitiesList] = useState<any[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  //
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isTouched, setIsTouched] = useState<{ [key: string]: boolean }>({
     hotelName: false,
@@ -34,6 +53,32 @@ function CreateHotel(props: Iprops) {
     hotelCity: false,
     hotelInformation: false,
   });
+
+  useEffect(() => {
+    const loadCountries = async () => {
+      const allCountries = await countries.all();
+      setCountriesList(allCountries);
+    };
+
+    loadCountries();
+  }, []);
+
+  const handleCountryChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const countryCode = event.target.value;
+    console.log("Fetched country: ", countryCode);
+    setSelectedCountry(countryCode);
+    const city = await cities.getByCountry(countryCode);
+    console.log("Fetched cities: ", city);
+    setCitiesList(city || []);
+    setSelectedCity("");
+  };
+
+  const handleCityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const cityCode = event.target.value;
+    setSelectedCity(cityCode);
+  };
 
   //Validate Input
   const validateHotelName = (name: string) => {
@@ -120,14 +165,14 @@ function CreateHotel(props: Iprops) {
     }
   }, [hotelDistrict, isTouched.hotelDistrict]);
 
-  useEffect(() => {
-    if (isTouched.hotelCity) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        hotelCity: validateHotelCity(hotelCity),
-      }));
-    }
-  }, [hotelCity, isTouched.hotelCity]);
+  // useEffect(() => {
+  //   if (isTouched.hotelCity) {
+  //     setErrors((prevErrors) => ({
+  //       ...prevErrors,
+  //       hotelCity: validateHotelCity(hotelCity),
+  //     }));
+  //   }
+  // }, [hotelCity, isTouched.hotelCity]);
 
   useEffect(() => {
     if (isTouched.hotelInformation) {
@@ -151,7 +196,7 @@ function CreateHotel(props: Iprops) {
       hotelEmail: validateHotelEmail(hotelEmail),
       hotelFulDescription: validateHotelFulDescription(hotelFulDescription),
       hotelDistrict: validateHotelDistrict(hotelDistrict),
-      hotelCity: validateHotelCity(hotelCity),
+      //hotelCity: validateHotelCity(hotelCity),
       hotelInformation: validateHotelInformation(hotelInformation),
     };
 
@@ -169,8 +214,8 @@ function CreateHotel(props: Iprops) {
         hotelEmail,
         hotelAvatar: "1",
         hotelFulDescription,
-        hotelDistrict,
-        hotelCity,
+        hotelDistrict ,
+        hotelCity:`${selectedCity},${selectedCountry}`,
         hotelInformation,
         isVerify: true, // Default value is true
         supplierId: Number(supplierId),
@@ -287,20 +332,47 @@ function CreateHotel(props: Iprops) {
                 onBlur={() => handleBlur("hotelDistrict")}
                 isInvalid={!!errors.hotelDistrict}
               />
+
               <Form.Control.Feedback type="invalid">
                 {errors.hotelDistrict}
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3" controlId="formHotelCity">
               <Form.Label>Hotel City</Form.Label>
-              <Form.Control
+              {/* <Form.Control
                 type="text"
                 placeholder="Please enter hotel city"
                 value={hotelCity}
                 onChange={(e: any) => setHotelCity(e.target.value)}
                 onBlur={() => handleBlur("hotelCity")}
                 isInvalid={!!errors.hotelCity}
-              />
+              /> */}
+
+              <Form.Control
+                as="select"
+                value={selectedCountry}
+                onChange={handleEvent<HTMLSelectElement>(handleCountryChange)}
+              >
+                <option value="">Select Country</option>
+                {countriesList.map((country) => (
+                  <option key={country.isoCode} value={country.isoCode}>
+                    {country.name}
+                  </option>
+                ))}
+              </Form.Control>
+              <Form.Control
+                as="select"
+                value={selectedCity}
+                onChange={handleEvent<HTMLSelectElement>(handleCityChange)}
+                disabled={!selectedCountry}
+              >
+                <option value="">Select City</option>
+                {citiesList.map((city) => (
+                  <option key={city.code} value={city.code}>
+                    {city.name}
+                  </option>
+                ))}
+              </Form.Control>
               <Form.Control.Feedback type="invalid">
                 {errors.hotelCity}
               </Form.Control.Feedback>

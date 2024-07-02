@@ -1,8 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { useEffect, useState } from "react";
 import tourService from "@/app/services/tourService";
 import { ITour } from "@/app/entities/tour";
 import useSWR, { mutate } from "swr";
+import Link from "next/link";
 
 const fetchTourImages = async (
   tourId: number,
@@ -52,91 +54,143 @@ const TourDetail = ({ params }: { params: { tourId: string } }) => {
     month: "long",
     day: "numeric",
   });
+
   return (
     <div>
       <div className="backgr-home">
-        <nav className="to-white pt-2 pb-2">
-          <ul className="flex ul-menu">
-            <li className="li-menu hover-bold">
-              <a
-                href=""
-                className="font-bold text-decoration-none link-style "
-                style={{ color: "#305A61" }}
-              >
-                Home
-              </a>
-            </li>
-            <li className="li-menu hover-bold">
-              <a
-                href=""
-                className="font-bold text-decoration-none"
-                style={{ color: "#1F1C17" }}
-              >
-                Hotel
-              </a>
-            </li>
-            <li className="li-menu hover-bold">
-              <a
-                href=""
-                className="font-bold text-decoration-none"
-                style={{ color: "#1F1C17" }}
-              >
-                Attractions
-              </a>
-            </li>
-            <li className="li-menu hover-bold none-t">
-              <a
-                href=""
-                className="font-bold text-decoration-none"
-                style={{ color: "#1F1C17" }}
-              >
-                Gift Voucher
-              </a>
-            </li>
-          </ul>
-        </nav>
         <div className="container pb-4">
-          <p className="color-primary font-semibold pb-4">
-            Home / Attractions / Phu Quoc / {tour.tourName}
-          </p>
-          <div className="border-tour-detail">
-            <h3>{tour.tourName}</h3>
-            <div className="time-location flex pb-2">
-              <div className="time-fe flex">
-                <img className="w-5 h-5" src="/image/calendar.png" alt="" />
-                <p className="ml-1">
-                  {formattedTime} - {formattedDate}
-                </p>
+          <div
+            className="font-semibold text-xl my-5"
+            style={{ color: "#305A61" }}
+          >
+            <Link
+              className="no-underline underline_hv"
+              style={{ color: "#305A61" }}
+              href="/"
+            >
+              Home
+            </Link>{" "}
+            <span>/</span>{" "}
+            <Link
+              className="no-underline underline_hv"
+              style={{ color: "#305A61" }}
+              href="/trekbooking/tour"
+            >
+              Attractions
+            </Link>{" "}
+            <span>/</span> <span>{tour?.tourName}</span>
+          </div>
+          <div
+            style={{ borderRadius: "20px", boxShadow: "0 4px 4px 0 #7F7F7F" }}
+          >
+            <div className="py-8 px-3">
+              <p className="font-semibold text-3xl">{tour.tourName}</p>
+              <div className="time-location flex pb-2">
+                <div className="time-fe flex">
+                  <img className="w-5 h-5" src="/image/calendar.png" alt="" />
+                  <p className="ml-1">{formattedTime}</p>
+                </div>
+                <div className="location-fe flex ml-4">
+                  <img className="w-5 h-5" src="/image/map.png" alt="" />
+                  <p className="ml-1">{tour.tourAddress}</p>
+                </div>
               </div>
-              <div className="location-fe flex ml-4">
-                <img className="w-5 h-5" src="/image/map.png" alt="" />
-                <p className="ml-1">{tour.tourAddress}</p>
+              <div className="row">
+                <div className="col-md-6">
+                  <img
+                    src={tourImages[0]}
+                    className="h-full border"
+                    style={{ borderRadius: "10px" }}
+                    alt="Image 1"
+                  />
+                </div>
+                <div className="col-md-6">
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-2">
+                    {tourImages.slice(1).map((image, index) => (
+                      <div key={index}>
+                        <img
+                          src={image}
+                          style={{ borderRadius: "10px" }}
+                          className="h-full border"
+                          alt={`Image ${index + 2}`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="row pb-6">
-              <div className="col-lg-6 pb-3">
-                <img src={tourImages[0] || "/image/tourdetail1.png"} alt="" />
+          </div>
+
+          <div className="row mt-4">
+            <div className="col-md-8">
+              <div
+                className="py-8 px-4"
+                style={{
+                  borderRadius: "20px",
+                  boxShadow: "0 4px 4px 0 #7F7F7F",
+                }}
+              >
+                <a
+                  className="no-underline px-4 py-1 text-base font-medium text-white"
+                  style={{ borderRadius: "10px", backgroundColor: "#305A61" }}
+                  href="#"
+                >
+                  Overview
+                </a>
+                <p className="font-bold text-xl pt-4" style={{color: "#305A61"}}>About <span>{tour.tourName}</span></p>
+                <p className="text-base font-light" style={{textIndent: "10px"}}>{tour.tourDescription}</p>
+                <div>
+                  <img style={{borderRadius: "20px"}} src={tourImages[0]} alt="tour thumb" />
+                </div>
               </div>
-              <div className="col-lg-6">
-                <div className="row">
-                  <div className="col-12 pb-3">
-                    <img
-                      src={tourImages[1] || "/image/tourdetail2.png"}
-                      alt=""
-                    />
+            </div>
+            <div className="col-md-4 ">
+              <div className="pt-8 pb-14 px-5 bg-white" style={{borderRadius: "20px" , boxShadow: "0 4px 4px 0 #7F7F7F",}}>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center">
+                    <img src="/image/calendartour.png" style={{width: "19px", height: "19px"}} alt="tour calendar" />
+                    <span className="font-semibold ml-1">Departure time:</span>
                   </div>
-                  <div className="col-12 flex  pb-3">
-                    <img
-                      className="w-1/2"
-                      src={tourImages[2] || "/image/tourdetail3.png"}
-                      alt=""
-                    />
-                    <img
-                      className="w-1/2"
-                      src={tourImages[3] || "/image/tourdetail4.png"}
-                      alt=""
-                    />
+                  <div>
+                    <span className="font-semibold">{formattedTime}</span>
                   </div>
+                </div>
+                <div className="flex justify-between items-center mt-3">
+                  <div className="flex items-center">
+                    <img src="/image/uptour.png" style={{width: "19px", height: "19px"}} alt="tour calendar" />
+                    <span className="font-semibold ml-1">Departure location:</span>
+                  </div>
+                  <div>
+                    <span className="font-semibold">{tour.tourAddress}</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center mt-3 pb-3" style={{borderBottom: "2px solid #000"}}>
+                  <div className="flex items-center">
+                    <img src="/image/user.png" style={{width: "19px", height: "19px"}} alt="tour calendar" />
+                    <span className="font-semibold ml-1">Capacity:</span>
+                  </div>
+                  <div>
+                    <span className="font-semibold">{tour.tourCapacity}</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center mt-3 pb-3">
+                  <div className="">
+                    <span className="font-bold text-xl ml-1" style={{color: "#305A61"}}>Price:</span>
+                  </div>
+                  <div>
+                    <span className="font-bold text-xl"><span>{tour.tourPrice}</span>US$</span>
+                  </div>
+                </div>
+                <div className="flex float-end pb-4">
+                  <a
+                    className="no-underline px-4 py-1 text-base font-medium text-white"
+                    style={{ borderRadius: "12px", backgroundColor: "#305A61" }}
+                    href=""
+                  >
+                    Add to cart
+                  </a>
                 </div>
               </div>
             </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Button, Form, Modal } from "react-bootstrap";
+import { Hotel } from "@mui/icons-material";
 import supplierStaffService from "@/app/services/supplierStaffService";
 
 interface Iprops {
@@ -22,7 +23,8 @@ function UpdateStaff(props: Iprops) {
   const [staffPhoneNumber, setStaffPhoneNumber] = useState<string>("");
   const [staffEmail, setStaffEmail] = useState<string>("");
   const [staffAddress, setStaffAddress] = useState<string>("");
-  const [staffPassword, setStaffPassword] = useState<string>("");  
+  const [staffPassword, setStaffPassword] = useState<string>("");
+  const [status, SetStatus] = useState<boolean>(true);
   const [roleId, setRoleId] = useState<number>(0);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});

@@ -7,13 +7,52 @@ import { analytics } from "../../../../../../../../public/firebase/firebase-conf
 import roomService from "@/app/services/roomService";
 import CreateRoom3DImage from "@/app/components/Room3DImages/Create3DRoomImage";
 import room3DImageService from "@/app/services/room3DImageService";
+import { toast } from "react-toastify";
+import "../../../../../../../../public/css/tour.css";
+import hotelService from "@/app/services/hotelService";
+import Link from "next/link";
+import "../../../../../../../../public/css/room.css";
 
-const ListRoomImage = ({ params }: { params: { roomId: string } }) => {
+
+const ListRoomImage = ({ params }: { params: {hotelId:string, roomId: string } }) => {
   const [showRoomImageCreate, setShowRoomImageCreate] = useState<boolean>(false);
   const [listRoomImage, setRoomImage] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [roomId, setRoomId] = useState(0);
+
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedImageRoom, setSelectedImageRoom] = useState<IRoom3DImage | null>(null);
+  const [room, setRoom] = useState<IRoom | null>(null);
+  const [hotel, setHotel] = useState<IHotel | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [roomImagePerPage] = useState(3);
+
+  const handleImageClick = (imageRoom: IRoom3DImage) => {
+    setSelectedImageRoom(imageRoom);
+    setShowPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setSelectedImageRoom(null);
+  };
+
+  useEffect(() => {
+    const fetchHotelandRoom = async () => {
+      try {
+        const hotelData = await hotelService.getHotelById(Number(params.hotelId));
+        setHotel(hotelData);
+
+        const roomData = await roomService.getRoomById(Number(params.roomId));
+        setRoom(roomData);
+      } catch (error) {
+        console.error("Error fetching hotel and room details:", error);
+      }
+    };
+
+    fetchHotelandRoom();
+  }, [params.hotelId, params.roomId]);
 
   const handleCreateRoomImage = async () => {
     setShowRoomImageCreate(false);
@@ -34,24 +73,23 @@ const ListRoomImage = ({ params }: { params: { roomId: string } }) => {
 
   useEffect(() => {
     if (params.roomId) {
-        room3DImageService
-          .getRoom3DImageByRoomId(Number(params.roomId))
-          .then((data: any) => {
-            setRoomImage(data);
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.error("Error fetching room images:", error);
-            setError(error);
-            setLoading(false);
-          });
-      }
+      room3DImageService
+        .getRoom3DImageByRoomId(Number(params.roomId))
+        .then((data: any) => {
+          setRoomImage(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching room images:", error);
+          setError(error);
+          setLoading(false);
+        });
+    }
   }, [params.roomId]);
 
-  const deleteImageButtonHandler = (roomImageId: number, imageUrl: string) => {
-    if (confirm("Are you sure you want to delete this image?")) {
-      handleDeleteRoomImage(roomImageId, imageUrl);
-    }
+  const deleteImageButtonHandler = (roomImage3DId: number, roomImage3DURL: string) => {
+    handleDeleteRoomImage(roomImage3DId, roomImage3DURL);
+    setShowPopup(false);
   };
 
   const deleteImageFromStorage = async (imageUrl: string) => {
@@ -64,12 +102,10 @@ const ListRoomImage = ({ params }: { params: { roomId: string } }) => {
     }
   };
 
-  const handleDeleteRoomImage = async (roomImageId: number, imageUrl: string) => {
+  const handleDeleteRoomImage = async (roomImage3DId: number, roomImage3DURL: string) => {
     try {
-      console.log("Deleting room image with ID:", roomImageId);
-      await deleteImageFromStorage(imageUrl);
-      await room3DImageService.deleteRoom3DImage(roomImageId);
-      console.log("Room 3D image deleted successfully");
+      await deleteImageFromStorage(roomImage3DURL);
+      await room3DImageService.deleteRoom3DImage(roomImage3DId);
 
       if (params.roomId) {
         room3DImageService
@@ -79,16 +115,16 @@ const ListRoomImage = ({ params }: { params: { roomId: string } }) => {
             setLoading(false);
           })
           .catch((error) => {
-            console.error("Error fetching room 3D images:", error);
+            console.error("Error fetching room images:", error);
             setError(error);
             setLoading(false);
           });
       }
 
-      alert("Room 3D image deleted successfully");
+      toast.success("Delete Image Successful");
     } catch (error) {
-      console.error("Error deleting room 3D image:", error);
-      alert("Failed to delete room 3D image");
+      console.error("Error deleting room image:", error);
+      alert("Failed to delete room image");
     }
   };
 
@@ -101,18 +137,68 @@ const ListRoomImage = ({ params }: { params: { roomId: string } }) => {
     setShowRoomImageCreate(true);
   };
 
-//   if (loading) {
-//     return <div>Loading...</div>;
-//   }
+  const indexOfLastRoomImage = currentPage * roomImagePerPage;
+  const indexOfFirstRoomImage = indexOfLastRoomImage - roomImagePerPage;
+  const currentRoomImage = listRoomImage.slice(indexOfFirstRoomImage, indexOfLastRoomImage);
 
-//   if (error) {
-//     return <div>Error loading room 3D images</div>;
-//   }
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const totalPages = Math.ceil(listRoomImage.length / roomImagePerPage);
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   return (
     <div className="relative">
       <div className="search-add">
         <div className="search-hotel flex">
+        {hotel && room && (
+            <div className="fix-name">
+              <Link
+                href="/supplier/hotel"
+                style={{ color: "black", fontSize: "18px" }}
+              >
+                Hotel
+              </Link>
+              <span
+                style={{
+                  color: "black",
+                  fontSize: "18px",
+                  marginLeft: "5px",
+                  marginRight: "5px",
+                }}
+              >
+                {" > "}
+              </span>
+              <Link
+                href={`/supplier/hotel/room/${params.hotelId}`}
+                style={{ color: "black", fontSize: "18px" }}
+              >
+                {hotel.hotelName}
+              </Link>
+              <span
+                style={{
+                  color: "black",
+                  fontSize: "18px",
+                  marginLeft: "5px",
+                  marginRight: "5px",
+                }}
+              >
+                {" > "}
+              </span>
+              <span style={{ color: "#4c7cab", fontSize: "18px" }}>
+                {room.roomName}
+              </span>
+            </div>
+          )}
           <input
             type="text"
             placeholder="Search........."
@@ -144,8 +230,8 @@ const ListRoomImage = ({ params }: { params: { roomId: string } }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {listRoomImage.length > 0 ? (
-                      listRoomImage.map((item: any, index) => (
+                    {currentRoomImage.length > 0 ? (
+                      currentRoomImage.map((item: any, index) => (
                         <tr
                           key={index}
                           className="border-b border-neutral-200 dark:border-white/10 text-center"
@@ -155,12 +241,8 @@ const ListRoomImage = ({ params }: { params: { roomId: string } }) => {
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 font-semibold flex justify-center">
                             <img
-                              className="max-w-[180px] max-h-[180px]"
-                              src={
-                                item.roomImage3DURL
-                                  ? item.roomImage3DURL
-                                  : "/image/imagedefault.png"
-                              }
+                              className="max-w-[180px] max-h-[65px]"
+                              src={item.roomImage3DURL ? item.roomImage3DURL : "/image/imagedefault.png"}
                               alt=""
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
@@ -168,16 +250,35 @@ const ListRoomImage = ({ params }: { params: { roomId: string } }) => {
                                 target.src = "/image/imagedefault.png";
                               }}
                             />
+                            {showPopup && selectedImageRoom?.roomImage3DId === item.roomImage3DId && (
+                              <div className="fixed inset-0 z-10 flex items-center justify-center ">
+                                <div className="fixed inset-0 bg-black opacity-5" onClick={handleClosePopup}></div>
+                                <div className="relative bg-white p-8 rounded-lg">
+                                  <p className="color-black font-bold text-2xl">
+                                    Do you want to delete Room Image 3D Id: {item.roomImage3DId} ?
+                                  </p>
+                                  <div className="button-kichhoat pt-4">
+                                    <button className="button-exit mr-2" onClick={handleClosePopup}>
+                                      Exit
+                                    </button>
+                                    <button
+                                      className="button-yes cursor-pointer"
+                                      onClick={() => deleteImageButtonHandler(item.roomImage3DId, item.roomImage3DURL)}
+                                    >
+                                      Yes
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </td>
-                          <td className="whitespace-nowrap px-6 py-4 ">
+                          <td className="whitespace-nowrap px-6 py-4">
                             <div className="flex justify-center">
                               <img
-                                className="w-5 h-5 cursor-pointer ml-3"
-                                src="/image/unlock.png"
+                                className="w-7 h-7 cursor-pointer ml-3"
+                                src="/image/bag.png"
                                 alt="Delete"
-                                onClick={() =>
-                                  deleteImageButtonHandler(item.roomImage3DId, item.roomImage3DURL)
-                                }
+                                onClick={() => handleImageClick(item)}
                               />
                             </div>
                           </td>
@@ -185,16 +286,43 @@ const ListRoomImage = ({ params }: { params: { roomId: string } }) => {
                       ))
                     ) : (
                       <tr>
-                        <td
-                          colSpan={8}
-                          className="text-center py-4 text-red-600 font-bold"
-                        >
+                        <td colSpan={8} className="text-center py-4 text-red-600 font-bold">
                           No Room3DImage found
                         </td>
                       </tr>
                     )}
                   </tbody>
                 </table>
+                <div className="pagination mt-4 flex justify-between items-center font-semibold">
+                  <div>
+                    <span className="ml-8">
+                      {currentPage} of {totalPages}
+                    </span>
+                  </div>
+                  <div className="flex items-center mr-8">
+                    <img
+                      className="w-3 h-3 cursor-pointer"
+                      src="/image/left.png"
+                      alt="Previous"
+                      onClick={handlePrevPage}
+                    />
+                    {Array.from({ length: totalPages }, (_, index) => (
+                      <p
+                        key={index}
+                        onClick={() => paginate(index + 1)}
+                        className={`mb-0 mx-2 cursor-pointer ${currentPage === index + 1 ? "active" : ""}`}
+                      >
+                        {index + 1}
+                      </p>
+                    ))}
+                    <img
+                      className="w-3 h-3 cursor-pointer"
+                      src="/image/right2.png"
+                      alt="Next"
+                      onClick={handleNextPage}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

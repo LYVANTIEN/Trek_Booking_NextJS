@@ -2,7 +2,7 @@ import React from 'react'
 import '../../../../public/css/voucher.css'
 const page = () => {
   return (
-    
+  
     <div>
     <nav className="to-white pt-2 pb-2">
           <ul className="flex ul-menu">

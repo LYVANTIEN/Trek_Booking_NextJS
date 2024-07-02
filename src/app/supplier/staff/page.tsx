@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import supplierStaffService, {
+  revalidateSupplierStaffs,
   toggleSupplierStaffStatus,
 } from "@/app/services/supplierStaffService";
 import CreateSupplierStaff from "@/app/components/Staff/CreateStaff";
@@ -20,16 +21,18 @@ const SupplierStaffList = () => {
   const [staffId, setStaffId] = useState(0);
   const [supplierStaff, setSupplierStaff] = useState<ISupplierStaff | null>(null);
 
-  const supplierId = localStorage.getItem("supplierId");
+  //const supplierId = localStorage.getItem("supplierId");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [staffPerPage] = useState(5);
   // Sử dụng useSWR để lấy danh sách nhân viên với key phù hợp
   const {
     data: supplierStaffList,
     error,
     mutate: mutateSupplierStaffs,
   } = useSWR(
-    supplierId ? `supplierStaffList-${supplierId}` : null,
-    () => supplierStaffService.getStaffsBySuppierId(Number(supplierId)),
+    "listStaff",
+    () => supplierStaffService.getStaffsBySuppierId(),
     {
       revalidateOnFocus: false,
     }
@@ -74,7 +77,23 @@ const SupplierStaffList = () => {
   if (error) {
     return <div>Error loading supplier staff</div>;
   }
+  const indexOfLastStaff = currentPage * staffPerPage;
+  const indexOfFirstStaff = indexOfLastStaff - staffPerPage;
+  const currentStaff = supplierStaffList.slice(indexOfFirstStaff, indexOfLastStaff);
 
+  const paginate = (pageNumber:number) => setCurrentPage(pageNumber);
+  const totalPages = Math.ceil(supplierStaffList.length / staffPerPage);
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
   return (
     <div className="relative">
       <div className="search-add">
@@ -99,36 +118,22 @@ const SupplierStaffList = () => {
               <div className="overflow-x-auto">
                 <table className="min-w-full text-start text-sm font-light text-surface dark:text-white border-solid">
                   <thead className="border-b border-neutral-200 font-medium dark:border-white/10 bk-top-table">
-                    <tr>
-                      <th scope="col" className="px-6 py-4">
-                        StaffId
-                      </th>
-                      <th scope="col" className="px-6 py-4 text-center">
-                        Staff Name
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Phone
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Email
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Address
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Status
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Action
-                      </th>
+                    <tr className="text-center">
+                      <th scope="col" className="px-6 py-4">StaffId</th>
+                      <th scope="col" className="px-6 py-4 text-center">Staff Name</th>
+                      <th scope="col" className="px-6 py-4">Phone</th>
+                      <th scope="col" className="px-6 py-4">Email</th>
+                      <th scope="col" className="px-6 py-4">Address</th>
+                      <th scope="col" className="px-6 py-4">Status</th>
+                      <th scope="col" className="px-6 py-4">Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {supplierStaffList.length > 0 ? (
-                      supplierStaffList.map((item: ISupplierStaff, index) => (
+                    {currentStaff.length > 0 ? (
+                      currentStaff.map((item: ISupplierStaff, index) => (
                         <tr
                           key={index}
-                          className="border-b border-neutral-200 dark:border-white/10"
+                          className="border-b border-neutral-200 dark:border-white/10 text-center"
                         >
                           <td className="whitespace-nowrap px-6 py-4 font-medium text-black">
                             {item.staffId}
@@ -151,7 +156,7 @@ const SupplierStaffList = () => {
                             }`}
                           >
                             {item.status ? "Active" : "Stopped"}</td>
-                          <td className="whitespace-nowrap px-6 py-4 flex">
+                          <td className="whitespace-nowrap px-6 py-4 flex justify-center">
                             <Link href="#">
                               <img
                                 className="w-5 h-5 cursor-pointer"
@@ -210,16 +215,31 @@ const SupplierStaffList = () => {
                       ))
                     ) : (
                       <tr>
-                        <td
-                          colSpan={9}
-                          className="text-center py-4 text-red-600 font-bold"
-                        >
+                        <td colSpan={9} className="text-center py-4 text-red-600 font-bold">
                           No staffs found
                         </td>
                       </tr>
                     )}
                   </tbody>
                 </table>
+                <div className="pagination mt-4 flex justify-between items-center font-semibold">
+                  <div>
+                    <span className="ml-8">{currentPage} of {totalPages}</span>
+                  </div>
+                  <div className="flex items-center mr-8">
+                    <img className="w-3 h-3 cursor-pointer" src="/image/left.png" alt="Previous" onClick={handlePrevPage} />
+                    {Array.from({ length: totalPages }, (_, index) => (
+                      <p
+                        key={index}
+                        onClick={() => paginate(index + 1)}
+                        className={`mb-0 mx-2 cursor-pointer ${currentPage === index + 1 ? 'active' : ''}`}
+                      >
+                        {index + 1}
+                      </p>
+                    ))}
+                    <img className="w-3 h-3 cursor-pointer" src="/image/right2.png" alt="Next" onClick={handleNextPage} />
+                  </div>
+                </div>
                 <CreateSupplierStaff
                   showStaffCreate={showStaffCreate}
                   setShowStaffCreate={setShowStaffCreate}

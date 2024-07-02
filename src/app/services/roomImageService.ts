@@ -1,5 +1,5 @@
 interface IRoomImageService {
-    getRoomImageByRoomId(roomId: number): Promise<IRoom[]>;
+    getRoomImageByRoomId(roomId: number): Promise<IRoomImage[]>;
     createRoomImage(roomImage: IRoomImage): Promise<IRoomImage>;
     //updateHotel(roomImage: Partial<IRoomImage>): Promise<IRoomImage>;
     deleteRoomImage(roomImageId: number): Promise<void>;
@@ -7,7 +7,7 @@ interface IRoomImageService {
   
   const roomImageService: IRoomImageService = {
     async getRoomImageByRoomId(roomId) {
-      console.log(roomId);
+     // console.log(roomId);
       try {
         const response = await fetch(
           `https://localhost:7132/getRoomImagebyRoomId/${roomId}`,
@@ -25,7 +25,6 @@ interface IRoomImageService {
           throw new Error("Failed to fetch room image list");
         }
         const data = await response.json();
-        console.log(data); // Trigger refetch after fetching
         return data;
       } 
       catch (error) {

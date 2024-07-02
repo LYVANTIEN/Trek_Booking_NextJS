@@ -1,13 +1,31 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 import commentService from "@/app/services/commentService";
+import hotelService from "@/app/services/hotelService";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
-
+import "../../../../../../public/css/comment.css";
 const ListCommentOfHotel = ({ params }: { params: { hotelId: string } }) => {
+  const [hotel, setHotel] = useState<IHotel | null>(null);
   const { data: listComment, error } = useSWR("listComment", () =>
     commentService.getCommentsByHotelId(Number(params.hotelId))
   );
+  
+  useEffect(() => {
+    const fetchHotel = async () => {
+      try {
+        const hotelData = await hotelService.getHotelById(
+          Number(params.hotelId)
+        );
+        setHotel(hotelData);
+      } catch (error) {
+        console.error("Error fetching hotel details:", error);
+      }
+    };
+
+    fetchHotel();
+  }, [params.hotelId]);
 
   if (!listComment) {
     return <div>Loading...</div>;
@@ -19,7 +37,32 @@ const ListCommentOfHotel = ({ params }: { params: { hotelId: string } }) => {
   return (
     <div className="relative">
       <div className="search-add ">
-        
+      {hotel && (
+          <div className="fix-name">
+            <Link
+              href="/supplier/hotel"
+              style={{ color: "black", fontSize: "18px" }}
+            >
+              Hotel
+            </Link>
+            <span
+              style={{
+                color: "black",
+                fontSize: "18px",
+                marginLeft: "5px",
+                marginRight: "5px",
+              }}
+            >
+              {" > "}
+            </span>
+            <Link
+              href={`/supplier/hotel/room/${params.hotelId}`}
+              style={{ color: "#4c7cab", fontSize: "18px" }}
+            >
+              {hotel.hotelName}
+            </Link>
+          </div>
+        )}
       </div>
       <div className="table-hotel pt-8">
         <div className="flex flex-col overflow-x-auto">

@@ -8,9 +8,5 @@ interface ISupplier{
     status: boolean;
     isVerify: boolean;
     roleId: number;
-    role:{
-        roleId: number;
-        roleName: string;
-        roleDescription: string
-    }
+    avatar: string;
 }
