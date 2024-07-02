@@ -1,19 +1,21 @@
+import Cookies from 'js-cookie';
 interface IPaymentWalletService{
-    getPaymentInforByUserId(userId: number): Promise<IPaymentWallet[]>;
+    getPaymentInforByUserId(): Promise<IPaymentWallet[]>;
 }
 
 const paymentWalletService: IPaymentWalletService = {
-    async getPaymentInforByUserId(userId) {
+    async getPaymentInforByUserId() {
       try {
         const response = await fetch(
-          `https://localhost:7132/getPaymentInforByUserId/${userId}`,
+          `https://localhost:7132/getPaymentInforByUserId`,
           {
             method: "GET",
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Include the token in the headers
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("token")}`, // Retrieve token from localStorage
+
             },
           }
         );

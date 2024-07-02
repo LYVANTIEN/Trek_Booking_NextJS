@@ -1,12 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import UpdateProfile from "@/app/components/Profile/UpdateProfile";
-import UpdateUser from "@/app/components/Profile/UpdateProfile";
 import userService from "@/app/services/userService";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 const Profile = () => {
-  const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -16,18 +15,12 @@ const Profile = () => {
   const [showUserUpdate, setShowUserUpdate] = useState<boolean>(false);
   const [User, setUser] = useState<IUser | null>(null);
 
-  useEffect(() => {
-    const id = localStorage.getItem("userId");
-    setUserId(id);
-  }, []);
-
-  const { data: user, error } = useSWR(userId ? `user/${userId}` : null, () =>
-    userService.getUserById(Number(userId))
+  const { data: user, error } = useSWR("profile", () =>
+    userService.getUserById()
   );
 
   useEffect(() => {
     if (user) {
-      //setUserId(userId);
       setUserName(user.userName);
       setAvatar(user.avatar);
       setEmail(user.email);
@@ -39,7 +32,7 @@ const Profile = () => {
     }
   }, [user, error]);
 
-  if (!userId) {
+  if (!user) {
     return <div>User ID not found in localStorage</div>;
   }
 
@@ -181,7 +174,7 @@ const Profile = () => {
               showUserUpdate={showUserUpdate}
               setShowUserUpdate={setShowUserUpdate}
               user={User}
-              userId={Number(userId)}
+              userId={Number(user.userId)}
               setUser={setUser}
             />
           </div>

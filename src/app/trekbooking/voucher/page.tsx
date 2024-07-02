@@ -5,16 +5,8 @@ import "../../../../public/css/voucher.css";
 import useSWR from "swr";
 import voucherWalletService from "@/app/services/voucherWalletService";
 const VoucherWallet = () => {
-  const [userId, setUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const id = localStorage.getItem("userId");
-    setUserId(id);
-  }, []);
-
-  const { data: voucherWalletList, error } = useSWR(
-    userId ? `voucherWalletList-${userId}` : null,
-    () => voucherWalletService.getVoucherUsageHistoryByUserId(Number(userId))
+  const { data: voucherWalletList, error } = useSWR("voucherWalletList", () =>
+    voucherWalletService.getVoucherUsageHistoryByUserId()
   );
 
   if (!voucherWalletList) {

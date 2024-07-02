@@ -2,7 +2,7 @@ import { ITour } from "../entities/tour";
 
 interface ITourImageService {
     
-    getTourImageByTourId(tourId: number): Promise<ITour[]>;
+    getTourImageByTourId(tourId: number): Promise<ITourImage[]>;
     createTourImage(tourImage: ITourImage): Promise<ITourImage>;
     deleteTourImage(tourImageId: number): Promise<void>;
   }

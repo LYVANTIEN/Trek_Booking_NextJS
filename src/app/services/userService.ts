@@ -1,6 +1,8 @@
+import Cookies from 'js-cookie';
+
 interface IUserService{
     getUsers(): Promise<any[]>;
-    getUserById(userId: number): Promise<IUser>;
+    getUserById(): Promise<IUser>;
     updateUser(user: IUser): Promise<IUser>;
 }
 
@@ -27,18 +29,18 @@ const userService: IUserService = {
     },
 
 
-    async getUserById(userId) {
-      console.log(userId);
+    async getUserById() {
+      //console.log(userId);
       try {
         const response = await fetch(
-          `https://localhost:7132/getUserById/${userId}`,
+          `https://localhost:7132/getUserById`,
           {
             method: "GET",
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Include the token in the headers
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("token")}`, // Retrieve token from localStorage
             },
           }
         );
@@ -64,7 +66,8 @@ const userService: IUserService = {
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`, 
+              // Authorization: `Bearer ${localStorage.getItem("token")}`, 
+              Authorization: `Bearer ${Cookies.get("token")}`, 
             },
             body: JSON.stringify(user),
           }

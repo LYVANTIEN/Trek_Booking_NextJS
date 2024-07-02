@@ -1,20 +1,23 @@
+import Cookies from 'js-cookie';
+
 interface IVoucherWalletService{
-    getVoucherUsageHistoryByUserId(userId: number): Promise<IVoucherWallet[]>;
+    getVoucherUsageHistoryByUserId(): Promise<IVoucherWallet[]>;
 }
 
 const voucherWalletService: IVoucherWalletService = {
-    async getVoucherUsageHistoryByUserId(userId) {
+    async getVoucherUsageHistoryByUserId() {
       // console.log(supplierId);
       try {
         const response = await fetch(
-          `https://localhost:7132/getVoucherUsageHistoryByUserId/${userId}`,
+          `https://localhost:7132/getVoucherUsageHistoryByUserId`,
           {
             method: "GET",
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Include the token in the headers
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("token")}`, // Retrieve token from localStorage
+
             },
           }
         );

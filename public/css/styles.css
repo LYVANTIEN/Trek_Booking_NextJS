@@ -103,6 +103,10 @@ width: 100%;
 .h-550 {
   height: 550px;
 }
+.h-285{
+  height: 285px;
+  width: 100%;
+}
 .card1 {
   transition: transform 0.3s ease;
 }

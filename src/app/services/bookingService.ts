@@ -3,6 +3,7 @@ import Cookies from 'js-cookie';
 
 interface IBookingService {
     getBookingsBySupplierId(): Promise<IBooking[]>;
+    getBookingByUserId():Promise<IBooking[]>;
     updateBooking(booking: {
       bookingId: number;
       userId: number;
@@ -70,6 +71,31 @@ interface IBookingService {
         return updatedBooking;
       } catch (error) {
         console.error("Error editing booking:", error);
+        throw error;
+      }
+    },
+    async getBookingByUserId() {
+      try {
+        const response = await fetch(
+          `https://localhost:7132/getBookingByUserId`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json, text/plain, */*",
+              "Content-Type": "application/json",
+              // Include the token in the headers
+              Authorization: `Bearer ${Cookies.get("token")}`, // Retrieve token from localStorage
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch tour order list");
+        }
+        const data = await response.json();
+        // console.log(data); // Trigger refetch after fetching
+        return data;
+      } catch (error) {
+        console.error("Error fetching tour order list:", error);
         throw error;
       }
     },

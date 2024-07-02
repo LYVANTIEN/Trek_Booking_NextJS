@@ -145,8 +145,8 @@ function CreateRoom(props: IProps) {
   const handleBlur = (field: string) => {
     setIsTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
   };
-  // End validate input // 
-  
+  // End validate input //
+
   const handleCloseModal = async () => {
     setRoomName("");
     setNote("");

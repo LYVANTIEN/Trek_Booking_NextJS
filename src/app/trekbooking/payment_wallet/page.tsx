@@ -6,16 +6,8 @@ import useSWR from "swr";
 import voucherWalletService from "@/app/services/voucherWalletService";
 import paymentWalletService from "@/app/services/paymentWalletService";
 const PaymentWallet = () => {
-  const [userId, setUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const id = localStorage.getItem("userId");
-    setUserId(id);
-  }, []);
-
-  const { data: paymentWalletList, error } = useSWR(
-    userId ? `paymentWalletList-${userId}` : null,
-    () => paymentWalletService.getPaymentInforByUserId(Number(userId))
+  const { data: paymentWalletList, error } = useSWR("paymentWalletList", () =>
+    paymentWalletService.getPaymentInforByUserId()
   );
 
   if (!paymentWalletList) {

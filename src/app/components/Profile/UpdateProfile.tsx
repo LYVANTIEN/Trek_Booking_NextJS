@@ -2,7 +2,7 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, use, useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import roomService from "@/app/services/roomService";
 import { mutate } from "swr";
@@ -34,14 +34,16 @@ const handleEvent = <T extends HTMLElement>(
 };
 
 function UpdateProfile(props: IProps) {
-  const { showUserUpdate, setShowUserUpdate, user, setUser } = props;
-  const [userId, setUserId] = useState<string | null>(null);
+  const { showUserUpdate, setShowUserUpdate, user, userId, setUser } = props;
+  //const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [roleId, setRoleId] = useState<number>();
+
   const [fileUpload, setFileUpload] = useState<File | null>(null);
   const [previewImageURL, setPreviewImageURL] = useState<string | null>(null);
   const [uploadedImageURLs, setUploadedImageURLs] = useState<string[]>([]);
@@ -51,11 +53,6 @@ function UpdateProfile(props: IProps) {
   const [citiesList, setCitiesList] = useState<any[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [selectedCity, setSelectedCity] = useState<string>("");
-
-  useEffect(() => {
-    const id = localStorage.getItem("userId");
-    setUserId(id);
-  }, []);
 
   useEffect(() => {
     const loadCountries = async () => {
@@ -81,7 +78,7 @@ function UpdateProfile(props: IProps) {
     const cityCode = event.target.value;
     setSelectedCity(cityCode);
   };
-const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const file = event.target.files ? event.target.files[0] : null;
     if (file) {
@@ -147,11 +144,12 @@ const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
 
   useEffect(() => {
     if (user && user.userId) {
-      //setUserId(user.userId);
       setUserName(user.userName);
-      setAvatar(user.avatar || "/image/addpicture.png");
+      setAvatar(user.avatar);
       setPhone(user.phone);
+      setPassword(user.password);
       setEmail(user.email);
+      setRoleId(user.roleId);
       setAddress(user.address);
 
       // Kiểm tra nếu user.address không phải là null hoặc undefined
@@ -173,7 +171,7 @@ const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         // Xử lý khi user.address là null hoặc undefined
         setSelectedCity("");
         setSelectedCountry("");
-setCitiesList([]);
+        setCitiesList([]);
       }
     }
   }, [user]); // Được khuyến khích bổ sung tất cả các định ngĩa
@@ -186,7 +184,7 @@ setCitiesList([]);
     }
 
     try {
-      let imageURLs = "";
+      let imageURLs = avatar; // Use existing avatar URL
       if (fileUpload) {
         imageURLs = await uploadImages();
       }
@@ -194,14 +192,14 @@ setCitiesList([]);
       const user: IUser = {
         userId: Number(userId),
         userName,
-        avatar: imageURLs || avatar,
+        avatar: imageURLs,
         phone,
         email,
         address: `${selectedCity}, ${selectedCountry}`,
-        password,
+        password: password,
         status: true,
         isVerify: true,
-        roleId: 4,
+        roleId: Number(roleId),
       };
 
       const updateUser = await userService.updateUser(user);
@@ -212,7 +210,7 @@ setCitiesList([]);
         toast.success("Update Profile Success");
       }
       handleCloseModal();
-      mutate(`user/${userId}`, userService.getUserById(Number(userId)), false);
+      mutate("profile");
     } catch (error) {
       toast.error("Failed to update profile");
       console.error(error);
@@ -272,7 +270,7 @@ setCitiesList([]);
                     </option>
                   ))}
                 </Form.Control>
-<Form.Control
+                <Form.Control
                   as="select"
                   value={selectedCity}
                   onChange={handleEvent<HTMLSelectElement>(handleCityChange)}
@@ -354,7 +352,7 @@ setCitiesList([]);
                   color: "black",
                   background: "white",
                 }}
-onClick={handleCloseModal}
+                onClick={handleCloseModal}
               >
                 Exit
               </Button>
