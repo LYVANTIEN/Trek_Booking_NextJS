@@ -139,12 +139,12 @@ const ListHotels = () => {
                 href="#"
                 className="text-white no-underline zoom-effect-container"
               >
-                <div className="relative image-card">
+              <div className="relative image-card">
                   <img
                     className="border w-full"
                     style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/dalat.png"
-                    alt="da lat"
+                    src="/image/cantho.webp"
+                    alt="Can Tho"
                   />
                   <div
                     className="absolute z-10 w-full bottom-0 flex justify-center"
@@ -155,17 +155,18 @@ const ListHotels = () => {
                       borderBottomRightRadius: "20px",
                     }}
                   >
-                    <span className="text-white font-semibold text-base max-[375px]:text-xs text-center">
-                      Da Lat
+                    <span className="text-white font-semibold text-base">
+                      Can Tho
                     </span>
                   </div>
                 </div>
               </Link>
               <div className="flex justify-center my-3">
-                <Link
-                  className="no-underline text-white border px-3 font-medium text-sm text-center  py-1"
+              <Link
+                  className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href=""
+                  //filter city can tho
+                  href={`/trekbooking/search_city?city=Cần Thơ`}
                 >
                   Find hotel
                 </Link>
@@ -180,8 +181,8 @@ const ListHotels = () => {
                   <img
                     className="border w-full"
                     style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/phuquoc.png"
-                    alt="da lat"
+                    src="/image/ninhbinh.jpg"
+                    alt="ninh binh"
                   />
                   <div
                     className="absolute z-10 w-full bottom-0 flex justify-center"
@@ -192,17 +193,17 @@ const ListHotels = () => {
                       borderBottomRightRadius: "20px",
                     }}
                   >
-                    <span className="text-white font-semibold text-base max-[375px]:text-xs text-center">
-                      Phu Quoc
+                    <span className="text-white font-semibold text-base">
+                      Ninh Binh
                     </span>
                   </div>
                 </div>
               </Link>
               <div className="flex justify-center my-3">
-                <Link
-                  className="no-underline text-white border px-3 font-medium text-sm text-center  py-1"
+              <Link
+                  className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href=""
+                  href={`/trekbooking/search_city?city=Ninh Bình`}
                 >
                   Find hotel
                 </Link>
@@ -213,49 +214,12 @@ const ListHotels = () => {
                 href="#"
                 className="text-white no-underline zoom-effect-container"
               >
-                <div className="relative image-card">
-                  <img
-                    className="border w-full"
-                    style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/halong.png"
-                    alt="da lat"
-                  />
-                  <div
-                    className="absolute z-10 w-full bottom-0 flex justify-center"
-                    style={{
-                      backgroundColor: "rgb(31,28,23,0.3)",
-                      border: "0 0 1px 1px",
-                      borderBottomLeftRadius: "20px",
-                      borderBottomRightRadius: "20px",
-                    }}
-                  >
-                    <span className="text-white font-semibold text-base max-[375px]:text-xs ">
-                      Ha Long
-                    </span>
-                  </div>
-                </div>
-              </Link>
-              <div className="flex justify-center my-3">
-                <Link
-                  className="no-underline text-white border px-3 font-medium text-sm text-center  py-1"
-                  style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href=""
-                >
-                  Find hotel
-                </Link>
-              </div>
-            </div>
-            <div className="col-lg-2 col-4">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
-                <div className="relative image-card">
+               <div className="relative image-card">
                   <img
                     className="border w-full"
                     style={{ borderRadius: "20px", height: "231px" }}
                     src="/image/hcm.png"
-                    alt="da lat"
+                    alt="Ho chi Minh"
                   />
                   <div
                     className="absolute z-10 w-full bottom-0 flex justify-center"
@@ -266,17 +230,18 @@ const ListHotels = () => {
                       borderBottomRightRadius: "20px",
                     }}
                   >
-                    <span className="text-white font-semibold text-base max-[375px]:text-xs text-center">
+                    <span className="text-white font-semibold text-base">
                       Ho Chi Minh
                     </span>
                   </div>
                 </div>
+
               </Link>
               <div className="flex justify-center my-3">
-                <Link
-                  className="no-underline text-white border px-3 font-medium text-sm text-center  py-1"
+              <Link
+                  className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href=""
+                  href={`/trekbooking/search_city?city=Ho Chi Minh`}
                 >
                   Find hotel
                 </Link>
@@ -287,12 +252,12 @@ const ListHotels = () => {
                 href="#"
                 className="text-white no-underline zoom-effect-container"
               >
-                <div className="relative image-card">
+               <div className="relative image-card">
                   <img
                     className="border w-full"
                     style={{ borderRadius: "20px", height: "231px" }}
                     src="/image/hanoi.png"
-                    alt="da lat"
+                    alt="Ha noi"
                   />
                   <div
                     className="absolute z-10 w-full bottom-0 flex justify-center"
@@ -303,17 +268,55 @@ const ListHotels = () => {
                       borderBottomRightRadius: "20px",
                     }}
                   >
-                    <span className="text-white font-semibold text-base max-[375px]:text-xs text-center">
+                    <span className="text-white font-semibold text-base">
                       Ha Noi
                     </span>
                   </div>
                 </div>
               </Link>
               <div className="flex justify-center my-3">
-                <Link
-                  className="no-underline text-white border px-3 font-medium text-sm text-center py-1"
+              <Link
+                  className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href=""
+                  href={`/trekbooking/search_city?city=Hanoi`}
+                >
+                  Find hotel
+                </Link>
+              </div>
+            </div>
+            <div className="col-lg-2 col-4">
+              <Link
+                href="#"
+                className="text-white no-underline zoom-effect-container"
+              >
+               <div className="relative image-card">
+                  <img
+                    className="border w-full"
+                    style={{ borderRadius: "20px", height: "231px" }}
+                    src="/image/phanthiet.jpg"
+                    alt="phan thiet"
+                  />
+                  <div
+                    className="absolute z-10 w-full bottom-0 flex justify-center"
+                    style={{
+                      backgroundColor: "rgb(31,28,23,0.3)",
+                      border: "0 0 1px 1px",
+                      borderBottomLeftRadius: "20px",
+                      borderBottomRightRadius: "20px",
+                    }}
+                  >
+                    <span className="text-white font-semibold text-base">
+                     Phan Thiết
+                    </span>
+                  </div>
+                </div>
+
+              </Link>
+              <div className="flex justify-center my-3">
+              <Link
+                  className="no-underline text-white border px-3 font-medium text-sm"
+                  style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
+                  href={`/trekbooking/search_city?city=Phan Thiết`}
                 >
                   Find hotel
                 </Link>
@@ -328,8 +331,8 @@ const ListHotels = () => {
                   <img
                     className="border w-full"
                     style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/phocohoian.jpg"
-                    alt="da lat"
+                    src="/image/vungtau.jpg"
+                    alt="Vung Tau"
                   />
                   <div
                     className="absolute z-10 w-full bottom-0 flex justify-center"
@@ -340,17 +343,18 @@ const ListHotels = () => {
                       borderBottomRightRadius: "20px",
                     }}
                   >
-                    <span className="text-white font-semibold text-base max-[375px]:text-xs text-center">
-                      Nghe An
+                    <span className="text-white font-semibold text-base">
+                      Vung Tau
                     </span>
                   </div>
                 </div>
+
               </Link>
               <div className="flex justify-center my-3">
-                <Link
-                  className="no-underline text-white border px-3 font-medium text-sm text-center  py-1"
+              <Link
+                  className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href=""
+                  href={`/trekbooking/search_city?city=Vũng Tàu`}
                 >
                   Find hotel
                 </Link>
