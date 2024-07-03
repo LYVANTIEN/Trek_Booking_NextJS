@@ -16,7 +16,7 @@ const voucherWalletService: IVoucherWalletService = {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Include the token in the headers
-              Authorization: `Bearer ${Cookies.get("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${localStorage.getItem("token")}`,  // Retrieve token from localStorage
 
             },
           }

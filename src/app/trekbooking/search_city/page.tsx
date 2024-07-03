@@ -27,43 +27,41 @@ const SearchPage = () => {
     [key: number]: IHotelImage[];
   }>({});
 
-  //filter
+  //filter city
   const [selectedCity, setSelectedCity] = useState<string>("");
+
   ///search
   const [city, setCity] = useState<string | null>(null);
-  const [checkInDate, setCheckInDate] = useState<string | null>(null);
-  const [checkOutDate, setCheckOutDate] = useState<string | null>(null);
 
   useEffect(() => {
     // This effect will run only once when the component mounts
     const searchParams = new URLSearchParams(window.location.search);
     const cityParam = searchParams.get("city");
-    const checkInDateParam = searchParams.get("checkInDate");
-    const checkOutDateParam = searchParams.get("checkOutDate");
-
     setCity(cityParam);
-    setCheckInDate(checkInDateParam);
-    setCheckOutDate(checkOutDateParam);
   }, []);
 
   useEffect(() => {
-    if (city && checkInDate && checkOutDate) {
-      searchHotels(checkInDate, checkOutDate, city);
+    if (city) {
+      searchHotels(city);
     } else {
       //fetchHotelsAndRooms();
     }
-  }, [city, checkInDate, checkOutDate]);
+  }, [city]);
 
-  const searchHotels = async (checkInDate: string, checkOutDate: string, city: string) => {
+  const searchHotels = async (city: string) => {
     try {
       setLoading(true);
-      const hotelSchedule = await hotelService.searchHotelSchedule(checkInDate, checkOutDate, city);
+      const hotelSchedule = await hotelService.searchHotelByCity(city);
       setHotelList(hotelSchedule);
       setLoading(false);
     } catch (error) {
       setLoading(false);
       console.error("Error searching hotels:", error);
-      setError(error instanceof Error ? error : new Error("An unexpected error occurred"));
+      setError(
+        error instanceof Error
+          ? error
+          : new Error("An unexpected error occurred")
+      );
     }
   };
   //------------------ Fetch RateValue ---------------------//
@@ -97,7 +95,7 @@ const SearchPage = () => {
     const fetchHotelsAndRooms = async () => {
       setLoading(true);
       try {
-        const [ rooms] = await Promise.all([
+        const [rooms] = await Promise.all([
           //hotelService.getHotels(),
           roomService.getRooms(),
         ]);
@@ -136,6 +134,7 @@ const SearchPage = () => {
     }
     setHotelImages(imagesMap);
   };
+
   //------------------ Fetch Comment List ---------------------//
 
   const fetchCommentsCount = useCallback(async () => {
@@ -175,11 +174,17 @@ const SearchPage = () => {
     },
     [roomList]
   );
+
   const getLowestPriceDiscount = useCallback(
     (hotelId: number) => {
       const rooms = roomList.filter((room) => room.hotelId === hotelId);
       if (rooms.length > 0) {
-        return Math.min(...rooms.map((room) => room.roomPrice - (room.roomPrice * (room.discountPercent/100)) ));
+        return Math.min(
+          ...rooms.map(
+            (room) =>
+              room.roomPrice - room.roomPrice * (room.discountPercent / 100)
+          )
+        );
       }
       return null;
     },
@@ -236,239 +241,257 @@ const SearchPage = () => {
         </div>
         <div className="content-search backgr-home pb-12 pt-20">
           <div className="container">
-          <div className="text-center">
-          <p className="font-bold text-4xl">The Best Place For Vacation </p>
-        </div>
-        <div
-          className="border mb-10 pt-6"
-          style={{ borderRadius: "20px", boxShadow: "0 6px 6px #0000004d" }}
-        >
-          <div className="row mx-3">
-            <div className="col-2">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
-                <div className="relative image-card">
-                  <img
-                    className="border w-full"
-                    style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/cantho.webp"
-                    alt="Can Tho"
-                  />
-                  <div
-                    className="absolute z-10 w-full bottom-0 flex justify-center"
-                    style={{
-                      backgroundColor: "rgb(31,28,23,0.3)",
-                      border: "0 0 1px 1px",
-                      borderBottomLeftRadius: "20px",
-                      borderBottomRightRadius: "20px",
-                    }}
+            <div className="text-center">
+              <p className="font-bold text-4xl">The Best Place For Vacation </p>
+            </div>
+            <div
+              className="border mb-10 pt-6"
+              style={{ borderRadius: "20px", boxShadow: "0 6px 6px #0000004d" }}
+            >
+              <div className="row mx-3">
+                <div className="col-2">
+                  <Link
+                    href="#"
+                    className="text-white no-underline zoom-effect-container"
                   >
-                    <span className="text-white font-semibold text-base">
-                      Can Tho
-                    </span>
+                    <div className="relative image-card">
+                      <img
+                        className="border w-full"
+                        style={{ borderRadius: "20px", height: "231px" }}
+                        src="/image/cantho.webp"
+                        alt="Can Tho"
+                      />
+                      <div
+                        className="absolute z-10 w-full bottom-0 flex justify-center"
+                        style={{
+                          backgroundColor: "rgb(31,28,23,0.3)",
+                          border: "0 0 1px 1px",
+                          borderBottomLeftRadius: "20px",
+                          borderBottomRightRadius: "20px",
+                        }}
+                      >
+                        <span className="text-white font-semibold text-base">
+                          Can Tho
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="flex justify-center my-3">
+                    <a
+                      className="no-underline text-white border px-3 font-medium text-sm"
+                      style={{
+                        backgroundColor: "#305A61",
+                        borderRadius: "10px",
+                      }}
+                      //filter city can tho
+                      href={`/trekbooking/search_city?city=Cần Thơ`}
+                    >
+                      Find hotel
+                    </a>
                   </div>
                 </div>
-              </Link>
-              <div className="flex justify-center my-3">
-                <Link
-                  className="no-underline text-white border px-3 font-medium text-sm"
-                  style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  //filter city can tho
-                  href={`/trekbooking/search_city?city=Cần Thơ`}
-                >
-                  Find hotel
-                </Link>
-              </div>
-            </div>
-            <div className="col-2">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
-                <div className="relative image-card">
-                  <img
-                    className="border w-full"
-                    style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/vungtau.jpg"
-                    alt="Vung Tau"
-                  />
-                  <div
-                    className="absolute z-10 w-full bottom-0 flex justify-center"
-                    style={{
-                      backgroundColor: "rgb(31,28,23,0.3)",
-                      border: "0 0 1px 1px",
-                      borderBottomLeftRadius: "20px",
-                      borderBottomRightRadius: "20px",
-                    }}
+                <div className="col-2">
+                  <Link
+                    href="#"
+                    className="text-white no-underline zoom-effect-container"
                   >
-                    <span className="text-white font-semibold text-base">
-                      Vung Tau
-                    </span>
+                    <div className="relative image-card">
+                      <img
+                        className="border w-full"
+                        style={{ borderRadius: "20px", height: "231px" }}
+                        src="/image/vungtau.jpg"
+                        alt="Vung Tau"
+                      />
+                      <div
+                        className="absolute z-10 w-full bottom-0 flex justify-center"
+                        style={{
+                          backgroundColor: "rgb(31,28,23,0.3)",
+                          border: "0 0 1px 1px",
+                          borderBottomLeftRadius: "20px",
+                          borderBottomRightRadius: "20px",
+                        }}
+                      >
+                        <span className="text-white font-semibold text-base">
+                          Vung Tau
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="flex justify-center my-3">
+                    <a
+                      className="no-underline text-white border px-3 font-medium text-sm"
+                      style={{
+                        backgroundColor: "#305A61",
+                        borderRadius: "10px",
+                      }}
+                      href={`/trekbooking/search_city?city=Vũng Tàu`}
+                    >
+                      Find hotel
+                    </a>
                   </div>
                 </div>
-              </Link>
-              <div className="flex justify-center my-3">
-                <Link
-                  className="no-underline text-white border px-3 font-medium text-sm"
-                  style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href={`/trekbooking/search_city?city=Vũng Tàu`}
-                >
-                  Find hotel
-                </Link>
-              </div>
-            </div>
-            <div className="col-2">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
-                <div className="relative image-card">
-                  <img
-                    className="border w-full"
-                    style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/ninhbinh.jpg"
-                    alt="ninh binh"
-                  />
-                  <div
-                    className="absolute z-10 w-full bottom-0 flex justify-center"
-                    style={{
-                      backgroundColor: "rgb(31,28,23,0.3)",
-                      border: "0 0 1px 1px",
-                      borderBottomLeftRadius: "20px",
-                      borderBottomRightRadius: "20px",
-                    }}
+                <div className="col-2">
+                  <Link
+                    href="#"
+                    className="text-white no-underline zoom-effect-container"
                   >
-                    <span className="text-white font-semibold text-base">
-                      Ninh Binh
-                    </span>
+                    <div className="relative image-card">
+                      <img
+                        className="border w-full"
+                        style={{ borderRadius: "20px", height: "231px" }}
+                        src="/image/ninhbinh.jpg"
+                        alt="ninh binh"
+                      />
+                      <div
+                        className="absolute z-10 w-full bottom-0 flex justify-center"
+                        style={{
+                          backgroundColor: "rgb(31,28,23,0.3)",
+                          border: "0 0 1px 1px",
+                          borderBottomLeftRadius: "20px",
+                          borderBottomRightRadius: "20px",
+                        }}
+                      >
+                        <span className="text-white font-semibold text-base">
+                          Ninh Binh
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="flex justify-center my-3">
+                    <a
+                      className="no-underline text-white border px-3 font-medium text-sm"
+                      style={{
+                        backgroundColor: "#305A61",
+                        borderRadius: "10px",
+                      }}
+                      href={`/trekbooking/search_city?city=Ninh Bình`}
+                    >
+                      Find hotel
+                    </a>
                   </div>
                 </div>
-              </Link>
-              <div className="flex justify-center my-3">
-                <Link
-                  className="no-underline text-white border px-3 font-medium text-sm"
-                  style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href={`/trekbooking/search_city?city=Ninh Bình`}
-                >
-                  Find hotel
-                </Link>
-              </div>
-            </div>
-            <div className="col-2">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
-                <div className="relative image-card">
-                  <img
-                    className="border w-full"
-                    style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/hcm.png"
-                    alt="da lat"
-                  />
-                  <div
-                    className="absolute z-10 w-full bottom-0 flex justify-center"
-                    style={{
-                      backgroundColor: "rgb(31,28,23,0.3)",
-                      border: "0 0 1px 1px",
-                      borderBottomLeftRadius: "20px",
-                      borderBottomRightRadius: "20px",
-                    }}
+                <div className="col-2">
+                  <Link
+                    href="#"
+                    className="text-white no-underline zoom-effect-container"
                   >
-                    <span className="text-white font-semibold text-base">
-                      Ho Chi Minh
-                    </span>
+                    <div className="relative image-card">
+                      <img
+                        className="border w-full"
+                        style={{ borderRadius: "20px", height: "231px" }}
+                        src="/image/hcm.png"
+                        alt="da lat"
+                      />
+                      <div
+                        className="absolute z-10 w-full bottom-0 flex justify-center"
+                        style={{
+                          backgroundColor: "rgb(31,28,23,0.3)",
+                          border: "0 0 1px 1px",
+                          borderBottomLeftRadius: "20px",
+                          borderBottomRightRadius: "20px",
+                        }}
+                      >
+                        <span className="text-white font-semibold text-base">
+                          Ho Chi Minh
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="flex justify-center my-3">
+                    <a
+                      className="no-underline text-white border px-3 font-medium text-sm"
+                      style={{
+                        backgroundColor: "#305A61",
+                        borderRadius: "10px",
+                      }}
+                      href={`/trekbooking/search_city?city=Ho Chi Minh`}
+                    >
+                      Find hotel
+                    </a>
                   </div>
                 </div>
-              </Link>
-              <div className="flex justify-center my-3">
-                <Link
-                  className="no-underline text-white border px-3 font-medium text-sm"
-                  style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href={`/trekbooking/search_city?city=Ho Chi Minh`}
-                >
-                  Find hotel
-                </Link>
-              </div>
-            </div>
-            <div className="col-2">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
-                <div className="relative image-card">
-                  <img
-                    className="border w-full"
-                    style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/hanoi.png"
-                    alt="da lat"
-                  />
-                  <div
-                    className="absolute z-10 w-full bottom-0 flex justify-center"
-                    style={{
-                      backgroundColor: "rgb(31,28,23,0.3)",
-                      border: "0 0 1px 1px",
-                      borderBottomLeftRadius: "20px",
-                      borderBottomRightRadius: "20px",
-                    }}
+                <div className="col-2">
+                  <Link
+                    href="#"
+                    className="text-white no-underline zoom-effect-container"
                   >
-                    <span className="text-white font-semibold text-base">
-                      Ha Noi
-                    </span>
+                    <div className="relative image-card">
+                      <img
+                        className="border w-full"
+                        style={{ borderRadius: "20px", height: "231px" }}
+                        src="/image/hanoi.png"
+                        alt="da lat"
+                      />
+                      <div
+                        className="absolute z-10 w-full bottom-0 flex justify-center"
+                        style={{
+                          backgroundColor: "rgb(31,28,23,0.3)",
+                          border: "0 0 1px 1px",
+                          borderBottomLeftRadius: "20px",
+                          borderBottomRightRadius: "20px",
+                        }}
+                      >
+                        <span className="text-white font-semibold text-base">
+                          Ha Noi
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="flex justify-center my-3">
+                    <a
+                      className="no-underline text-white border px-3 font-medium text-sm"
+                      style={{
+                        backgroundColor: "#305A61",
+                        borderRadius: "10px",
+                      }}
+                      href={`/trekbooking/search_city?city=Hanoi`}
+                    >
+                      Find hotel
+                    </a>
                   </div>
                 </div>
-              </Link>
-              <div className="flex justify-center my-3">
-                <Link
-                  className="no-underline text-white border px-3 font-medium text-sm"
-                  style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href={`/trekbooking/search_city?city=Hanoi`}
-                >
-                  Find hotel
-                </Link>
-              </div>
-            </div>
-            <div className="col-2">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
-                <div className="relative image-card">
-                  <img
-                    className="border w-full"
-                    style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/phanthiet.jpg"
-                    alt="phan thiet"
-                  />
-                  <div
-                    className="absolute z-10 w-full bottom-0 flex justify-center"
-                    style={{
-                      backgroundColor: "rgb(31,28,23,0.3)",
-                      border: "0 0 1px 1px",
-                      borderBottomLeftRadius: "20px",
-                      borderBottomRightRadius: "20px",
-                    }}
+                <div className="col-2">
+                  <Link
+                    href="#"
+                    className="text-white no-underline zoom-effect-container"
                   >
-                    <span className="text-white font-semibold text-base">
-                     Phan Thiết
-                    </span>
+                    <div className="relative image-card">
+                      <img
+                        className="border w-full"
+                        style={{ borderRadius: "20px", height: "231px" }}
+                        src="/image/phanthiet.jpg"
+                        alt="phan thiet"
+                      />
+                      <div
+                        className="absolute z-10 w-full bottom-0 flex justify-center"
+                        style={{
+                          backgroundColor: "rgb(31,28,23,0.3)",
+                          border: "0 0 1px 1px",
+                          borderBottomLeftRadius: "20px",
+                          borderBottomRightRadius: "20px",
+                        }}
+                      >
+                        <span className="text-white font-semibold text-base">
+                          Phan Thiết
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="flex justify-center my-3">
+                    <a
+                      className="no-underline text-white border px-3 font-medium text-sm"
+                      style={{
+                        backgroundColor: "#305A61",
+                        borderRadius: "10px",
+                      }}
+                      href={`/trekbooking/search_city?city=Phan Thiết`}
+                    >
+                      Find hotel
+                    </a>
                   </div>
                 </div>
-              </Link>
-              <div className="flex justify-center my-3">
-                <Link
-                  className="no-underline text-white border px-3 font-medium text-sm"
-                  style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href={`/trekbooking/search_city?city=Phan Thiết`}
-                >
-                  Find hotel
-                </Link>
               </div>
             </div>
-          </div>
-        </div>
             <div className="row">
               <div className="col-lg-3  col-md-4 col-12  ">
                 <div className="border-filter">
@@ -610,7 +633,6 @@ const SearchPage = () => {
                       <p className="text-faci">Wifi</p>
                     </div>
                   </div>
-                  
                 </div>
               </div>
               <div className="col-lg-9 col-md-8 col-12">

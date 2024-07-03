@@ -1,10 +1,11 @@
+import Cookies from 'js-cookie';
 interface IRoomImageService {
     getRoom3DImageByRoomId(roomId: number): Promise<IRoom3DImage[]>;
     createRoom3DImage(room3DImage: IRoom3DImage): Promise<IRoom3DImage>;
     //updateHotel(roomImage: Partial<IRoomImage>): Promise<IRoomImage>;
     deleteRoom3DImage(roomImage3DId: number): Promise<void>;
   }
-  
+
   const roomImage3DService: IRoomImageService = {
     async getRoom3DImageByRoomId(roomId) {
       console.log(roomId);
@@ -17,7 +18,7 @@ interface IRoomImageService {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Include the token in the headers
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
             },
           }
         );
@@ -41,7 +42,7 @@ interface IRoomImageService {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
           },
           body: JSON.stringify(room3DImage),
         });
@@ -65,7 +66,7 @@ interface IRoomImageService {
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
             },
             body: JSON.stringify({ status: false }),
           }

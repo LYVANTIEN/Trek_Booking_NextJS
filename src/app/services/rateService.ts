@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 interface IRateService {
     getRatesByHotelId(hotelId: number): Promise<IRate[]>;
 }
@@ -14,7 +15,7 @@ const rateService: IRateService = {
                 Accept: "application/json, text/plain, */*",
                 "Content-Type": "application/json",
                 // Include the token in the headers
-                Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+                Authorization: `Bearer ${Cookies.get("tokenUser")}`, // Retrieve token from localStorage
               },
             }
           );

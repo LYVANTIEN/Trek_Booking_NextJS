@@ -1,4 +1,5 @@
 'use client'
+import 'react-toastify/dist/ReactToastify.css';
 
 import NavbarRegisterSupplier from '../components/NavbarRegisterSupplier';
 export default function RootLayout({

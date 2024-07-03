@@ -8,5 +8,5 @@ interface ISupplierStaff{
     status: boolean;
     IsVerify: boolean;
     supplierId: number;    
-    roleId: number;    
+    roleId: number;
 }

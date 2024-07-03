@@ -24,7 +24,7 @@ const hotelService: IHotelService = {
         headers: {
           "Content-Type": "application/json",
           // Include the token in the headers
-          Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+          Authorization: `Bearer ${Cookies.get("tokenUser")}` // Retrieve token from localStorage
         },
       });
       if (!response.ok) { 
@@ -51,7 +51,7 @@ const hotelService: IHotelService = {
            headers: {
              Accept: "application/json, text/plain, */*",
              "Content-Type": "application/json",
-             Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+             Authorization: `Bearer ${Cookies.get("tokenUser")}`, // Retrieve token from localStorage
            },
          }
        );
@@ -86,7 +86,7 @@ const hotelService: IHotelService = {
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
+            Authorization: `Bearer ${Cookies.get("tokenUser")}`,
           },
         }
       );
@@ -139,7 +139,7 @@ const hotelService: IHotelService = {
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${Cookies.get("tokenUser")}`, // Retrieve token from localStorage
           },
         }
       );
@@ -186,7 +186,7 @@ const hotelService: IHotelService = {
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,// Retrieve token from localStorage
           },
           body: JSON.stringify(hotel),
         }
@@ -211,7 +211,7 @@ const hotelService: IHotelService = {
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,// Retrieve token from localStorage
           },
           body: JSON.stringify(hotel),
         }

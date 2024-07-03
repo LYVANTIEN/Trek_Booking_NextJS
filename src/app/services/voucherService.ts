@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 interface IVoucherService {
   getVouchersByHotelId(hotelId: number): Promise<IVoucher[]>;
   createVoucher(voucher: IVoucher): Promise<IVoucher>;
@@ -17,7 +18,7 @@ const voucherService: IVoucherService = {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Include the token in the headers
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
             },
           }
         );
@@ -118,7 +119,7 @@ const voucherService: IVoucherService = {
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${localStorage.getItem("token")}`, 
             },
           }
         );

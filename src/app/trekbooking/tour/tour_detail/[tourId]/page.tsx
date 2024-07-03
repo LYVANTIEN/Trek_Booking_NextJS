@@ -178,6 +178,42 @@ const TourDetail = ({ params }: { params: { tourId: string } }) => {
                     ))}
                   </div>
                 </div>
+                <div className="flex justify-between items-center mt-3">
+                  <div className="flex items-center">
+                    <img src="/image/uptour.png" style={{width: "19px", height: "19px"}} alt="tour calendar" />
+                    <span className="font-semibold ml-1">Departure location:</span>
+                  </div>
+                  <div>
+                    <span className="font-semibold">{tour.tourAddress}</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center mt-3 pb-3" style={{borderBottom: "2px solid #000"}}>
+                  <div className="flex items-center">
+                    <img src="/image/user.png" style={{width: "19px", height: "19px"}} alt="tour calendar" />
+                    <span className="font-semibold ml-1">Capacity:</span>
+                  </div>
+                  <div>
+                    <span className="font-semibold">{tour.tourCapacity}</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center mt-3 pb-3">
+                  <div className="">
+                    <span className="font-bold text-xl ml-1" style={{color: "#305A61"}}>Price:</span>
+                  </div>
+                  <div>
+                    <span className="font-bold text-xl"><span>{tour.tourPrice}</span>US$</span>
+                  </div>
+                </div>
+                <div className="flex float-end pb-4">
+                  <a
+                    className="no-underline px-4 py-1 text-base font-medium text-white"
+                    style={{ borderRadius: "12px", backgroundColor: "#305A61" }}
+                    href=""
+                  >
+                    Add to cart
+                  </a>
+                </div>
               </div>
             </div>
           </div>

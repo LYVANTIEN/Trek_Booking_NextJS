@@ -1,8 +1,8 @@
 import { ITour } from "../entities/tour";
-
+import Cookies from "js-cookie";
 interface ITourImageService {
     
-    getTourImageByTourId(tourId: number): Promise<ITour[]>;
+    getTourImageByTourId(tourId: number): Promise<ITourImage[]>;
     createTourImage(tourImage: ITourImage): Promise<ITourImage>;
     deleteTourImage(tourImageId: number): Promise<void>;
   }
@@ -19,7 +19,7 @@ interface ITourImageService {
                 Accept: "application/json, text/plain, */*",
                 "Content-Type": "application/json",
                 // Include the token in the headers
-                Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+                Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
               },
             }
           );
@@ -67,7 +67,7 @@ interface ITourImageService {
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
             },
             body: JSON.stringify({ status: false }),
           }

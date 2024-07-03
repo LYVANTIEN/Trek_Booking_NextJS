@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 interface ITourOrderService {
   getTourOrderBySupplierId(supplierId: number): Promise<ITourOrder[]>;
   updateTourOrder(tourOrder: {

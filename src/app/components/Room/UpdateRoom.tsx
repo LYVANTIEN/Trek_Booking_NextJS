@@ -46,11 +46,19 @@ function UpdateRoom(props: IProps) {
     if (!note) return "Room Note is required";
     return "";
   };
-
+//new
   const validateRoomDiscount = (discount: string) => {
     if (!discount) return "Room Discount is required";
-    if (isNaN(parseFloat(discount)) || parseFloat(discount) <= 0)
+    
+    const discountValue = parseFloat(discount);
+    if (isNaN(discountValue) || discountValue <= 0) {
       return "Room Discount must be a positive number";
+    }
+  
+    if (discountValue < 1 || discountValue > 90) {
+      return "Room Discount must be between 1 and 90";
+    }
+  
     return "";
   };
 

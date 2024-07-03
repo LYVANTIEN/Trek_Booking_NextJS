@@ -1,5 +1,6 @@
 import { mutate } from "swr";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
+
 interface ISupplierStaffService {
   getStaffsBySuppierId(): Promise<ISupplierStaff[]>;
   createStaff(supplierStaff: ISupplierStaff): Promise<ISupplierStaff>;
@@ -9,6 +10,7 @@ interface ISupplierStaffService {
   
   const supplierStaffService: ISupplierStaffService = {
     async getStaffsBySuppierId() {
+      // console.log(supplierId);
       try {
         const response = await fetch(
           `https://localhost:7132/getSupplierStaffBySupplierId`,
@@ -18,7 +20,7 @@ interface ISupplierStaffService {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Include the token in the headers
-              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from cookies
             },
           }
         );
@@ -41,7 +43,8 @@ interface ISupplierStaffService {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from cookies
+
           },
           body: JSON.stringify(supplierStaff),
         });
@@ -64,7 +67,8 @@ interface ISupplierStaffService {
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from cookies
+
             },
             body: JSON.stringify(supplierStaff),
           }
@@ -87,7 +91,8 @@ interface ISupplierStaffService {
             method: "PUT",headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from cookies
+
             },
             body: JSON.stringify({ status: false }),
           }

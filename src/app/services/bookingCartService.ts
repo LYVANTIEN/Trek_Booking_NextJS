@@ -5,7 +5,7 @@ export async function addToBookingCart(data:any) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-             Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+               Authorization: `Bearer ${Cookies.get("tokenUser")}`
         },
         body: JSON.stringify(data)
     });

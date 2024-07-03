@@ -25,10 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <Script
-          src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"
-          strategy="afterInteractive"
-        />
+       
       </head>
       <body className={roboto.className}>
       {/* <ToastContainer/> */}
@@ -36,7 +33,7 @@ export default function RootLayout({
    
         {children}
          <Footer/>
-       
+        
         </body>
     </html>
   );

@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 interface IRoomImageService {
     getRoomImageByRoomId(roomId: number): Promise<IRoomImage[]>;
     createRoomImage(roomImage: IRoomImage): Promise<IRoomImage>;
@@ -17,7 +18,7 @@ interface IRoomImageService {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Include the token in the headers
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
             },
           }
         );
@@ -40,7 +41,7 @@ interface IRoomImageService {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
           },
           body: JSON.stringify(roomImage),
         });
@@ -87,7 +88,7 @@ interface IRoomImageService {
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
             },
             body: JSON.stringify({ status: false }),
           }

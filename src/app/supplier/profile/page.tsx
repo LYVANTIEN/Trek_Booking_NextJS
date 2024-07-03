@@ -1,73 +1,39 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import UpdateProfile from "@/app/components/Profile/UpdateProfile";
-import userService from "@/app/services/userService";
+import UpdateProfileSupplier from "@/app/components/Supplier/UpdateProfileSupplier";
+import supplierService from "@/app/services/supplierService";
 import { useEffect, useState } from "react";
-import useSWR, { mutate } from "swr";
-import { ref, deleteObject } from "firebase/storage";
-import { analytics } from "../../../../public/firebase/firebase-config";
+import useSWR from "swr";
+
 const Profile = () => {
-  const [userName, setUserName] = useState<string>("");
+  const [supplierName, setSupplierName] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [address, setAddress] = useState<string>("");
 
-  const [showUserUpdate, setShowUserUpdate] = useState<boolean>(false);
-  const [User, setUser] = useState<IUser | null>(null);
-  //delete avatar from firebase
-  const [oldAvatarUrl, setOldAvatarUrl] = useState<string>('');
-  const { data: user, error } = useSWR("profile", () =>
-    userService.getUserById()
+  const [showSupplierUpdate, setShowSupplierUpdate] = useState<boolean>(false);
+  const [Supplier, setSupplier] = useState<ISupplier | null>(null);
+
+  const { data: supplier, error } = useSWR("profile", () =>
+    supplierService.getSupplierById()
   );
 
-
-//
-const handleAvatar = async () => {
-  setShowUserUpdate(false);
-  await handleDeleteAvatar(oldAvatarUrl);
-};
-
-//delete image from firebase
-const deleteImageFromStorage = async (imageUrl: string) => {
-  try {
-    const storageRef = ref(analytics, imageUrl);
-    await deleteObject(storageRef);
- //   console.log("Image deleted successfully from Firebase Storage");
-  } catch (error) {
-    console.error("Error deleting image from Firebase Storage:", error);
-  }
-};
-//Delete Hotel avatar in cloud storage after update new avatar
-const handleDeleteAvatar = async (imageUrl: string) => {
-  try {
- //   console.log("Deleting room image with ID:", roomImageId);
-    await deleteImageFromStorage(imageUrl);
-    //toast.success("Delete Image Successful")
-  } catch (error) {
-    console.error("Error deleting room image:", error);
-    alert("Failed to delete room image");
-  }
-};
-
-
-
-
   useEffect(() => {
-    if (user) {
-      setUserName(user.userName);
-      setAvatar(user.avatar);
-      setEmail(user.email);
-      setPhone(user.phone);
-      setAddress(user.address);
-      setUser(user);
+    if (supplier) {
+      setSupplierName(supplier.supplierName);
+      setAvatar(supplier.avatar);
+      setEmail(supplier.email);
+      setPhone(supplier.phone);
+      setAddress(supplier.address);
+      setSupplier(supplier);
     } else if (error) {
-      console.error("Failed to fetch user:", error);
+      console.error("Failed to fetch supplier:", error);
     }
-  }, [user, error]);
+  }, [supplier, error]);
 
-  if (!user) {
-    return <div>User ID not found in localStorage</div>;
+  if (!supplier) {
+    return <div>Supplier ID not found</div>;
   }
 
   return (
@@ -116,7 +82,7 @@ const handleDeleteAvatar = async (imageUrl: string) => {
                     className="w-[150px] h-[150px] cursor-pointer m-2 rounded-full object-cover"
                     src={avatar ? avatar : "/image/usersupplier.png"}
                     alt="Avatar"
-                    onError={(e) => {
+onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.onerror = null;
                       target.src = "/image/usersupplier.png";
@@ -134,11 +100,11 @@ const handleDeleteAvatar = async (imageUrl: string) => {
                 }}
               >
                 <div className="col-md-5">
-                  <label className="font-bold text-xl">User Name</label>
+                  <label className="font-bold text-xl">Supplier Name</label>
                 </div>
                 <div className="flex-1">
                   <label className="font-bold text-xl text-gray-400">
-                    {userName}
+                    {supplierName}
                   </label>
                 </div>
               </div>
@@ -197,21 +163,19 @@ const handleDeleteAvatar = async (imageUrl: string) => {
                   className="text-white font-medium py-2 px-6 text-lg border"
                   style={{ backgroundColor: "#305A61", borderRadius: "20px" }}
                   onClick={() => {
-                    setOldAvatarUrl(user.avatar);
-                    setShowUserUpdate(true);
+setShowSupplierUpdate(true);
                   }}
                 >
                   Update
                 </button>
               </div>
             </div>
-            <UpdateProfile
-              onUpdate={handleAvatar}
-              showUserUpdate={showUserUpdate}
-              setShowUserUpdate={setShowUserUpdate}
-              user={User}
-              userId={Number(user.userId)}
-              setUser={setUser}
+            <UpdateProfileSupplier
+              showSupplierUpdate={showSupplierUpdate}
+              setShowSupplierUpdate={setShowSupplierUpdate}
+              supplier={Supplier}
+              supplierId={Number(supplier.supplierId)}
+              setSupplier={setSupplier}
             />
           </div>
         </div>

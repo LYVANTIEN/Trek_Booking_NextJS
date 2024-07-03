@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 interface IServiceOfRoom {
     getServiceByRoomId(roomId: number): Promise<IService[]>;
     createRoomService(roomService: IRoomService): Promise<IRoomService>;
@@ -13,7 +14,7 @@ interface IServiceOfRoom {
           headers: {
             "Content-Type": "application/json",
             // Include the token in the headers
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
           },
         });
         if (!response.ok) { 
@@ -40,7 +41,7 @@ interface IServiceOfRoom {
                 Accept: "application/json, text/plain, */*",
                 "Content-Type": "application/json",
                 // Include the token in the headers
-                Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+                Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
               },
             }
           );
@@ -67,7 +68,7 @@ interface IServiceOfRoom {
               headers: {
                 Accept: "application/json, text/plain, */*",
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
               },
               body: JSON.stringify(roomService) // Truyền dữ liệu roomService vào body
             }
@@ -102,7 +103,7 @@ interface IServiceOfRoom {
               headers: {
                 Accept: "application/json, text/plain, */*",
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`, 
+                Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, 
               },
               body: JSON.stringify(roomService),
             }

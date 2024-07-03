@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 interface IRoomService {
   getRoomsByHotelId(hotelId: number): Promise<IRoom[]>;
   createRoom(room: IRoom): Promise<IRoom>;
@@ -15,7 +16,7 @@ const roomService: IRoomService = {
         headers: {
           "Content-Type": "application/json",
           // Include the token in the headers
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+          Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
         },
       });
       if (!response.ok) { 
@@ -42,7 +43,7 @@ const roomService: IRoomService = {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Include the token in the headers
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
             },
           }
         );
@@ -70,7 +71,7 @@ const roomService: IRoomService = {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Include the token in the headers
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
             },
           }
         );
@@ -97,7 +98,7 @@ const roomService: IRoomService = {
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
             },
           }
         );
@@ -131,7 +132,7 @@ const roomService: IRoomService = {
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
             },
           }
         );
@@ -164,7 +165,7 @@ const roomService: IRoomService = {
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`, 
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
             },
             body: JSON.stringify(room),
           }
@@ -198,7 +199,7 @@ const roomService: IRoomService = {
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`, 
+              Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
             },
             body: JSON.stringify(room),
           }

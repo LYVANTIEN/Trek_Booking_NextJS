@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useEffect, useState } from "react";
 import "../../../../public/css/tour.css";
@@ -67,9 +68,23 @@ const TourList = () => {
      
       <div className="container">
         <div className="container">
-          <p className="color-primary font-bold cursor-pointer">
-            Home / Attractions / Phu Quoc
-          </p>
+        <div className="font-semibold text-xl my-5" style={{ color: "#305A61" }}>
+          <Link
+            className="no-underline underline_hv"
+            style={{ color: "#305A61" }}
+            href="/"
+          >
+            Home
+          </Link>{" "}
+          <span>/</span>{" "}
+          <Link
+            className="no-underline underline_hv"
+            style={{ color: "#305A61" }}
+            href="/trekbooking/tour"
+          >
+            Attractions
+          </Link>{" "}
+        </div>
         </div>
         <div className="row ">
           <div className="col-lg-3 col-md-3 col-12 ">

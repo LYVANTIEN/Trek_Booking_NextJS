@@ -88,7 +88,7 @@ const ListHotelImage = ({ params }: { params: { hotelId: string } }) => {
   const deleteImageFromStorage = async (imageUrl: string) => {
     try {
       const storageRef = ref(analytics, imageUrl);
-      await deleteObject(storageRef);
+await deleteObject(storageRef);
     } catch (error) {
       console.error("Error deleting image from Firebase Storage:", error);
     }
@@ -189,7 +189,7 @@ const ListHotelImage = ({ params }: { params: { hotelId: string } }) => {
           <input type="text" placeholder="Search........." className="input-hotel pl-3" />
           <img src="/image/search.png" alt="" />
         </div>
-        <button className="ml-8 button-add ml-4rem" onClick={handleAddImage}>
+<button className="ml-8 button-add ml-4rem" onClick={handleAddImage}>
           + Add Hotel Image
         </button>
       </div>
@@ -228,7 +228,7 @@ const ListHotelImage = ({ params }: { params: { hotelId: string } }) => {
                                     <p className="color-black font-bold text-2xl">Do you want to delete Hotel Image 3D Id: {item.hotelImageId}?</p>
                                     <div className="button-kichhoat pt-4">
                                       <button className="button-exit mr-2" onClick={handleClosePopup}>Exit</button>
-                                      <button className="button-yes cursor-pointer" onClick={() => deleteImageButtonHandler(item.hotelImageId, item.hotelImageURL)}>Yes</button>
+<button className="button-yes cursor-pointer" onClick={() => deleteImageButtonHandler(item.hotelImageId, item.hotelImageURL)}>Yes</button>
                                     </div>
                                   </div>
                                 </div>

@@ -1,5 +1,4 @@
-
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import useSWR, { mutate } from 'swr';
 import { ITour } from '../entities/tour';
 interface ITourService {
@@ -20,7 +19,7 @@ export const tourService: ITourService = {
         headers: {
           "Content-Type": "application/json",
           // Include the token in the headers
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+          Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
         },
       });
       if (!response.ok) { 
@@ -42,7 +41,7 @@ export const tourService: ITourService = {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
             // Include the token in the headers
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
           },
       });
       if (!response.ok) {
@@ -67,8 +66,7 @@ export const tourService: ITourService = {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
             // Include the token in the headers
-            Authorization: `Bearer ${Cookies.get("tokenUser")}`
-
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
           },
         }
       );
@@ -93,7 +91,7 @@ export const tourService: ITourService = {
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
           },
         }
       );

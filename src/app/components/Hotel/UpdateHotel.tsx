@@ -296,7 +296,7 @@ function UpdateHotel(props: Iprops) {
     <>
       <Modal
         className="pt-36"
-        show={showHotelUpdate}
+show={showHotelUpdate}
         onHide={() => handleCloseModal()}
         size="lg"
         backdrop="static"
@@ -367,7 +367,7 @@ function UpdateHotel(props: Iprops) {
               <Form.Control
                 type="text"
                 placeholder="Please enter hotel district"
-                value={hotelDistrict}
+value={hotelDistrict}
                 onChange={(e) => setHotelDistrict(e.target.value)}
                 onBlur={() => handleBlur("hotelDistrict")}
                 isInvalid={!!errors.hotelDistrict}
