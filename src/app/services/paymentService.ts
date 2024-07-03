@@ -68,7 +68,44 @@ const createBooking = async (bookingData:any) => {
       throw error;
     }
   };
+
+
+  const handleTourPayment = async (paymentData:any) => {
+    try {
+        const response = await fetch('https://localhost:7132/StripePayment/CreateTour', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Cookies.get("tokenUser")}` // Thêm token nếu cần thiết
+            },
+            body: JSON.stringify(paymentData),
+        });
+
+        if (!response.ok) {
+            const errorDetail = await response.json();
+            console.error('Error from server:', errorDetail);
+            return;
+        }
+
+        const { data: sessionId } = await response.json();
+        const stripe = await stripePromise;
+
+        if (stripe && sessionId) {
+            const result = await stripe.redirectToCheckout({ sessionId });
+            if (result.error) {
+                toast.error('Payment failed!');
+            } else {
+                toast.success('Payment successful!');
+            }
+        } else {
+            console.error('Stripe or sessionId is missing.');
+        }
+    } catch (error) {
+        console.error('Payment error:', error);
+    }
+};
 export default {
     handlePayment,
-    createBooking
+    createBooking,
+    handleTourPayment
 };

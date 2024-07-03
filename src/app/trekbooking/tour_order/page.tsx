@@ -8,7 +8,6 @@ import { Oval } from 'react-loader-spinner';
 import userService from '@/app/services/userService';
 import { toast } from "react-toastify";
 import { BookingCartTour } from '@/app/entities/BookingCartTour';
-import { BookingTourItem } from '@/app/entities/BookingTourItem';
 import { getCartTourByUserId } from '@/app/services/bookingCartTourService';
 import paymentService from '@/app/services/paymentService';
 
