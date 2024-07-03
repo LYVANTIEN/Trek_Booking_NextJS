@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import BASE_URL from './apiService';
 
 interface IHotelService {
   getHotelsBySuppierId(): Promise<IHotel[]>;
@@ -20,38 +21,33 @@ interface IHotelService {
 const hotelService: IHotelService = {
   async getHotels() {
     try {
-      const response = await fetch("https://localhost:7132/getHotels", {
+      const response = await fetch(`${BASE_URL}/getHotels`, {
         headers: {
           "Content-Type": "application/json",
-          // Include the token in the headers
-          Authorization: `Bearer ${Cookies.get("tokenUser")}` // Retrieve token from localStorage
+          Authorization: `Bearer ${Cookies.get("tokenUser")}` 
         },
       });
       if (!response.ok) { 
         throw new Error("Failed to fetch booking list");
       }
       const data = await response.json();
-      // console.log(data); // Trigger refetch after fetching
       return data;
     } catch (error) {
       console.error("Error fetching booking list:", error);
       throw error;
     }
   },
-  /// search hotel by city
-
 
   async searchHotelByCity(city: string): Promise<IHotel[]> {
-    // console.log(hotelId);
      try {
        const response = await fetch(
-         `https://localhost:7132/searchHotelByCity?city=${encodeURIComponent(city)}`,
+         `${BASE_URL}/searchHotelByCity?city=${encodeURIComponent(city)}`,
          {
            method: "GET",
            headers: {
              Accept: "application/json, text/plain, */*",
              "Content-Type": "application/json",
-             Authorization: `Bearer ${Cookies.get("tokenUser")}`, // Retrieve token from localStorage
+             Authorization: `Bearer ${Cookies.get("tokenUser")}`,
            },
          }
        );
@@ -59,7 +55,7 @@ const hotelService: IHotelService = {
          throw new Error("Failed to fetch hotel details");
        }
        const data: IHotel[] = await response.json();
-    return data;
+       return data;
      } 
      catch (error) {
        console.error("Error fetching hotel details:", error);
@@ -67,20 +63,10 @@ const hotelService: IHotelService = {
      }
    },
 
-   ///search hotel by schedule
-
-  //   convertDateFormat(dateStr: string): string {
-  //   const [day, month, year] = dateStr.split('/');
-  //   return `${year}/${month}/${day}`;
-  // },
-
   async searchHotelSchedule(checkInDate: string, checkOutDate: string, city: string): Promise<IHotel[]> {
-    // const checkInDate = this.convertDateFormat(checkInDateStr);
-    // const checkOutDate = this.convertDateFormat(checkOutDateStr);
-
     try {
       const response = await fetch(
-        `https://localhost:7132/searchHotelSchedule?checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&city=${encodeURIComponent(city)}`,
+        `${BASE_URL}/searchHotelSchedule?checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&city=${encodeURIComponent(city)}`,
         {
           method: "GET",
           headers: {
@@ -101,18 +87,16 @@ const hotelService: IHotelService = {
     }
   },
    
-  
   async getHotelsBySuppierId() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getHotelsBySupplierId`,
+        `${BASE_URL}/getHotelsBySupplierId`,
         {
           method: "GET",
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            // Include the token in the headers
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
           },
         }
       );
@@ -120,7 +104,7 @@ const hotelService: IHotelService = {
         throw new Error("Failed to fetch hotel list");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+      console.log(data);
       return data;
     } 
     catch (error) {
@@ -130,24 +114,22 @@ const hotelService: IHotelService = {
   },
 
   async getHotelById(hotelId) {
-   // console.log(hotelId);
     try {
       const response = await fetch(
-        `https://localhost:7132/getHotelById/${hotelId}`,
+        `${BASE_URL}/getHotelById/${hotelId}`,
         {
           method: "GET",
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenUser")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${Cookies.get("tokenUser")}`,
           },
         }
       );
       if (!response.ok) {
         throw new Error("Failed to fetch hotel details");
       }
-      const data: IHotel = await response.json(); // Ensure the returned data is a single hotel object
-      //console.log(data); // Trigger refetch after fetching
+      const data: IHotel = await response.json(); 
       return data;
     } 
     catch (error) {
@@ -158,7 +140,7 @@ const hotelService: IHotelService = {
 
   async createHotel(hotel) {
     try {
-      const response = await fetch(`https://localhost:7132/createHotel`, {
+      const response = await fetch(`${BASE_URL}/createHotel`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -180,13 +162,13 @@ const hotelService: IHotelService = {
   async updateHotel(hotel) {
     try {
       const response = await fetch(
-        `https://localhost:7132/updateHotel`,
+        `${BASE_URL}/updateHotel`,
         {
           method: "PUT",
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,// Retrieve token from localStorage
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
           },
           body: JSON.stringify(hotel),
         }
@@ -205,13 +187,13 @@ const hotelService: IHotelService = {
   async updateHotelAvatar(hotel) {
     try {
       const response = await fetch(
-        `https://localhost:7132/updateHotelAvatar`,
+        `${BASE_URL}/updateHotelAvatar`,
         {
           method: "PUT",
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,// Retrieve token from localStorage
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
           },
           body: JSON.stringify(hotel),
         }
@@ -228,10 +210,9 @@ const hotelService: IHotelService = {
   },
 
   async deleteHotel(hotelId) {
-    console.log(hotelId);
     try {
       const response = await fetch(
-        `https://localhost:7132/deleteHotel/${hotelId}`,
+        `${BASE_URL}/deleteHotel/${hotelId}`,
         {
           method: "PUT",
           headers: {
@@ -250,7 +231,7 @@ const hotelService: IHotelService = {
       if (contentType && contentType.includes("application/json")) {
         data = await response.json();
       } else {
-        data = await response.text(); // Handle plain text response
+        data = await response.text(); 
       }
   
       console.log(data);
@@ -262,10 +243,9 @@ const hotelService: IHotelService = {
   },
 
   async recoverHotelDeleted(hotelId) {
-    console.log(hotelId);
     try {
       const response = await fetch(
-        `https://localhost:7132/recoverHotelDeleted/${hotelId}`,
+        `${BASE_URL}/recoverHotelDeleted/${hotelId}`,
         {
           method: "PUT",
           headers: {
@@ -284,7 +264,7 @@ const hotelService: IHotelService = {
       if (contentType && contentType.includes("application/json")) {
         data = await response.json();
       } else {
-        data = await response.text(); // Handle plain text response
+        data = await response.text(); 
       }
   
       console.log(data);

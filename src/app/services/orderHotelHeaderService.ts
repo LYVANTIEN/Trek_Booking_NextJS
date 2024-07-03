@@ -1,34 +1,35 @@
 import Cookies from 'js-cookie';
-interface IOrderHotelHeaderService{
-    getOrderHotelHeaderByUserId(): Promise<IOrderHotelHeader[]>;
+import BASE_URL from './apiService';
+
+interface IOrderHotelHeaderService {
+  getOrderHotelHeaderByUserId(): Promise<IOrderHotelHeader[]>;
 }
 
 const orderHotelHeaderService: IOrderHotelHeaderService = {
-    async getOrderHotelHeaderByUserId() {
-        try {
-          const response = await fetch(
-            `https://localhost:7132/getOrderHotelHeaderByUserId`,
-            {
-              method: "GET",
-              headers: {
-                Accept: "application/json, text/plain, */*",
-                "Content-Type": "application/json",
-                // Include the token in the headers
-                Authorization: `Bearer ${Cookies.get("token")}`, // Retrieve token from localStorage
-              },
-            }
-          );
-          if (!response.ok) {
-            throw new Error("Failed to fetch user");
-          }
-          const data = await response.json();
-          console.log(data); // Trigger refetch after fetching
-          return data;
-        } 
-        catch (error) {
-          console.error("Error fetching user:", error);
-          throw error;
+  async getOrderHotelHeaderByUserId() {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/getOrderHotelHeaderByUserId`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("token")}`, // Retrieve token from localStorage
+          },
         }
-      },
-}
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch order hotel headers");
+      }
+      const data = await response.json();
+      console.log(data); // Trigger refetch after fetching
+      return data;
+    } catch (error) {
+      console.error("Error fetching order hotel headers:", error);
+      throw error;
+    }
+  },
+};
+
 export default orderHotelHeaderService;

@@ -1,4 +1,6 @@
 import Cookies from "js-cookie";
+import BASE_URL from './apiService';
+
 interface ITourOrderService {
   getTourOrderBySupplierId(supplierId: number): Promise<ITourOrder[]>;
   updateTourOrder(tourOrder: {
@@ -16,16 +18,14 @@ interface ITourOrderService {
 
 const tourOrderService: ITourOrderService = {
   async getTourOrderBySupplierId(supplierId) {
-    // console.log(supplierId);
     try {
       const response = await fetch(
-        `https://localhost:7132/getTourOrderBySupplierId/${supplierId}`,
+        `${BASE_URL}/getTourOrderBySupplierId/${supplierId}`,
         {
           method: "GET",
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            // Include the token in the headers
             Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
           },
         }
@@ -34,17 +34,17 @@ const tourOrderService: ITourOrderService = {
         throw new Error("Failed to fetch tour order list");
       }
       const data = await response.json();
-      // console.log(data); // Trigger refetch after fetching
       return data;
     } catch (error) {
       console.error("Error fetching tour order list:", error);
       throw error;
     }
   },
+  
   async updateTourOrder(tourOrder) {
     try {
       const response = await fetch(
-        `https://localhost:7132/updateTourOrder/${tourOrder.tourOrderId}`,
+        `${BASE_URL}/updateTourOrder/${tourOrder.tourOrderId}`,
         {
           method: "PUT",
           headers: {
@@ -60,7 +60,6 @@ const tourOrderService: ITourOrderService = {
       }
       const updatedTourOrder = await response.json();
       console.log(updatedTourOrder); // Log updated booking details
-      // mutate(this.getBookingsBySupplierId);
       return updatedTourOrder;
     } catch (error) {
       console.error("Error editing booking:", error);
@@ -68,4 +67,5 @@ const tourOrderService: ITourOrderService = {
     }
   },
 };
+
 export default tourOrderService;

@@ -102,7 +102,7 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
                 <div className="flex relative z-2 color-mess">
                   {user ? (
                     <div className="flex">
-                      <div className="flex relative z-2 color-mess">
+                      <div className="flex relative z-2 color-mess hleft-12">
                         <img
                           src={
                             user.avatar

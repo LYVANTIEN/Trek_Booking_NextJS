@@ -1,4 +1,6 @@
 import Cookies from "js-cookie";
+import BASE_URL from "./apiService";
+
 interface ILoginRequest {
   email: string;
   password: string;
@@ -13,14 +15,15 @@ interface ILoginResponse {
   userName: string;
   supplierName: string;
   staffName: string;
-  
 }
+
 interface ILoginResult {
   success: boolean;
   token?: string;
   role?: string;
   errorMessage?: string;
 }
+
 interface IAuthenticateService {
   loginClient(email: string, password: string): Promise<ILoginResult>;
   logOutClient(): Promise<void>;
@@ -49,7 +52,7 @@ interface IAuthenticateService {
 const authenticateService: IAuthenticateService = {
   async loginClient(email: string, password: string): Promise<ILoginResult> {
     try {
-      const response = await fetch("https://localhost:7132/loginClient", {
+      const response = await fetch(`${BASE_URL}/loginClient`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,8 +66,6 @@ const authenticateService: IAuthenticateService = {
         const userName = data.userName;
         const roleName = data.roleName;
         // Save token to local storage or cookies for future requests
-        // localStorage.setItem("token", token);
-        // localStorage.setItem("userName", userName);
         Cookies.set("tokenUser", token, { expires: 1 });
         Cookies.set("userName", userName, { expires: 1 });
         Cookies.set("roleName", roleName, { expires: 1 });
@@ -81,9 +82,10 @@ const authenticateService: IAuthenticateService = {
       };
     }
   },
+
   async signUpClient(user) {
     try {
-      const response = await fetch("https://localhost:7132/registerClient", {
+      const response = await fetch(`${BASE_URL}/registerClient`, {
         method: "POST",
         headers: {
           Accept: "application/json, text/plain, */*",
@@ -103,7 +105,7 @@ const authenticateService: IAuthenticateService = {
 
   async loginSupplier(email: string, password: string): Promise<ILoginResult> {
     try {
-      const response = await fetch("https://localhost:7132/loginSupplier", {
+      const response = await fetch(`${BASE_URL}/loginSupplier`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -117,7 +119,6 @@ const authenticateService: IAuthenticateService = {
         const supplierName = data.supplierName;
         const roleName = data.roleName;
         // Save token to local storage or cookies for future requests
-        // localStorage.setItem("supplierId", supplierId.toString());
         Cookies.set("tokenSupplier", token, { expires: 1 });
         Cookies.set("supplierName", supplierName, { expires: 1 });
         Cookies.set("roleName", roleName, { expires: 1 });
@@ -134,9 +135,10 @@ const authenticateService: IAuthenticateService = {
       };
     }
   },
+
   async signUpSupplier(supplier) {
     try {
-      const response = await fetch("https://localhost:7132/registerSupplier", {
+      const response = await fetch(`${BASE_URL}/registerSupplier`, {
         method: "POST",
         headers: {
           Accept: "application/json, text/plain, */*",
@@ -153,13 +155,14 @@ const authenticateService: IAuthenticateService = {
       throw error;
     }
   },
+
   async loginSupplierStaff(
     staffEmail: string,
     staffPassword: string
   ): Promise<ILoginResult> {
     try {
       const response = await fetch(
-        "https://localhost:7132/loginSupplierStaff",
+        `${BASE_URL}/loginSupplierStaff`,
         {
           method: "POST",
           headers: {
@@ -193,6 +196,7 @@ const authenticateService: IAuthenticateService = {
       };
     }
   },
+
   async logOutClient() {
     try {
       // Clear the local storage
@@ -205,10 +209,10 @@ const authenticateService: IAuthenticateService = {
       throw error;
     }
   },
+
   async logOutSupplier() {
     try {
       // Clear the local storage
-      // localStorage.removeItem("supplierId");
       Cookies.remove("tokenSupplier");
       Cookies.remove("roleName");
       Cookies.remove("supplierName");
@@ -218,6 +222,7 @@ const authenticateService: IAuthenticateService = {
       throw error;
     }
   },
+
   async logOutStaff() {
     try {
       // Clear the local storage
@@ -232,4 +237,5 @@ const authenticateService: IAuthenticateService = {
     }
   },
 };
+
 export default authenticateService;
