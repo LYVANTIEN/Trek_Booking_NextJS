@@ -9,5 +9,4 @@ interface IUser{
     status: boolean;
     isVerify: boolean;
     roleId: number;
-    
 }

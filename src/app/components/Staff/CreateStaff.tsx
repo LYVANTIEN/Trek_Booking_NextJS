@@ -1,10 +1,9 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Button, Form, Modal } from "react-bootstrap";
 import supplierStaffService from "@/app/services/supplierStaffService";
-
+import supplierService from "@/app/services/supplierService";
 interface Iprops {
   showStaffCreate: boolean;
   setShowStaffCreate: (value: boolean) => void;
@@ -13,6 +12,7 @@ interface Iprops {
 
 function CreateSupplierStaff(props: Iprops) {
   const { showStaffCreate, setShowStaffCreate, onCreate } = props;
+  const [supplierId, setSupplierId] = useState<number | null>(null);
   const [staffName, setStaffName] = useState<string>("");
   const [staffPhoneNumber, setStaffPhoneNumber] = useState<string>("");
   const [staffEmail, setStaffEmail] = useState<string>("");
@@ -27,7 +27,17 @@ function CreateSupplierStaff(props: Iprops) {
     staffAddress: false,
     staffPassword: false,
   });
-
+  useEffect(() => {
+    const fetchSupplierId = async () => {
+      try {
+        const supplier = await supplierService.getSupplierById();
+        setSupplierId(supplier.supplierId);
+      } catch (error) {
+        toast.error("Failed to fetch supplier ID");
+      }
+    };
+    fetchSupplierId();
+  }, []);
   const validateStaffName = (name: string) => {
     if (!name) return "Staff Name is required";
     return "";
@@ -90,7 +100,6 @@ function CreateSupplierStaff(props: Iprops) {
   };
 
   const handleSubmit = async () => {
-    const supplierId = localStorage.getItem("supplierId");
     
     const validationErrors = {
       staffName: validateStaffName(staffName),
@@ -105,6 +114,10 @@ function CreateSupplierStaff(props: Iprops) {
     if (Object.values(validationErrors).some((error) => error)) {
       return;
     }
+    if (supplierId === null) {
+      toast.error("Supplier ID is not available");
+      return;
+    }
     try {
       const supplierStaff: ISupplierStaff = {
         staffId: 0,
@@ -115,7 +128,7 @@ function CreateSupplierStaff(props: Iprops) {
         staffAddress,
         staffPassword,
         status: true, // Default value is true
-        supplierId: Number(supplierId),
+        supplierId: supplierId,
         roleId: 3,
       };
       const response = await supplierStaffService.createStaff(supplierStaff);

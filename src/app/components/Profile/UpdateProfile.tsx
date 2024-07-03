@@ -147,7 +147,7 @@ function UpdateProfile(props: IProps) {
   useEffect(() => {
     if (user && user.userId) {
       setUserName(user.userName);
-      setAvatar(user.avatar || "/image/addpicture.png");
+      setAvatar(user.avatar);
       setPhone(user.phone);
       setPassword(user.password);
       setEmail(user.email);

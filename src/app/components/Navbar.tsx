@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "../../../node_modules/next/navigation";
 import authenticateService from "../services/authenticateService";
 import { toast } from "react-toastify";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import useSWR from "swr";
 import userService from "../services/userService";
 
@@ -18,18 +18,14 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ title }) => {
   const [userName, setUserName] = useState<string | null>(null);
   const router = useRouter();
-
-  const { data: user, error } = useSWR("user", () =>
-    userService.getUserById()
-  );
-
+  const { data: user, error } = useSWR("user", () => userService.getUserById());
   useEffect(() => {
     const cookieUserName = Cookies.get("userName");
     setUserName(cookieUserName ?? null);
   }, []);
 
   const handleLogout = async () => {
-    await authenticateService.logOut();
+    await authenticateService.logOutClient();
     toast.success("Logout Success..");
     router.push("/login_client");
   };
@@ -73,21 +69,20 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
                 </a>
               </li>
               <li className="flex hover-bold cursor-pointer">
-                <Link className="flex text-decoration-none"  href="/trekbooking/booking_cart">
-                <img
-                  style={{ width: "30px", height: "25px" }}
-                  src="/image/cart.png"
-                  alt=""
-                  className="pr-2"
-                />
-                <span
-                 
-                  className="no-underline text-accent font-bold"
+                <Link
+                  className="flex text-decoration-none"
+                  href="/trekbooking/booking_cart"
                 >
-                  Cart(1)
-                </span>
+                  <img
+                    style={{ width: "30px", height: "25px" }}
+                    src="/image/cart.png"
+                    alt=""
+                    className="pr-2"
+                  />
+                  <span className="no-underline text-accent font-bold">
+                    Cart(1)
+                  </span>
                 </Link>
-               
               </li>
               <li className="flex hover-bold cursor-pointer">
                 <img
@@ -109,10 +104,13 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
                     <div className="flex">
                       <div className="flex relative z-2 color-mess">
                         <img
-                          style={{ height: "25px" }}
-                          src={user.avatar ? user.avatar : "/image/usersupplier.png"}
+                          src={
+                            user.avatar
+                              ? user.avatar
+                              : "/image/usersupplier.png"
+                          }
                           alt=""
-                          className="pr-2" 
+                          className="rounded-full w-7 mr-2"
                         />
                         <Link
                           className="no-underline text-accent font-bold"
@@ -206,13 +204,81 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
                   </a>
                 </li>
                 <li className="flex pb-4 hover-bold">
-                  <img src="/image/users.png" alt="" className="pr-2" />
-                  <a
-                    href=""
-                    className="font-bold text-decoration-none text-accent"
-                  >
-                    Log In/ Sign up
-                  </a>
+                {user ? (
+                    <div className="flex">
+                      <div className="flex relative z-2 color-mess">
+                        <img
+                          src={
+                            user.avatar
+                              ? user.avatar
+                              : "/image/usersupplier.png"
+                          }
+                          alt=""
+                          className="rounded-full w-7 mr-2"
+                        />
+                        <Link
+                          className="no-underline text-accent font-bold"
+                          href="#"
+                        >
+                          {user.userName}
+                        </Link>
+                      </div>
+                      <div className="backgourd-li text-center">
+                        <Link
+                          className="no-underline text-accent font-bold block mt-3 mb-3 hover-nav-sub"
+                          href="/trekbooking/profile"
+                        >
+                          Manager profile
+                        </Link>
+                        <Link
+                          className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
+                          href="/trekbooking/voucher"
+                        >
+                          Voucher Wallet
+                        </Link>
+                        <Link
+                          className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
+                          href="/trekbooking/payment_wallet"
+                        >
+                          Payment Wallet
+                        </Link>
+                        <Link
+                          className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
+                          href="/trekbooking/booking_history"
+                        >
+                          History
+                        </Link>
+                        <Link
+                          className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
+                          href="signup_client"
+                          onClick={handleLogout}
+                        >
+                          Logout
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex">
+                      <img
+                        style={{ width: "30px", height: "25px" }}
+                        src="/image/users.png"
+                        alt=""
+                        className="pr-2"
+                      />
+                      <Link
+                        className="no-underline text-accent font-bold"
+                        href="/login_client"
+                      >
+                        Log In /
+                      </Link>
+                      <Link
+                        className="no-underline text-accent font-bold"
+                        href="signup_client"
+                      >
+                        Register
+                      </Link>
+                    </div>
+                  )}
                 </li>
               </ul>
             </div>
@@ -224,7 +290,9 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
             <li className="li-menu hover-bold">
               <Link
                 href="/"
-                className={`font-bold text-decoration-none link-text ${pathname === "/trekbooking" ? "link-style" : ""}`}
+                className={`font-bold text-decoration-none link-text ${
+                  pathname === "/trekbooking" ? "link-style" : ""
+                }`}
               >
                 Home
               </Link>
@@ -232,7 +300,12 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
             <li className="li-menu hover-bold">
               <Link
                 href="/trekbooking/list_hotel"
-                className={`font-bold text-decoration-none link-text ${pathname === "/trekbooking/list_hotel" || pathname === "/trekbooking/search" ? "link-style" : ""}`}
+                className={`font-bold text-decoration-none link-text ${
+                  pathname === "/trekbooking/list_hotel" ||
+                  pathname === "/trekbooking/search"
+                    ? "link-style"
+                    : ""
+                }`}
               >
                 Hotel
               </Link>
@@ -240,7 +313,9 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
             <li className="li-menu hover-bold">
               <Link
                 href="/trekbooking/tour"
-                className={`font-bold text-decoration-none link-text ${pathname === "/trekbooking/tour" ? "link-style" : ""}`}
+                className={`font-bold text-decoration-none link-text ${
+                  pathname === "/trekbooking/tour" ? "link-style" : ""
+                }`}
               >
                 Attractions
               </Link>
@@ -248,7 +323,9 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
             <li className="li-menu hover-bold none-t">
               <Link
                 href="/"
-                className={`font-bold text-decoration-none link-text ${pathname === "/trekbooking/voucher" ? "link-style" : ""}`}
+                className={`font-bold text-decoration-none link-text ${
+                  pathname === "/trekbooking/voucher" ? "link-style" : ""
+                }`}
               >
                 Gift Voucher
               </Link>

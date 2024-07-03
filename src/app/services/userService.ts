@@ -67,7 +67,7 @@ const userService: IUserService = {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               // Authorization: `Bearer ${localStorage.getItem("token")}`, 
-              Authorization: `Bearer ${Cookies.get("token")}`, 
+              Authorization: `Bearer ${Cookies.get("tokenUser")}`, 
             },
             body: JSON.stringify(user),
           }

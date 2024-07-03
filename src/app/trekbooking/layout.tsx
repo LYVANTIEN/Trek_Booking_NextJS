@@ -5,8 +5,8 @@ const inter = Inter({ subsets: ["latin"] });
 import { Roboto } from "next/font/google";
 import Navbar from "../components/Navbar";
 import Footer from "../components/footer";
-import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+// import { ToastContainer } from "react-toastify";
+// import 'react-toastify/dist/ReactToastify.css';
 import Script from "next/script";
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -31,7 +31,7 @@ export default function RootLayout({
         />
       </head>
       <body className={roboto.className}>
-      <ToastContainer/>
+      {/* <ToastContainer/> */}
       <Navbar title=""></Navbar> 
    
         {children}
