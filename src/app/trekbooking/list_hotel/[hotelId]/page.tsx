@@ -50,10 +50,29 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
   >([]);
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
+  const [userData, setUserData] = useState<any>(null);
   const [roomList, setRoomList] = useState<IRoom[]>([]);
   const [roomImages, setRoomImages] = useState<{ [key: number]: IRoomImage[] }>(
+
     {}
   );
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      // const token = Cookies.get("tokenUser");
+      if (token) {
+        try {
+          const user = await userService.getUserById();
+          setUserData(user);
+        } catch (err) {
+          console.error(err);
+          // Xử lý lỗi nếu cần
+        }
+      }
+    };
+    fetchUserData();
+  }, [token]);
   const averageRating = () => {
     if (combinedList.length === 0) return 0;
   
@@ -109,7 +128,7 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
     }
   
   }, [hotel, params.hotelId]);
-  const userData = userService.getUserById();
+   // const userData = userService.getUserById();
   const fetchRoomImages = async (rooms: IRoom[]) => {
     const imagesMap: { [key: number]: IRoomImage[] } = {};
     for (const room of rooms) {
