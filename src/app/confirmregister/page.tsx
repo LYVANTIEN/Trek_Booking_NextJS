@@ -14,7 +14,7 @@ const Page = () => {
               </h2>
               <p className="text-2xl font-bold pt-3">
                 Whether your accommodation business is a part-time job or a
-                full-time job, don't forget to register your vacation home on
+                full-time job, dont forget to register your vacation home on
                 Trek Booking to reach travelers around the world.
               </p>
             </div>
@@ -50,7 +50,7 @@ const Page = () => {
                 </div>
 
                 <Link className="let-start pt-4" href="signup_supplier">
-                  <button className="btn-start-register">Let's start</button>
+                  <button className="btn-start-register">Lets start</button>
                   <img className="right-but" src="/image/right.png" alt="" />
                 </Link>
               </div>

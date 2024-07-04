@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable @next/next/no-img-element */
+
 "use client";
 import { useState, FormEvent } from "react";
 import Link from "next/link";

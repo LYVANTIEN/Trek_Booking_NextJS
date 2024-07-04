@@ -3,7 +3,7 @@ import { BookingCartItem } from "@/app/entities/bookingCartItem";
 import { deleteBookingCart, getBookingCartByUserId, getHotelById, getRoomById, getRoomImagesByRoomId } from "@/app/services/bookingCartService";
 import { useEffect, useState } from "react";
 import Slider from "react-slick";
-import Link from "../../../../node_modules/next/link";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Oval } from 'react-loader-spinner'; 
 import { deleteCartTour, getCartTourByUserId } from "@/app/services/bookingCartTourService";
@@ -29,12 +29,12 @@ const BookingCart = () => {
   const router = useRouter();
   const [isFirstDivVisible, setIsFirstDivVisible] = useState(true);
 
-  const handleBookingCartClick = (e:any) => {
+  const handleBookingCartClick = (e: any) => {
     e.preventDefault();
     setIsFirstDivVisible(false);
   };
 
-  const handleCartToursClick = (e:any) => {
+  const handleCartToursClick = (e: any) => {
     e.preventDefault();
     setIsFirstDivVisible(true);
   };
@@ -56,7 +56,7 @@ const BookingCart = () => {
   const [roomDetails, setRoomDetails] = useState<{ [key: number]: IRoom }>({});
   const [hotelDetails, setHotelDetails] = useState<{ [key: number]: IHotel }>({});
   const [roomImages, setRoomImages] = useState<{ [key: number]: IRoomImage[] }>({});
-  const [tourImages, setTourImages] = useState<{ [key: number]: ITourImage[] }>({});
+  const [tourImages, setTourImages] = useState<{ [key: number]: string }>({});
   const [tourNames, setTourNames]  = useState<{ [key: number]: ITour }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [cartTours, setCartTours] = useState<BookingCartTour[]>([]);
@@ -67,18 +67,20 @@ const BookingCart = () => {
         const tours = await getCartTourByUserId();
         setCartTours(tours);
 
+        const imagesMap: { [key: number]: string } = {};
+        const namesMap: { [key: number]: ITour } = {};
       
-        const imagesPromises = tours.map(tour => tourService.getTourImageByTourId(tour.tourId));
-        const namesPromises = tours.map(tour => tourService.getTourById(tour.tourId));
+        const imagesPromises = tours.map((tour: ITour) => tourService.getTourImageByTourId(tour.tourId));
+        const namesPromises = tours.map((tour: ITour) => tourService.getTourById(tour.tourId));
 
         const imagesResults = await Promise.all(imagesPromises);
         const namesResults = await Promise.all(namesPromises);
-        const imagesMap = {};
-        const namesMap = {};
-        tours.forEach((tour:any, index:any) => {
-          imagesMap[tour.tourId] = imagesResults[index][0]?.tourImageURL || '';
-          namesMap[tour.tourId] = namesResults[index]?.tourName || 'Unknown Tour';
+
+        tours.forEach((tour: ITour, index: number) => {
+          imagesMap[tour.tourId] = imagesResults[index][0]?.tourImageURL || '/default-image.png';
+          namesMap[tour.tourId] = { ...tour, tourName: namesResults[index]?.tourName || 'Unknown Tour' };
         });
+
         setTourImages(imagesMap);
         setTourNames(namesMap);
 
@@ -132,7 +134,7 @@ const BookingCart = () => {
     fetchBookingCart();
   }, []);
 
-  const handleQuantityChange = (tourId:number, delta:number) => {
+  const handleQuantityChange = (tourId: number, delta: number) => {
     setCartTours(prevCartTours => {
       return prevCartTours.map(tour => {
         if (tour.tourId === tourId) {
@@ -146,7 +148,7 @@ const BookingCart = () => {
     });
   };
 
-  const handleDelete = async (cartTourId:number) => {
+  const handleDelete = async (cartTourId: number) => {
     try {
       await deleteCartTour(cartTourId);
       setCartTours(prevCartTours => prevCartTours.filter(tour => tour.cartTourId !== cartTourId));
@@ -156,10 +158,9 @@ const BookingCart = () => {
       toast.error('Failed to delete cart tour');
     }
   };
-  const handleBuy = (tour:any) => {
+  const handleBuy = (tour: any) => {
     router.push(`/trekbooking/tour_order?tourId=${tour.tourId}&quantity=${tour.tourQuantity}`);
   };
-  
 
   if (isLoading) {
     return (
@@ -270,13 +271,12 @@ const BookingCart = () => {
                         <img
                           className="border w-40 h-28"
                           style={{ borderRadius: "10px" }}
-                          src={tourImages[tour.tourId] || '/default-image.png'}
-                          alt=""
+                          src={tourImages[tour.tourId] || '/default-image.png'} alt="Tour Image"
                         />
                       </div>
                       <div className="w-2/5">
                         <span className="font-semibold text-base">
-                          {tourNames[tour.tourId]}
+                          {tourNames[tour.tourId]?.tourName || 'Unknown Tour'}
                         </span>
                       </div>
                     </div>
@@ -447,7 +447,7 @@ const BookingCart = () => {
                                               backgroundColor: "#305A61",
                                               borderRadius: "10px",
                                             }}
-                                            onClick={(e) => {
+                                            onClick={(e:any) => {
                                               e.preventDefault();
                                               handleAddToCart(item.roomId, item.hotelId);
                                             }}
