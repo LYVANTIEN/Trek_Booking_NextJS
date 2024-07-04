@@ -1,6 +1,7 @@
 interface IOrderHotelHeader{
     id: number;
     userId: number;
+    supplierId: number;
     totalPrice: number;
     checkInDate: string | Date;
     checkOutDate: string | Date;

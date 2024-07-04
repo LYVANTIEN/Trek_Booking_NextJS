@@ -62,12 +62,13 @@ function CreateTourImage(props: Iprops) {
   };
 
   const handleSubmit = async () => {
+    handleCloseModal();
     if (fileUploads.length === 0) {
       toast.error("Please choose at least one image!!!");
       return;
     }
-    if (fileUploads.length + listTourImage > 6) {
-      toast.error("You can only add up to 6 images for this tour.");
+    if (fileUploads.length + listTourImage > 5) {
+      toast.error("You can only add up to 5 images for this tour.");
       return;
     }
 
@@ -84,7 +85,6 @@ function CreateTourImage(props: Iprops) {
 
       await Promise.all(tourImagePromises);
       toast.success("Tour Images created successfully");
-      handleCloseModal();
       onCreate();
     } catch (error) {
       toast.error("Failed to create tour images");
@@ -105,7 +105,7 @@ function CreateTourImage(props: Iprops) {
       <Modal show={showTourImageCreate} onHide={handleCloseModal} size="lg" centered>
         <Modal.Body className="p-4">
           <h2 className="font-bold pb-4">Add Image Pictures</h2>
-          <h4 className="font-bold pb-4">Tour Image: {listTourImage}/6 </h4>
+          <h4 className="font-bold pb-4">Tour Image: {listTourImage}/5 </h4>
           <div className="flex justify-center flex-wrap">
             {previewImageURLs.length > 0 ? (
               previewImageURLs.map((url, index) => (

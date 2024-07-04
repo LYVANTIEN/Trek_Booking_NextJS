@@ -7,13 +7,18 @@ import CreateHotel from "@/app/components/Hotel/CreateHotel";
 import { Button } from "react-bootstrap";
 import UpdateHotel from "@/app/components/Hotel/UpdateHotel";
 import DetailHotel from "@/app/components/Hotel/DetailHotel";
-import { mutate } from "swr";
 import { toast } from "react-toastify";
 import HotelAvatar from "@/app/components/Hotel/HotelAvatar";
 import { ref, deleteObject } from "firebase/storage";
 import { analytics } from "../../../../public/firebase/firebase-config";
+import Cookies from "js-cookie";
 
 const HotelListOfSupplier = () => {
+  const [role, setRole] = useState<string>("");
+  useEffect(() => {
+    const roleName = Cookies.get("roleName") || ""; // Thêm giá trị mặc định là chuỗi rỗng nếu roleName là undefined
+    setRole(roleName);
+  }, []);
   const [hotelList, setHotelList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,12 +29,14 @@ const HotelListOfSupplier = () => {
   const [showNoti, setShowNoti] = useState<boolean>(false);
   const [HotelId, setHotelId] = useState(0);
   const [Hotel, setHotel] = useState<IHotel | null>(null);
-  const [oldAvatarUrl, setOldAvatarUrl] = useState<string>('');
+  const [oldAvatarUrl, setOldAvatarUrl] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [hotelPerPage] = useState(5);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [selectedHotel, setSelectedHotel] = useState<IHotel | null>(null);
-  const [imageLoadErrors, setImageLoadErrors] = useState<{ [key: number]: boolean }>({});
+  const [imageLoadErrors, setImageLoadErrors] = useState<{
+    [key: number]: boolean;
+  }>({});
 
   const [loadingPage, setLoadingPage] = useState(false);
 
@@ -56,13 +63,10 @@ const HotelListOfSupplier = () => {
       }
       if (response) {
         setShowPopup(false);
-        const supplierId = localStorage.getItem("supplierId");
-        await hotelService
-          .getHotelsBySuppierId(Number(supplierId))
-          .then((data: any) => {
-            setHotelList(data);
-            setLoading(false);
-          });
+        await hotelService.getHotelsBySuppierId().then((data: any) => {
+          setHotelList(data);
+          setLoading(false);
+        });
 
         toast.success(`Hotel ${isVerify ? "locked" : "unlocked"} successfully`);
       } else {
@@ -80,91 +84,73 @@ const HotelListOfSupplier = () => {
   };
 
   useEffect(() => {
-    const supplierId = localStorage.getItem("supplierId");
-    if (supplierId) {
-      hotelService
-        .getHotelsBySuppierId(Number(supplierId))
-        .then((data: any) => {
-          setHotelList(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching hotel list:", error);
-          setError(error);
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
+    hotelService
+      .getHotelsBySuppierId()
+      .then((data: any) => {
+        setHotelList(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching hotel list:", error);
+        setError(error);
+        setLoading(false);
+      });
   }, []);
 
   const handleHotelAvatar = async () => {
     setShowHotelAvatar(false);
-    const supplierId = localStorage.getItem("supplierId");
-    if (supplierId) {
-      hotelService
-        .getHotelsBySuppierId(Number(supplierId))
-        .then(async (data: any) => {
-          setHotelList(data);
-          setLoading(false);
-          await handleDeleteHotelAvatar(oldAvatarUrl);
-        })
-        .catch((error) => {
-          console.error("Error fetching hotel list:", error);
-          setError(error);
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
+
+    hotelService
+      .getHotelsBySuppierId()
+      .then(async (data: any) => {
+        setHotelList(data);
+        setLoading(false);
+        await handleDeleteHotelAvatar(oldAvatarUrl);
+      })
+      .catch((error) => {
+        console.error("Error fetching hotel list:", error);
+        setError(error);
+        setLoading(false);
+      });
   };
 
   //reload sau khi add
   const handleCreateHotel = async () => {
     setShowHotelCreate(false);
-    const supplierId = localStorage.getItem("supplierId");
-    if (supplierId) {
-      hotelService
-        .getHotelsBySuppierId(Number(supplierId))
-        .then((data: any) => {
-          setHotelList(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching hotel list:", error);
-          setError(error);
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
+
+    hotelService
+      .getHotelsBySuppierId()
+      .then((data: any) => {
+        setHotelList(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching hotel list:", error);
+        setError(error);
+        setLoading(false);
+      });
   };
   const handleUpdateHotel = async () => {
     setShowHotelUpdate(false);
-    const supplierId = localStorage.getItem("supplierId");
-    if (supplierId) {
-      hotelService
-        .getHotelsBySuppierId(Number(supplierId))
-        .then((data: any) => {
-          setHotelList(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching hotel list:", error);
-          setError(error);
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
+    hotelService
+      .getHotelsBySuppierId()
+      .then((data: any) => {
+        setHotelList(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching hotel list:", error);
+        setError(error);
+        setLoading(false);
+      });
   };
 
-//delete image from firebase
+  //delete image from firebase
   const deleteImageFromStorage = async (imageUrl: string) => {
     try {
       const storageRef = ref(analytics, imageUrl);
       await deleteObject(storageRef);
-   //   console.log("Image deleted successfully from Firebase Storage");
+      //   console.log("Image deleted successfully from Firebase Storage");
     } catch (error) {
       console.error("Error deleting image from Firebase Storage:", error);
     }
@@ -172,7 +158,7 @@ const HotelListOfSupplier = () => {
   //Delete Hotel avatar in cloud storage after update new avatar
   const handleDeleteHotelAvatar = async (imageUrl: string) => {
     try {
-   //   console.log("Deleting room image with ID:", roomImageId);
+      //   console.log("Deleting room image with ID:", roomImageId);
       await deleteImageFromStorage(imageUrl);
       //toast.success("Delete Image Successful")
     } catch (error) {
@@ -186,23 +172,18 @@ const HotelListOfSupplier = () => {
     try {
       await hotelService.deleteHotel(hotelId);
       // Load lại dữ liệu từ API
-      const supplierId = localStorage.getItem("supplierId");
-      if (supplierId) {
-        hotelService
-          .getHotelsBySuppierId(Number(supplierId))
-          .then((data: any) => {
-            setHotelList(data);
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.error("Error fetching hotel list:", error);
-            setError(error);
-            setLoading(false);
-          });
-      } else {
-        setLoading(false);
-      }
-      alert("Hotel deleted successfully");
+
+      hotelService
+        .getHotelsBySuppierId()
+        .then((data: any) => {
+          setHotelList(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching hotel list:", error);
+          setError(error);
+          setLoading(false);
+        });
     } catch (error) {
       console.error("Error deleting hotel:", error);
       alert("Failed to delete hotel");
@@ -245,12 +226,16 @@ const HotelListOfSupplier = () => {
           />
           <img src="/image/search.png" alt="" />
         </div>
-        <button
-          className="ml-8 button-add ml-4rem"
-          onClick={() => setShowHotelCreate(true)}
-        >
-          + Add hotel
-        </button>
+        {role === "supplier" ? (
+          <button
+            className="ml-8 button-add ml-4rem"
+            onClick={() => setShowHotelCreate(true)}
+          >
+            + Add hotel
+          </button>
+        ) : (
+          <div></div>
+        )}
       </div>
       <div className="table-hotel pt-8">
         <div className="flex flex-col overflow-x-auto">
@@ -273,6 +258,9 @@ const HotelListOfSupplier = () => {
                         Isverify
                       </th>
                       <th scope="col" className="px-6 py-4">
+                        Manage Hotel Image
+                      </th>
+                      <th scope="col" className="px-6 py-4">
                         Manage Voucher
                       </th>
                       <th scope="col" className="px-6 py-4">
@@ -287,9 +275,13 @@ const HotelListOfSupplier = () => {
                       <th scope="col" className="px-6 py-4">
                         Manage Rate
                       </th>
-                      <th scope="col" className="px-6 py-4">
-                        Action
-                      </th>
+                      {role === "supplier" ? (
+                        <th scope="col" className="px-6 py-4">
+                          Action
+                        </th>
+                      ) : (
+                        <div></div>
+                      )}
                     </tr>
                   </thead>
                   <tbody>
@@ -306,7 +298,7 @@ const HotelListOfSupplier = () => {
                             {item.hotelName}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 w-0 h-0">
-                            <Link href="#" className='flex justify-center'>
+                            <Link href="#" className="flex justify-center">
                               {imageLoadErrors[item.hotelId] ? (
                                 <div
                                   className="cursor-pointer"
@@ -314,7 +306,10 @@ const HotelListOfSupplier = () => {
                                     setOldAvatarUrl(item.hotelAvatar);
                                     setHotelId(item.hotelId);
                                     setShowHotelAvatar(true);
-                                    console.log("HotelID: " + item.hotelId, item);
+                                    console.log(
+                                      "HotelID: " + item.hotelId,
+                                      item
+                                    );
                                   }}
                                 >
                                   Upload Avatar
@@ -329,7 +324,10 @@ const HotelListOfSupplier = () => {
                                     setOldAvatarUrl(item.hotelAvatar);
                                     setHotelId(item.hotelId);
                                     setShowHotelAvatar(true);
-                                    console.log("HotelID: " + item.hotelId, item);
+                                    console.log(
+                                      "HotelID: " + item.hotelId,
+                                      item
+                                    );
                                   }}
                                   onError={() => handleImageError(item.hotelId)}
                                 />
@@ -344,7 +342,19 @@ const HotelListOfSupplier = () => {
                             {item.isVerify ? "Active" : "Stopped"}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link className='flex justify-center'
+                            <Link
+                              className="flex justify-center"
+                              href={`/supplier/hotel/hotelImage/${item.hotelId}`}
+                            >
+                              <img
+                                src="/image/managevoucher.png"
+                                alt="Manage Hotel Image"
+                              />
+                            </Link>
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4">
+                            <Link
+                              className="flex justify-center"
                               href={`/supplier/hotel/voucher/${item.hotelId}`}
                             >
                               <img
@@ -354,7 +364,10 @@ const HotelListOfSupplier = () => {
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link className='flex justify-center' href={`/supplier/hotel/room/${item.hotelId}`}>
+                            <Link
+                              className="flex justify-center"
+                              href={`/supplier/hotel/room/${item.hotelId}`}
+                            >
                               <img
                                 src="/image/managevoucher.png"
                                 alt="Manage Room"
@@ -362,7 +375,7 @@ const HotelListOfSupplier = () => {
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link className='flex justify-center' href="#">
+                            <Link className="flex justify-center" href="#">
                               <img
                                 src="/image/viewdetail.png"
                                 alt="View Detail"
@@ -375,86 +388,104 @@ const HotelListOfSupplier = () => {
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link className='flex justify-center' href={`/supplier/hotel/comment/${item.hotelId}`}>
-                              <img src="/image/managevoucher.png" alt="Manage Comment" />
+                            <Link
+                              className="flex justify-center"
+                              href={`/supplier/hotel/comment/${item.hotelId}`}
+                            >
+                              <img
+                                src="/image/managevoucher.png"
+                                alt="Manage Comment"
+                              />
                             </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <Link className='flex justify-center' href={`/supplier/hotel/rate/${item.hotelId}`}>
-                              <img src="/image/managevoucher.png" alt="Manage Rate" />
+                            <Link
+                              className="flex justify-center"
+                              href={`/supplier/hotel/rate/${item.hotelId}`}
+                            >
+                              <img
+                                src="/image/managevoucher.png"
+                                alt="Manage Rate"
+                              />
                             </Link>
                           </td>
-                          <td className="whitespace-nowrap px-6 py-4 ">
-                         
-                            <Link href="#" className="flex">
-                            <img
-                                className="w-10 h-5 cursor-pointer"
-                                src="/image/pen.png"
-                                alt="Edit"
-                                onClick={() => {
-                                  setHotelId(item.hotelId);
-                                  setHotel(item);
-                                  setShowHotelUpdate(true);
-                                  console.log("HotelID: " + item.hotelId, item);
-                                }}
-                              />
-                   
-                            <img
-                              className="w-5 h-5 cursor-pointer ml-3"
-                              onClick={() => handleImageClick(item)}
-                              src={
-                                item.isVerify
-                                  ? "/image/lock.png"
-                                  : "/image/unlock.png"
-                              }
-                              alt={item.isVerify ? "Ban" : "Unban"}
-                            />
-                            </Link>
-                            {showPopup &&
-                              selectedHotel?.hotelId === item.hotelId && (
-                                <div className="fixed inset-0 z-10 flex items-center justify-center">
-                                  <div
-                                    className="fixed inset-0 bg-black opacity-50"
-                                    onClick={handleClosePopup}
-                                  ></div>
-                                  <div className="relative bg-white p-8 rounded-lg">
-                                    <p className="color-black font-bold text-2xl">
-                                      Do you want to{" "}
-                                      {item.isVerify ? "lock" : "unlock"} this{" "}
-                                      {item.hotelName}?
-                                    </p>
-                                    <div className="button-kichhoat pt-4">
-                                      <Button
-                                        className="button-exit mr-2"
-                                        onClick={handleClosePopup}
-                                        style={{
-                                          background: "white",
-                                          color: "black",
-                                          border: "1px solid #ccc",
-                                        }}
-                                      >
-                                        Exit
-                                      </Button>
-                                      <Button
-                                        className="button-yes"
-                                        onClick={() =>
-                                          handleLockUnlockHotel(
-                                            item.hotelId,
-                                            item.isVerify
-                                          )
-                                        }
-                                        style={{
-                                          background: "#305A61",
-                                          border: "1px solid #ccc",
-                                        }}
-                                      >
-                                        Yes
-                                      </Button>
+                          {role === "supplier" ? (
+                            <td className="whitespace-nowrap px-6 py-4 ">
+                              <Link href="#" className="flex">
+                                <img
+                                  className="w-10 h-5 cursor-pointer"
+                                  src="/image/pen.png"
+                                  alt="Edit"
+                                  onClick={() => {
+                                    setHotelId(item.hotelId);
+                                    setHotel(item);
+                                    setShowHotelUpdate(true);
+                                    console.log(
+                                      "HotelID: " + item.hotelId,
+                                      item
+                                    );
+                                  }}
+                                />
+
+                                <img
+                                  className="w-5 h-5 cursor-pointer ml-3"
+                                  onClick={() => handleImageClick(item)}
+                                  src={
+                                    item.isVerify
+                                      ? "/image/lock.png"
+                                      : "/image/unlock.png"
+                                  }
+                                  alt={item.isVerify ? "Ban" : "Unban"}
+                                />
+                              </Link>
+                              {showPopup &&
+                                selectedHotel?.hotelId === item.hotelId && (
+                                  <div className="fixed inset-0 z-10 flex items-center justify-center">
+                                    <div
+                                      className="fixed inset-0 bg-black opacity-50"
+                                      onClick={handleClosePopup}
+                                    ></div>
+                                    <div className="relative bg-white p-8 rounded-lg">
+                                      <p className="color-black font-bold text-2xl">
+                                        Do you want to{" "}
+                                        {item.isVerify ? "lock" : "unlock"} this{" "}
+                                        {item.hotelName}?
+                                      </p>
+                                      <div className="button-kichhoat pt-4">
+                                        <Button
+                                          className="button-exit mr-2"
+                                          onClick={handleClosePopup}
+                                          style={{
+                                            background: "white",
+                                            color: "black",
+                                            border: "1px solid #ccc",
+                                          }}
+                                        >
+                                          Exit
+                                        </Button>
+                                        <Button
+                                          className="button-yes"
+                                          onClick={() =>
+                                            handleLockUnlockHotel(
+                                              item.hotelId,
+                                              item.isVerify
+                                            )
+                                          }
+                                          style={{
+                                            background: "#305A61",
+                                            border: "1px solid #ccc",
+                                          }}
+                                        >
+                                          Yes
+                                        </Button>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              )}
-                          </td>
+                                )}
+                            </td>
+                          ) : (
+                            <div></div>
+                          )}
                         </tr>
                       ))
                     ) : (

@@ -59,7 +59,7 @@ const PaymentWallet = () => {
                   <div>
                     <p className="pb-repon">
                       Paid Date: {new Date(item.paidDate).toLocaleDateString()}{" "}
-                      {new Date(item.paidDate).toLocaleTimeString()}
+{new Date(item.paidDate).toLocaleTimeString()}
                     </p>
                     <p className="mb-0">Payment Fee: {item.paymentFee} $</p>
                   </div>

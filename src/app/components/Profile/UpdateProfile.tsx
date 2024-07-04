@@ -11,8 +11,6 @@ import userService from "@/app/services/userService";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { analytics } from "../../../../public/firebase/firebase-config";
 import { countries, cities } from "country-cities";
-import PhoneInput from "react-phone-number-input";
-import "react-phone-number-input/style.css";
 interface IProps {
   showUserUpdate: boolean;
   setShowUserUpdate: (value: boolean) => void;
@@ -76,7 +74,7 @@ function UpdateProfile(props: IProps) {
   };
 
   // const handleCityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  //   const cityCode = event.target.value;
+//   const cityCode = event.target.value;
   //   setSelectedCity(cityCode);
   // };
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -172,7 +170,7 @@ function UpdateProfile(props: IProps) {
         setSelectedCountry("");
       }
     }
-  }, [showUserUpdate, user]);
+}, [showUserUpdate, user]);
 
   const handleSubmit = async () => {
     const validationErrors = validate();
@@ -209,6 +207,7 @@ function UpdateProfile(props: IProps) {
       }
       handleCloseModal();
       mutate("profile");
+      mutate("user");
     } catch (error) {
       toast.error("Failed to update profile");
       console.error(error);
@@ -245,7 +244,7 @@ function UpdateProfile(props: IProps) {
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Phone</Form.Label>
-                <PhoneInput
+                {/* <PhoneInput
                   placeholder="Enter phone number"
                   value={phone}
                   onChange={(value) => setPhone(value || "")}
@@ -255,8 +254,8 @@ function UpdateProfile(props: IProps) {
                 />
                 {errors.phone && (
                   <div className="invalid-feedback d-block">{errors.phone}</div>
-                )}
-                {/* <Form.Control
+                )} */}
+                <Form.Control
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -264,14 +263,14 @@ function UpdateProfile(props: IProps) {
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.phone}
-                </Form.Control.Feedback> */}
+                </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Country</Form.Label>
                 <Form.Control
                   as="select"
                   value={selectedCountry}
-                  isInvalid={!!errors.country}
+isInvalid={!!errors.country}
                   onChange={handleEvent<HTMLSelectElement>(handleCountryChange)}
                 >
                   <option value="">Select Country</option>
@@ -350,7 +349,7 @@ function UpdateProfile(props: IProps) {
             </Col>
             <Col xs="auto">
               <Button
-                style={{
+style={{
                   border: "1px solid #ccc",
                   color: "black",
                   background: "white",

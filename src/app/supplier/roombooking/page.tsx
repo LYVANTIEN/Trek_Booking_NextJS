@@ -9,7 +9,6 @@ import UpdateBooking from "./update_booking";
 import BookingDetail from "./booking_detail";
 
 const BookingListOfSupplier = () => {
-  const supplierId = localStorage.getItem("supplierId");
   const { data: bookingList, error } = useSWR("bookingList", () =>
     bookingService.getBookingsBySupplierId()
   );

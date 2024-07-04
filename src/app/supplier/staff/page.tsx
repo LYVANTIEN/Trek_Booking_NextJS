@@ -21,7 +21,7 @@ const SupplierStaffList = () => {
   const [staffId, setStaffId] = useState(0);
   const [supplierStaff, setSupplierStaff] = useState<ISupplierStaff | null>(null);
 
-  const supplierId = localStorage.getItem("supplierId");
+  //const supplierId = localStorage.getItem("supplierId");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [staffPerPage] = useState(5);
@@ -31,8 +31,8 @@ const SupplierStaffList = () => {
     error,
     mutate: mutateSupplierStaffs,
   } = useSWR(
-    supplierId ? `supplierStaffList-${supplierId}` : null,
-    () => supplierStaffService.getStaffsBySuppierId(Number(supplierId)),
+    "listStaff",
+    () => supplierStaffService.getStaffsBySuppierId(),
     {
       revalidateOnFocus: false,
     }
@@ -135,7 +135,7 @@ const SupplierStaffList = () => {
                           key={index}
                           className="border-b border-neutral-200 dark:border-white/10 text-center"
                         >
-                          <td className="whitespace-nowrap px-6 py-4 font-medium text-black">
+                          <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">
                             {item.staffId}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 font-semibold text-black">

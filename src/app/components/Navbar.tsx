@@ -8,6 +8,8 @@ import { useRouter } from "../../../node_modules/next/navigation";
 import authenticateService from "../services/authenticateService";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
+import useSWR from "swr";
+import userService from "../services/userService";
 
 interface NavbarProps {
   title: string;
@@ -16,13 +18,14 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ title }) => {
   const [userName, setUserName] = useState<string | null>(null);
   const router = useRouter();
+  const { data: user, error } = useSWR("user", () => userService.getUserById());
   useEffect(() => {
     const cookieUserName = Cookies.get("userName");
     setUserName(cookieUserName ?? null);
   }, []);
 
   const handleLogout = async () => {
-    await authenticateService.logOut();
+    await authenticateService.logOutClient();
     toast.success("Logout Success..");
     router.push("/login_client");
   };
@@ -97,23 +100,130 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
               </li>
               <li className="flex hover-bold cursor-pointer dropdown relative z-10">
                 <div className="flex relative z-2 color-mess">
-                  {userName ? (
+                  {user ? (
                     <div className="flex">
-                      <div className="flex relative z-2 color-mess">
+                      <div className="flex relative z-2 color-mess hleft-12">
                         <img
-                          style={{ height: "25px" }}
-                          src="/image/usersupplier.png"
+                          src={
+                            user.avatar
+                              ? user.avatar
+                              : "/image/usersupplier.png"
+                          }
                           alt=""
-                          className="pr-2"
+                          className="rounded-full w-7 h-6 mr-2"
                         />
                         <Link
                           className="no-underline text-accent font-bold"
                           href="#"
                         >
-                          {userName}
+                          {user.userName}
                         </Link>
                       </div>
                       <div className="backgourd-li text-center">
+                        <Link
+                          className="no-underline text-accent font-bold block mt-3 mb-3 hover-nav-sub"
+                          href="/trekbooking/profile"
+                        >
+                          Manager profile
+                        </Link>
+                        <Link
+                          className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
+                          href="/trekbooking/voucher"
+                        >
+                          Voucher Wallet
+                        </Link>
+                        <Link
+                          className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
+                          href="/trekbooking/payment_wallet"
+                        >
+                          Payment Wallet
+                        </Link>
+                        <Link
+                          className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
+                          href="/trekbooking/booking_history"
+                        >
+                          History
+                        </Link>
+                        <Link
+                          className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
+                          href="signup_client"
+                          onClick={handleLogout}
+                        >
+                          Logout
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex">
+                      <img
+                        
+                        src="/image/users.png"
+                        alt=""
+                        className="pr-2 w-7 h-6"
+                      />
+                      <Link
+                        className="no-underline text-accent font-bold"
+                        href="/login_client"
+                      >
+                        Log In /
+                      </Link>
+                      <Link
+                        className="no-underline text-accent font-bold"
+                        href="signup_client"
+                      >
+                        Register
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div className="col-7 lg:hidden cursor-pointer" onClick={handleClick}>
+            <CiMenuBurger style={{ float: "right", fontSize: "22px" }} />
+          </div>
+          {showSubMenu && (
+            <div className="sub-menu-mobi flex justify-center pt-4">
+              <ul className="lg:hidden">
+                <li className="flex pb-4 hover-bold">
+                  <img src="/image/cart.png" alt="" className="pr-2" />
+                  <a
+                    href="/trekbooking/booking_cart"
+                    className="font-bold text-decoration-none text-accent"
+                  >
+                    Cart
+                  </a>
+                </li>
+                <li className="flex pb-4 hover-bold">
+                  <img src="/image/bell.png" alt="" className="pr-2" />
+                  <a
+                    href="/confirmregister"
+                    className="font-bold text-decoration-none text-accent"
+                  >
+                    Post your hotel
+                  </a>
+                </li>
+                <li className="flex pb-4 hover-bold">
+                {user ? (
+                    <div className="flex dropdown">
+                      <div className="flex relative z-2 color-mess">
+                        <img
+                          src={
+                            user.avatar
+                              ? user.avatar
+                              : "/image/usersupplier.png"
+                          }
+                          alt=""
+                          className="rounded-full w-7 h-6 mr-2"
+                        />
+                        <Link
+                          className="no-underline text-accent font-bold"
+                          href="#"
+                        >
+                          {user.userName}
+                        </Link>
+                      </div>
+                      <div className="backgourd-li1 text-center">
                         <Link
                           className="no-underline text-accent font-bold block mt-3 mb-3 hover-nav-sub"
                           href="/trekbooking/profile"
@@ -169,42 +279,6 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
                       </Link>
                     </div>
                   )}
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div className="col-7 lg:hidden cursor-pointer" onClick={handleClick}>
-            <CiMenuBurger style={{ float: "right", fontSize: "22px" }} />
-          </div>
-          {showSubMenu && (
-            <div className="sub-menu-mobi flex justify-center pt-4">
-              <ul className="lg:hidden">
-                <li className="flex pb-4 hover-bold">
-                  <img src="/image/cart.png" alt="" className="pr-2" />
-                  <a
-                    href=""
-                    className="font-bold text-decoration-none text-accent"
-                  >
-                    Cart
-                  </a>
-                </li>
-                <li className="flex pb-4 hover-bold">
-                  <img src="/image/bell.png" alt="" className="pr-2" />
-                  <a
-                    href=""
-                    className="font-bold text-decoration-none text-accent"
-                  >
-                    Post your hotel
-                  </a>
-                </li>
-                <li className="flex pb-4 hover-bold">
-                  <img src="/image/users.png" alt="" className="pr-2" />
-                  <a
-                    href=""
-                    className="font-bold text-decoration-none text-accent"
-                  >
-                    Log In/ Sign up
-                  </a>
                 </li>
               </ul>
             </div>

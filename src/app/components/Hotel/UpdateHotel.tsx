@@ -6,6 +6,7 @@ import hotelService from "@/app/services/hotelService";
 import { Button, Form, Modal } from "react-bootstrap";
 import { Hotel } from "@mui/icons-material";
 import { cities, countries } from "country-cities";
+import supplierService from "@/app/services/supplierService";
 
 interface Iprops {
   showHotelUpdate: boolean;
@@ -38,6 +39,7 @@ function UpdateHotel(props: Iprops) {
   } = props;
 
   //const [HotelId, setHotelId] = useState<Number>();
+  const [supplierId, setSupplierId] = useState<number | null>(null);
   const [hotelName, setHotelName] = useState<string>("");
   const [hotelPhone, setHotelPhone] = useState<string>("");
   const [hotelEmail, setHotelEmail] = useState<string>("");
@@ -64,7 +66,17 @@ function UpdateHotel(props: Iprops) {
     hotelCity: false,
     hotelInformation: false,
   });
-
+  useEffect(() => {
+    const fetchSupplierId = async () => {
+      try {
+        const supplier = await supplierService.getSupplierById();
+        setSupplierId(supplier.supplierId);
+      } catch (error) {
+        toast.error("Failed to fetch supplier ID");
+      }
+    };
+    fetchSupplierId();
+  }, []);
   useEffect(() => {
     const loadCountries = async () => {
       const allCountries = await countries.all();
@@ -199,7 +211,7 @@ function UpdateHotel(props: Iprops) {
   // End Validate Input //
   const handleSubmit = async () => {
     const hotelId = ThishotelId;
-    const supplierId = localStorage.getItem("supplierId");
+    // const supplierId = localStorage.getItem("supplierId");
     const validationErrors = {
       hotelName: validateHotelName(hotelName),
       hotelPhone: validateHotelPhone(hotelPhone),
@@ -284,7 +296,7 @@ function UpdateHotel(props: Iprops) {
     <>
       <Modal
         className="pt-36"
-        show={showHotelUpdate}
+show={showHotelUpdate}
         onHide={() => handleCloseModal()}
         size="lg"
         backdrop="static"
@@ -355,7 +367,7 @@ function UpdateHotel(props: Iprops) {
               <Form.Control
                 type="text"
                 placeholder="Please enter hotel district"
-                value={hotelDistrict}
+value={hotelDistrict}
                 onChange={(e) => setHotelDistrict(e.target.value)}
                 onBlur={() => handleBlur("hotelDistrict")}
                 isInvalid={!!errors.hotelDistrict}

@@ -93,7 +93,7 @@ function DetailHotel(props: IProps) {
                 <Form.Label className="font-bold text-xl">
                   Hotel District
                 </Form.Label>
-                <p>{hotelDistrict}</p>
+                <p>{hotelDistrict}$</p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="tourAddress">
                 <Form.Label className="font-bold text-xl">

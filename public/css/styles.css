@@ -1,3 +1,6 @@
+.hleft-12{
+  left: -12px;
+}
 .history-title{
   background: #305A61;
 }
@@ -20,6 +23,9 @@
   border: 1px solid #ccc;
   font-weight: bold;
   margin-left: 12px;
+}
+.buyagain:hover{
+  opacity: 0.8;
 }
 .send{
   background-color: #305A61;
@@ -107,6 +113,7 @@ width: 100%;
   height: 285px;
   width: 100%;
 }
+
 .card1 {
   transition: transform 0.3s ease;
 }
@@ -418,6 +425,9 @@ a {
     opacity: 0.8;
     
   }
+  .underline_hv:hover{
+    text-decoration: underline;
+  }
   .btn-exit-modal{
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -442,16 +452,31 @@ a {
     padding-bottom: 4px;
     width: 165px;
     position: absolute;
-    right: -44px;
+    right: -27px;
     top: -16px;
     background-color: white;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     display: none;
 }
+.backgourd-li1{
+  z-index: 0;
+  padding: 40px 6px;
+  padding-bottom: 4px;
+  width: 165px;
+  position: absolute;
+  right: -48px;
+  top: -16px;
+  background-color: white;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  display: none;
+}
 .dropdown:hover .color-mess .color-mon{
   color: #305a61 !important;
 }
 .dropdown:hover .backgourd-li{
+  display: block;
+}
+.dropdown:hover .backgourd-li1{
   display: block;
 }
 .hover-nav-sub:hover{

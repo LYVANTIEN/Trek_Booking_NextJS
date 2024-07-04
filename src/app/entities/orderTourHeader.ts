@@ -1,6 +1,7 @@
 interface IOrderTourHeader{
     id: number;
     userId: number;
+    supplierId: number;
     totalPrice: number;
     tourOrderDate: string | Date;
     sessionId: number;

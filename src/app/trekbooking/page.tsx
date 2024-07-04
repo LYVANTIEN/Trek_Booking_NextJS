@@ -1,10 +1,10 @@
 'use client'
 import { useRouter, useSearchParams } from "next/navigation";
 import Homepage from "../components/Homepage";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { toast } from "react-toastify";
 
-export default function Home() {
+ function Home() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -18,5 +18,13 @@ export default function Home() {
     <div>
       <Homepage></Homepage>
     </div>
+  );
+}
+
+export default function WrappedHome() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Home />
+      </Suspense>
   );
 }

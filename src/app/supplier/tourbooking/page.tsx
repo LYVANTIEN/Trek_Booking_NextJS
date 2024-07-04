@@ -7,9 +7,9 @@ import UpdateTourOrder from "./update_tour_order";
 import TourOrderDetail from "./tour_order_detail";
 
 const TourOrderListOfSupplier = () => {
-  const supplierId = localStorage.getItem("supplierId");
+ 
   const { data: tourOrderList, error } = useSWR("tourOrderList", () =>
-    tourOrderService.getTourOrderBySupplierId(Number(supplierId))
+    tourOrderService.getTourOrderBySupplierId()
   );
   const [showModalEdit, setShowModalEdit] = useState<boolean>(false);
   const [showModalTourOrderDetail, setShowModalTourOrderDetail] = useState<boolean>(false);

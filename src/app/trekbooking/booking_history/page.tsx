@@ -13,6 +13,7 @@ import orderHotelHeaderService from "@/app/services/orderHotelHeaderService";
 import orderHotelDetailService from "@/app/services/orderHotelDetailService";
 import roomImageService from "@/app/services/roomImageService";
 
+
 const formatRoomDescription = (description: string) => {
   return description.split(".").map((sentence, index) => {
     if (sentence.trim() === "") return null;
@@ -84,7 +85,7 @@ const Booking_History = () => {
 
         // Fetch tour images
         const tourIds = new Set(
-          detailsArray
+detailsArray
             .filter(
               (detail): detail is IOrderTourDetail =>
                 detail !== null && detail.tourId !== undefined
@@ -190,7 +191,7 @@ const Booking_History = () => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    draggable: false,
+draggable: false,
     autoplay: false,
     autoplaySpeed: 1000,
   };
@@ -276,7 +277,7 @@ const Booking_History = () => {
                             className="font-bold text-lg"
                             style={{ color: "#305A61" }}
                           >
-                            Total
+Total
                           </span>
                         </div>
                         <div className="col-md-2 text-center">
@@ -337,7 +338,7 @@ const Booking_History = () => {
                                   ?.map((detail) => detail.tourName)
                                   .join(", ")}
                               </span>
-                            </div>
+</div>
                           </div>
                           <div className="col-md-6 row ">
                             <div className="col-md-4 flex items-center content-center justify-evenly">
@@ -401,7 +402,7 @@ const Booking_History = () => {
               <>
                 <link
                   rel="stylesheet"
-                  type="text/css"
+type="text/css"
                   href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
                 />
                 <link
@@ -460,7 +461,7 @@ const Booking_History = () => {
                                           <img
                                             className="w-3/4 h-60 border rounded-lg mx-auto"
                                             src={image.roomImageURL}
-                                            alt="room thumbnail"
+alt="room thumbnail"
                                           />
                                         </div>
                                       ))}
@@ -515,7 +516,7 @@ const Booking_History = () => {
                                       >
                                         Convenient
                                       </p>
-                                      <div className="w-3/4 m-auto">
+<div className="w-3/4 m-auto">
                                         <div className="flex items-center pb-1 ">
                                           <img
                                             className="w-2 h-2 mr-2"
@@ -565,7 +566,7 @@ const Booking_History = () => {
                                             className="text-center text-sm font-semibold pt-3"
                                             style={{ color: "#305A61" }}
                                           >
-                                            Guest(s)
+Guest(s)
                                           </p>
                                           {/* <div className="flex flex-wrap items-center pb-1 w-3/4 mx-auto">
                                             {Array.from({
@@ -612,7 +613,7 @@ const Booking_History = () => {
                                                 style={{
                                                   backgroundColor: "#305A61",
                                                   borderRadius: "10px",
-                                                }}
+}}
                                                 onClick={(e) => {
                                                   e.preventDefault();
                                                   // handleAddToCart(

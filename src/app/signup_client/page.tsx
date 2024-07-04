@@ -11,6 +11,7 @@ const signUpClient = () => {
   const [isPassword, setIsPassword] = useState(true);
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [userName, setUserName] = useState("");
   const [roleId, setRoleId] = useState(4);
   const [password, setPassword] = useState("");
   const togglePasswordVisibility = () => {
@@ -21,7 +22,12 @@ const signUpClient = () => {
     e.preventDefault();
 
     try {
-      await authenticateService.signUpClient({ email, password, roleId });
+      await authenticateService.signUpClient({
+        email,
+        userName,
+        password,
+        roleId,
+      });
       toast.success("Sign up successfully!");
       setTimeout(() => {
         router.push("/login_client");
@@ -35,7 +41,7 @@ const signUpClient = () => {
       <div className="image-bk">
         <div className="login">
           <div className="text-login">
-            <h3 className="text-center font-bold color-black">Sign up</h3>
+            <h3 className="text-center font-bold color-black text-xl">Sign up</h3>
           </div>
           <form onSubmit={handleSubmit}>
             <div className="text-input relative">
@@ -48,7 +54,15 @@ const signUpClient = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-
+              <p className="color-black m-0 pt-2 pb-1">Enter your username</p>
+              <input
+                className="input-text"
+                type="text"
+                placeholder="UserName"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                required
+              />
               <p className="m-0 pt-4 pb-1">Enter your password</p>
               <input
                 className="input-text"
@@ -80,55 +94,28 @@ const signUpClient = () => {
                 onClick={togglePasswordVisibility}
                 alt=""
               />
-              <div className="continue text-center mt-4">
+              <div className="flex justify-center">
                 <button
-                  className="text-xl button-text"
-                  style={{ color: "#CED1D2" }}
-                >
-                  Continue
-                </button>
+                    className="w-4/5 text-xl text-white button-text mt-4"
+                    style={{ backgroundColor: "#305A61", borderRadius: "20px" }}
+                  >
+                    Continue
+                  </button>
               </div>
+                
 
               <div className="nav-sign flex justify-between">
                 <Link
                   className="pt-2 text-right text-base cursor-pointer text-decoration"
-                  style={{ color: "#CED1D2" }}
+                 
                   href="login_client"
                 >
                   You have a account?
                 </Link>
-                <p
-                  className="pt-2 text-right text-base cursor-pointer"
-                  style={{ color: "#CED1D2" }}
-                >
-                  Forget your password
-                </p>
+               
               </div>
             </div>
           </form>
-          <div className="policy">
-            <div className="input flex">
-              <input className="input-check" type="checkbox" />
-              <p className="text-center mb-0">
-                I have read and accept the Terms of Service & Privacy Policy
-              </p>
-            </div>
-          </div>
-          <div className="login-with flex justify-center items-center mt-2 pb-2">
-            <img className="h-1 w-1/3" src="/image/login-gach.png" alt="" />
-            <p className="mb-0 pd-or fz-14">or sign up with</p>
-            <img className="h-1 w-1/3" src="/image/login-gach.png" alt="" />
-          </div>
-          <div className="difflogin flex justify-center pb-9">
-            <div className="facebook flex items-center cursor-pointer mr-3">
-              <img className="w-3 h-3 mr-3" src="/image/facebook.png" alt="" />
-              <p className="mb-0">Facebook</p>
-            </div>
-            <div className="google flex items-center cursor-pointer ml-3">
-              <img className="w-3 h-3 mr-3" src="/image/google.png" alt="" />
-              <p className="mb-0 ">Google</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
