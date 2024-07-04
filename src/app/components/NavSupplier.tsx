@@ -15,17 +15,7 @@ const NavSupplier = () => {
     const roleName = Cookies.get("roleName") || ""; // Thêm giá trị mặc định là chuỗi rỗng nếu roleName là undefined
     setRole(roleName);
   }, []);
-
-  // const handleLogoutSupplier = async () => {
-  //   await authenticateService.logOutSupplier();
-  //   toast.success("Logout Success..");
-  //   router.push("/login_supplier");
-  // };
-  // const handleLogoutStaff = async () => {
-  //   await authenticateService.logOutStaff();
-  //   toast.success("Logout Success..");
-  //   router.push("/login_supplier_staff");
-  // };
+  
   return (
     <div>
       <header className="nav-supllier">
