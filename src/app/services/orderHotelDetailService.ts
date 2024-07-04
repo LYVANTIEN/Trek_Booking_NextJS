@@ -3,7 +3,7 @@ interface IOrderHotelDetailService{
     getOrderHotelDetailByOrderHotelHeaderId(orderHotelHeaderId: number): Promise<IOrderHotelDetail>;
 }
 
-const orderTourDetailService: IOrderHotelDetailService = {
+const orderHotelDetailService: IOrderHotelDetailService = {
     async getOrderHotelDetailByOrderHotelHeaderId(orderHotelHeaderId) {
         try {
           const response = await fetch(
@@ -31,4 +31,4 @@ const orderTourDetailService: IOrderHotelDetailService = {
         }
       },
 }
-export default orderTourDetailService;
+export default orderHotelDetailService;

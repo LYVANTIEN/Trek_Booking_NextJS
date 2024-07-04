@@ -365,11 +365,14 @@ const Booking_History = () => {
                               </div>
                             </div>
                             <div className="col-md-2 flex items-center content-center justify-evenly">
-                              <div>
-                                {tourDetails[header.id]
-                                  ?.map((detail) => detail.tourTotalPrice)
-                                  .join(", ")}
-                                $
+                              <div
+                                className={`whitespace-nowrap ${
+                                  header.completed
+                                    ? "color-active"
+                                    : "color-stop"
+                                }`}
+                              >
+                                {header.completed ? "Confirmed" : "Pending..."}
                               </div>
                             </div>
                             <div className="col-md-2 flex items-center content-center justify-evenly">
