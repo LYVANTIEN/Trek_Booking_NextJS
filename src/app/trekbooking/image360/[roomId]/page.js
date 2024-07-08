@@ -1,7 +1,7 @@
-'use client';
-import React, { useEffect, useState, useRef } from 'react';
-import '../../../../../public/css/imag360.css';
-import '../../../../../public/css/voucher.css';
+"use client";
+import React, { useEffect, useState, useRef } from "react";
+import "../../../../../public/css/imag360.css";
+import "../../../../../public/css/voucher.css";
 
 const roomImage3DService = {
   async getRoom3DImageByRoomId(roomId) {
@@ -44,7 +44,7 @@ const List3DRoom = ({ params }) => {
       try {
         const data = await roomImage3DService.getRoom3DImageByRoomId(roomId);
         if (Array.isArray(data)) {
-          const urls = data.map(item => item.roomImage3DURL);
+          const urls = data.map((item) => item.roomImage3DURL);
           setListImageUrl(urls);
         } else {
           console.error("Fetched data is not an array:", data);
@@ -56,12 +56,13 @@ const List3DRoom = ({ params }) => {
 
     fetchImages();
 
-    const script1 = document.createElement('script');
-    script1.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.min.js';
+    const script1 = document.createElement("script");
+    script1.src =
+      "https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.min.js";
     script1.async = true;
     script1.onload = () => {
-      const script2 = document.createElement('script');
-      script2.src = '/Components/panolens.min.js';
+      const script2 = document.createElement("script");
+      script2.src = "/Components/panolens.min.js";
       script2.async = true;
       script2.onload = () => {
         console.log("Panolens script loaded");
@@ -74,7 +75,9 @@ const List3DRoom = ({ params }) => {
     return () => {
       document.body.removeChild(script1);
       // Optional: Remove script2 if it was added
-      const script2 = document.querySelector('script[src="/Components/panolens.min.js"]');
+      const script2 = document.querySelector(
+        'script[src="/Components/panolens.min.js"]'
+      );
       if (script2) {
         document.body.removeChild(script2);
       }
@@ -89,7 +92,7 @@ const List3DRoom = ({ params }) => {
         const imageUrl = listImageUrl[currentImageIndex];
         console.log("ImageURL: ", imageUrl);
 
-        if (typeof imageUrl === 'string') {
+        if (typeof imageUrl === "string") {
           // Remove and dispose the previous panorama if it exists
           if (panoramaRef.current) {
             viewerRef.current.remove(panoramaRef.current);
@@ -100,7 +103,7 @@ const List3DRoom = ({ params }) => {
           const panorama = new PANOLENS.ImagePanorama(imageUrl);
           panoramaRef.current = panorama;
 
-          const imageContainer = document.querySelector('.image360-container');
+          const imageContainer = document.querySelector(".image360-container");
           if (!imageContainer) {
             console.error("Image container not found");
             return;
@@ -136,7 +139,9 @@ const List3DRoom = ({ params }) => {
   };
 
   const handleBack = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + listImageUrl.length) % listImageUrl.length);
+    setCurrentImageIndex(
+      (prevIndex) => (prevIndex - 1 + listImageUrl.length) % listImageUrl.length
+    );
   };
 
   return (
@@ -144,36 +149,77 @@ const List3DRoom = ({ params }) => {
       <div className="virtual flex justify-center">
         <div className="border-virtual">
           <div className="virtual-tour flex justify-center items-center">
-            <img className='img-line' src="/image/line40.png" alt="" />
-            <h5 className='px-3 color-primary font-semibold fz-16'>Virtual tour</h5>
-            <img className='img-line' src="/image/line40.png" alt="" />
+            <img className="img-line" src="/image/line40.png" alt="" />
+            <h5 className="px-3 color-primary font-semibold fz-16">
+              Virtual tour
+            </h5>
+            <img className="img-line" src="/image/line40.png" alt="" />
           </div>
-          <p className='color-primary text-center pb-3 fz-12'>Lorem ipsum dolor sit amet consectetur. Vel sit dignissim feugiat semper at pharetra laoreet</p>
+          <p className="color-primary text-center pb-3 fz-12">
+            Lorem ipsum dolor sit amet consectetur. Vel sit dignissim feugiat
+            semper at pharetra laoreet
+          </p>
         </div>
       </div>
       <div className="tour">
         <div className="container">
           <div className="tour__head"></div>
-          <p>Lorem ipsum dolor sit amet consectetur. Sodales vitae gravida eget tristique sed nec. Lectus ac viverra arcu vestibulum. Tincidunt velit nulla pellentesque dolor cras. Lacus auctor ut quis ullamcorper consectetur sit.</p>
-          <p>Lorem ipsum dolor sit amet consectetur. Sodales vitae gravida eget tristique sed nec. Lectus ac viverra arcu vestibulum. Tincidunt velit nulla pellentesque dolor cras. Lacus auctor ut quis ullamcorper consectetur sit.</p>
-          <div className='relative'>
+          <p>
+            Lorem ipsum dolor sit amet consectetur. Sodales vitae gravida eget
+            tristique sed nec. Lectus ac viverra arcu vestibulum. Tincidunt
+            velit nulla pellentesque dolor cras. Lacus auctor ut quis
+            ullamcorper consectetur sit.
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur. Sodales vitae gravida eget
+            tristique sed nec. Lectus ac viverra arcu vestibulum. Tincidunt
+            velit nulla pellentesque dolor cras. Lacus auctor ut quis
+            ullamcorper consectetur sit.
+          </p>
+          <div className="relative">
             <div className="image360-container"></div>
             {listImageUrl.length > 0 && (
               <div className="action-image flex justify-between">
-                <img onClick={handleBack} className='cursor-pointer wh-fix' src="/image/left360.png" alt="" />
+                <img
+                  onClick={handleBack}
+                  className="cursor-pointer wh-fix"
+                  src="/image/left360.png"
+                  alt=""
+                />
                 <div className="img-control flex">
-                  <img className='mx-1 cursor-pointer wh-fix' src="/image/plus.png" alt="" />
-                  <img className='mx-1 cursor-pointer wh-fix' src="/image/minus.png" alt="" />
-                  <img className='mx-1 cursor-pointer wh-fix' src="/image/up.png" alt="" />
-                  <img className='mx-1 cursor-pointer wh-fix' src="/image/down1.png" alt="" />
+                  <img
+                    className="mx-1 cursor-pointer wh-fix"
+                    src="/image/plus.png"
+                    alt=""
+                  />
+                  <img
+                    className="mx-1 cursor-pointer wh-fix"
+                    src="/image/minus.png"
+                    alt=""
+                  />
+                  <img
+                    className="mx-1 cursor-pointer wh-fix"
+                    src="/image/up.png"
+                    alt=""
+                  />
+                  <img
+                    className="mx-1 cursor-pointer wh-fix"
+                    src="/image/down1.png"
+                    alt=""
+                  />
                 </div>
-                <img onClick={handleNext} className='cursor-pointer wh-fix' src="/image/right360.png" alt="" />
+                <img
+                  onClick={handleNext}
+                  className="cursor-pointer wh-fix"
+                  src="/image/right360.png"
+                  alt=""
+                />
               </div>
             )}
           </div>
         </div>
       </div>
-      <div className='pb-28 backgr-home max-[500px]:pb-14'></div>
+      <div className="pb-28 backgr-home max-[500px]:pb-14"></div>
     </>
   );
 };

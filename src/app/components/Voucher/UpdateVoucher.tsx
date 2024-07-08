@@ -180,7 +180,7 @@ function UpdateVoucher(props: IProps) {
   }, [voucher]);
 
   const handleSubmit = async () => {
-    const validationErrors = {      
+    const validationErrors = {
       availableDate: validateAvailableDate(availableDate),
       expireDate: validateExpireDate(expireDate, availableDate),
       voucherQuantity: validateVoucherQuantity(voucherQuantity),
@@ -251,9 +251,9 @@ function UpdateVoucher(props: IProps) {
                   type="text"
                   value={voucherCode}
                   onChange={(e) => setVoucherCode(e.target.value)}
-                  onBlur={() => handleBlur("voucherCode")}                  
+                  onBlur={() => handleBlur("voucherCode")}
                   readOnly
-                />                
+                />
               </Form.Group>
             </Col>
             <Col>
@@ -279,6 +279,7 @@ function UpdateVoucher(props: IProps) {
                 <Form.Control
                   type="date"
                   value={availableDate}
+                  readOnly
                   min={getTodayDate().split("-").reverse().join("-")}
                   onChange={(e) => setAvailableDate(e.target.value)}
                   onBlur={() => handleBlur("availableDate")}
