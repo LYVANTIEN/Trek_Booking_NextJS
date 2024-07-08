@@ -136,10 +136,10 @@ const ListHotels = () => {
           <div className="row mx-3">
             <div className="col-lg-2 col-4">
               <Link
-                href="#"
+                href={`/trekbooking/search_city?city=Cần Thơ`}
                 className="text-white no-underline zoom-effect-container"
               >
-              <div className="relative image-card">
+                <div className="relative image-card">
                   <img
                     className="border w-full"
                     style={{ borderRadius: "20px", height: "231px" }}
@@ -162,7 +162,7 @@ const ListHotels = () => {
                 </div>
               </Link>
               <div className="flex justify-center my-3">
-              <Link
+                <Link
                   className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
                   //filter city can tho
@@ -174,7 +174,7 @@ const ListHotels = () => {
             </div>
             <div className="col-lg-2 col-4">
               <Link
-                href="#"
+                href={`/trekbooking/search_city?city=Ninh Bình`}
                 className="text-white no-underline zoom-effect-container"
               >
                 <div className="relative image-card">
@@ -200,7 +200,7 @@ const ListHotels = () => {
                 </div>
               </Link>
               <div className="flex justify-center my-3">
-              <Link
+                <Link
                   className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
                   href={`/trekbooking/search_city?city=Ninh Bình`}
@@ -211,10 +211,10 @@ const ListHotels = () => {
             </div>
             <div className="col-lg-2 col-4">
               <Link
-                href="#"
+                href={`/trekbooking/search_city?city=Ho Chi Minh`}
                 className="text-white no-underline zoom-effect-container"
               >
-               <div className="relative image-card">
+                <div className="relative image-card">
                   <img
                     className="border w-full"
                     style={{ borderRadius: "20px", height: "231px" }}
@@ -235,10 +235,9 @@ const ListHotels = () => {
                     </span>
                   </div>
                 </div>
-
               </Link>
               <div className="flex justify-center my-3">
-              <Link
+                <Link
                   className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
                   href={`/trekbooking/search_city?city=Ho Chi Minh`}
@@ -249,10 +248,10 @@ const ListHotels = () => {
             </div>
             <div className="col-lg-2 col-4">
               <Link
-                href="#"
+                href={`/trekbooking/search_city?city=Hanoi`}
                 className="text-white no-underline zoom-effect-container"
               >
-               <div className="relative image-card">
+                <div className="relative image-card">
                   <img
                     className="border w-full"
                     style={{ borderRadius: "20px", height: "231px" }}
@@ -275,7 +274,7 @@ const ListHotels = () => {
                 </div>
               </Link>
               <div className="flex justify-center my-3">
-              <Link
+                <Link
                   className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
                   href={`/trekbooking/search_city?city=Hanoi`}
@@ -286,10 +285,10 @@ const ListHotels = () => {
             </div>
             <div className="col-lg-2 col-4">
               <Link
-                href="#"
+                href={`/trekbooking/search_city?city=Phan Thiết`}
                 className="text-white no-underline zoom-effect-container"
               >
-               <div className="relative image-card">
+                <div className="relative image-card">
                   <img
                     className="border w-full"
                     style={{ borderRadius: "20px", height: "231px" }}
@@ -306,14 +305,13 @@ const ListHotels = () => {
                     }}
                   >
                     <span className="text-white font-semibold text-base">
-                     Phan Thiết
+                      Phan Thiết
                     </span>
                   </div>
                 </div>
-
               </Link>
               <div className="flex justify-center my-3">
-              <Link
+                <Link
                   className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
                   href={`/trekbooking/search_city?city=Phan Thiết`}
@@ -348,10 +346,9 @@ const ListHotels = () => {
                     </span>
                   </div>
                 </div>
-
               </Link>
               <div className="flex justify-center my-3">
-              <Link
+                <Link
                   className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
                   href={`/trekbooking/search_city?city=Vũng Tàu`}
@@ -362,91 +359,68 @@ const ListHotels = () => {
             </div>
           </div>
         </div>
-        <div className="text-center">
-          <p className="font-bold text-4xl pb-2">Hotels near home</p>
-        </div>
-        <div className="row text-center">
-          {/* Links to locations */}
-          {[
-            "Ho Chi Minh",
-            "Ha Noi",
-            "Ha Long",
-            "Da Lat",
-            "Phu Quoc",
-            "Da Nang",
-          ].map((city) => (
-            <div key={city} className="col-lg-2 col-sm-4 col-6 col-md-4 pb-2">
-              <a
-                className="no-underline  border text-sm font-semibold listA  py-1 block"
-                href="#"
-                style={{ borderRadius: "10px" }}
-              >
-                {city}
-              </a>
-            </div>
-          ))}
-        </div>
+
         <div className="mt-16">
           <div className="row">
             {hotelList.length > 0 ? (
-              hotelList.map((item: IHotel) => (
-                <div key={item.hotelId} className="col-md-4 col-lg-3 mb-2">
-                  <div
-                    className="border grid justify-items-center pb-3 card1 "
-                    style={{
-                      borderRadius: "20px",
-                      boxShadow: "0 4px 4px rgba(0, 0, 0, 0.25)",
-                      height: "460px",
-                    }}
-                  >
-                    <img
-                      src={item.hotelAvatar}
-                      alt="hotel"
-                      className="p-3 w-100 h-64"
-                      style={{ border: "1px", borderRadius: "36px" }}
-                    />
-                    <span className="text-lg font-semibold text-center">
-                      {item.hotelName}
-                    </span>
-                    <div className="flex justify-between items-center text-sm font-medium">
-                      <div className="flex mr-2">
-                        {averageRatings[item.hotelId] > 0 ? (
-                          [...Array(averageRatings[item.hotelId])].map(
-                            (_, index) => (
-                              <img
-                                key={index}
-                                className="inline w-3 h-3 ml-1"
-                                src="/image/star.png"
-                                alt=""
-                              />
-                            )
-                          )
-                        ) : (
-                          <span className="">No rating</span>
-                        )}
-                      </div>
-                      {" "}
-                      <span className="" style={{ color: "#2cc92c" }}>
-                        {" "}
-                        {commentsCount[item.hotelId] || 0} reviews
-                      </span>
-                    </div>
-                    <p className="text-base font-semibold">
-                      From ${getLowestPrice(item.hotelId) || "N/A"}
-                    </p>
-                    <Link
-                      href={`/trekbooking/list_hotel/${item.hotelId}`}
-                      className="text-white font-medium pt-2 pb-1  px-6 text-lg no-underline"
+              hotelList
+                .filter((item: IHotel) => item.isVerify === true) // Lọc các khách sạn có isVerify = true
+                .map((item: IHotel) => (
+                  <div key={item.hotelId} className="col-md-4 col-lg-3 mb-2">
+                    <div
+                      className="border grid justify-items-center pb-3 card1 "
                       style={{
-                        backgroundColor: "#305A61",
                         borderRadius: "20px",
+                        boxShadow: "0 4px 4px rgba(0, 0, 0, 0.25)",
+                        height: "460px",
                       }}
                     >
-                      Book now
-                    </Link>
+                      <img
+                        src={item.hotelAvatar}
+                        alt="hotel"
+                        className="p-3 w-100 h-64"
+                        style={{ border: "1px", borderRadius: "36px" }}
+                      />
+                      <span className="text-lg font-semibold text-center">
+                        {item.hotelName}
+                      </span>
+                      <div className="flex justify-between items-center text-sm font-medium">
+                        <div className="flex mr-2">
+                          {averageRatings[item.hotelId] > 0 ? (
+                            [...Array(averageRatings[item.hotelId])].map(
+                              (_, index) => (
+                                <img
+                                  key={index}
+                                  className="inline w-3 h-3 ml-1"
+                                  src="/image/star.png"
+                                  alt=""
+                                />
+                              )
+                            )
+                          ) : (
+                            <span className="">No rating</span>
+                          )}
+                        </div>
+                        <span className="" style={{ color: "#2cc92c" }}>
+                          {commentsCount[item.hotelId] || 0} reviews
+                        </span>
+                      </div>
+                      <p className="text-base font-semibold">
+                        From ${getLowestPrice(item.hotelId) || "N/A"}
+                      </p>
+                      <Link
+                        href={`/trekbooking/list_hotel/${item.hotelId}`}
+                        className="text-white font-medium pt-2 pb-1  px-6 text-lg no-underline"
+                        style={{
+                          backgroundColor: "#305A61",
+                          borderRadius: "20px",
+                        }}
+                      >
+                        Book now
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              ))
+                ))
             ) : (
               <div className="col-12">
                 <p className="text-center py-4 text-red-600 font-bold">

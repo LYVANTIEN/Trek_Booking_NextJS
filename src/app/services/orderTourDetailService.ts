@@ -23,7 +23,7 @@ const orderTourDetailService: IOrderTourDetailService = {
         throw new Error("Failed to fetch order tour detail");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+   
       return data;
     } catch (error) {
       console.error("Error fetching order tour detail:", error);

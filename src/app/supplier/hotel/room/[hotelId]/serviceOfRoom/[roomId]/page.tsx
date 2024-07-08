@@ -130,7 +130,7 @@ const ListServiceOfRoom = ({ params }: { params: {hotelId:string, roomId: string
           </div>
         )}
         <button
-          className="ml-8 button-add ml-4rem"
+          className="ml-8 button-add relative z-10"
           onClick={() => setShowServiceOfRoomCreate(true)}
         >
           + Add Service

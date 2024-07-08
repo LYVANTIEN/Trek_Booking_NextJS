@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { LineChart } from "@mui/x-charts";
 import "../../../../public/css/dashboard.css";
 import PieChartGG from "../../components/Dashboard/PieChartGG";
 import DonutChart from "../../components/Dashboard/DonutChart";
@@ -66,10 +65,10 @@ const DashBoard = () => {
         rel="stylesheet"
       />
       <div className="relative">
-        <div className="table-hotel1 pt-8">
-          <div className="row row-cols-1 row-cols-md-2 row-cols-xl-4">
-            <div className="col">
-              <div className="card radius-10 border-start border-0 border-3 border-info">
+        <div className="table-hotel1 max-[768px]:w-100 pt-8">
+          <div className="row pb-4">
+            <div className="col-lg-3 col-6 max-[992px]:mb-4">
+<div className="card radius-10 border-start border-0 border-3 border-info">
                 <div className="card-body">
                   <div className="d-flex align-items-center">
                     <div>
@@ -96,7 +95,7 @@ const DashBoard = () => {
                 </div>
               </div>
             </div>
-            <div className="col">
+            <div className="col-lg-3 col-6">
               <div className="card radius-10 border-start border-0 border-3 border-danger">
                 <div className="card-body">
                   <div className="d-flex align-items-center">
@@ -128,12 +127,12 @@ const DashBoard = () => {
                 </div>
               </div>
             </div>
-            <div className="col">
+            <div className="col-lg-3 col-6">
               <div className="card radius-10 border-start border-0 border-3 border-success">
                 <div className="card-body">
                   <div className="d-flex align-items-center">
                     <div>
-                      <p className="mb-0 text-secondary">Total Tour Orders</p>
+<p className="mb-0 text-secondary">Total Tour Orders</p>
                       <h4 className="my-1 text-success">
                         {countTour !== null ? countTour : "No order yet..."}
                       </h4>
@@ -157,7 +156,7 @@ const DashBoard = () => {
                 </div>
               </div>
             </div>
-            <div className="col">
+            <div className="col-lg-3 col-6">
               <div className="card radius-10 border-start border-0 border-3 border-warning">
                 <div className="card-body">
                   <div className="d-flex align-items-center">
@@ -189,25 +188,25 @@ const DashBoard = () => {
               </div>
             </div>
           </div>
-          <div className="row chart-row">
-            <div className="card chart-card">
-              <LineChartGG />
+          <div className="row  pb-4 ml-1 max-[768px]:ml-0">
+            <div className="col-lg-6 col-md-6 col-12 max-[768px]:mb-4">
+              <LineChartGG  />
             </div>
-            <div className="card chart-card">
+            <div className=" col-lg-5 col-md-6 col-12 ml-4 max-[768px]:ml-0  ">
               <DonutChart />
             </div>
           </div>
-          <div className="row chart-row">
-            <div className="card chart-card">
+          <div className="row  ml-1 max-[768px]:ml-0">
+            <div className=" col-lg-6 col-md-6  col-12 max-[768px]:mb-4">
               <LineChartGGTour />
             </div>
-            <div className="card chart-card">
-              <PieChartGG />
+            <div className="col-lg-5 col-md-6 col-12  ml-4 max-[768px]:ml-0 ">
+          <PieChartGG />
             </div>
           </div>
           <div className="row chart-row">
             <div className="card chart-card">
-              <LineChart
+              {/* <LineChart
                 xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
                 series={[
                   {
@@ -216,7 +215,7 @@ const DashBoard = () => {
                 ]}
                 width={500}
                 height={450}
-              />
+              /> */}
             </div>
             <div className="card chart-card">{/* <PieChartGG /> */}</div>
           </div>

@@ -23,7 +23,7 @@ const orderHotelDetailService: IOrderHotelDetailService = {
         throw new Error("Failed to fetch order hotel detail");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+    
       return data;
     } catch (error) {
       console.error("Error fetching order hotel detail:", error);

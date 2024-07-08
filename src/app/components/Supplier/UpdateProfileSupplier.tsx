@@ -34,7 +34,13 @@ const handleEvent = <T extends HTMLElement>(
 };
 
 function UpdateProfileSupplier(props: IProps) {
-  const { showSupplierUpdate, setShowSupplierUpdate, supplier, supplierId, setSupplier } = props;  
+  const {
+    showSupplierUpdate,
+    setShowSupplierUpdate,
+    supplier,
+    supplierId,
+    setSupplier,
+  } = props;
   const [supplierName, setSupplierName] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
@@ -77,7 +83,7 @@ function UpdateProfileSupplier(props: IProps) {
     const cityCode = event.target.value;
     setSelectedCity(cityCode);
   };
-const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const file = event.target.files ? event.target.files[0] : null;
     if (file) {
@@ -98,7 +104,7 @@ const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     }
 
     try {
-      const storageRef = ref(analytics, "User_Image/" + fileUpload.name);
+      const storageRef = ref(analytics, "Supplier_Image/" + fileUpload.name);
       const snapshot = await uploadBytes(storageRef, fileUpload);
       const downloadURL = await getDownloadURL(snapshot.ref);
       setUploadedImageURLs([downloadURL]);
@@ -113,24 +119,28 @@ const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
-    if (!supplierName) {
+    if (!supplierName || supplierName.trim() === "") {
       newErrors.supplierName = "Supplier Name is required";
     } else if (/[^a-zA-Z\s]/.test(supplierName)) {
       newErrors.supplierName =
         "Supplier Name must not contain numbers or special characters";
     }
 
-    if (!phone || isNaN(parseInt(phone)))
-      newErrors.roomAvailable = "Available must be a number";
+    if (!phone || phone.trim() === "") {
+      newErrors.phone = "Please enter phone number";
+    } else if (isNaN(parseInt(phone))) {
+      newErrors.phone = "Phone must be a number";
+    }
     if (!email) newErrors.email = "Email is required";
-    if (!selectedCity || !selectedCountry)
-      newErrors.address = "Address must be fully selected";
+    if (!selectedCountry) newErrors.country = "Please select a country";
+    if (!address || address.trim() === "") {
+      newErrors.address = "Address is required";
+    }
     return newErrors;
   };
 
-  const handleCloseModal = async () => {   
+  const handleCloseModal = async () => {
     setErrors({});
-    setSupplier(null);
     setFileUpload(null);
     setPreviewImageURL(null);
     setUploadedImageURLs([]);
@@ -138,38 +148,30 @@ const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
   };
 
   useEffect(() => {
-    if (supplier && supplier.supplierId) {
+    if (showSupplierUpdate && supplier && supplier.supplierId) {
       setSupplierName(supplier.supplierName);
-      setAvatar(supplier.avatar || "/image/addpicture.png");
+      setAvatar(supplier.avatar);
       setPhone(supplier.phone);
       setPassword(supplier.password);
       setEmail(supplier.email);
       setRoleId(supplier.roleId);
-      setAddress(supplier.address);
 
-      // Kiểm tra nếu user.address không phải là null hoặc undefined
       if (supplier.address) {
-        const addressParts = supplier.address.split(", ");
-        if (addressParts.length === 2) {
-          setSelectedCity(addressParts[0]);
-          setSelectedCountry(addressParts[1]);
-          // Load cities for the selected country
-          const city = cities.getByCountry(addressParts[1]);
-          setCitiesList(city || []);
+        const addressParts = supplier.address.split(",");
+        if (addressParts.length > 1) {
+          const displayAddress = addressParts.slice(0, -1).join(",").trim();
+          setAddress(displayAddress);
+          setSelectedCountry(addressParts[addressParts.length - 1].trim());
         } else {
-          // Xử lý khi địa chỉ không có đúng định dạng mong muốn
-          setSelectedCity("");
+          setAddress(supplier.address);
           setSelectedCountry("");
-          setCitiesList([]);
         }
       } else {
-        // Xử lý khi user.address là null hoặc undefined
-        setSelectedCity("");
-setSelectedCountry("");
-        setCitiesList([]);
+        setAddress("");
+        setSelectedCountry("");
       }
     }
-  }, [supplier]); // Được khuyến khích bổ sung tất cả các định ngĩa
+  }, [showSupplierUpdate, supplier]);
 
   const handleSubmit = async () => {
     const validationErrors = validate();
@@ -190,11 +192,11 @@ setSelectedCountry("");
         avatar: imageURLs,
         phone,
         email,
-        address: `${selectedCity}, ${selectedCountry}`,
+        address: `${address}, ${selectedCountry}`,
         password: password,
         status: true,
         isVerify: true,
-        roleId: (Number(roleId)),
+        roleId: Number(roleId),
       };
 
       const updateSupplier = await supplierService.updateSupplier(supplier);
@@ -206,6 +208,7 @@ setSelectedCountry("");
       }
       handleCloseModal();
       mutate("profile");
+      mutate("supplier");
     } catch (error) {
       toast.error("Failed to update profile");
       console.error(error);
@@ -229,7 +232,7 @@ setSelectedCountry("");
           <Row>
             <Col>
               <Form.Group className="mb-3">
-                <Form.Label>UserName</Form.Label>
+                <Form.Label>Supplier Name</Form.Label>
                 <Form.Control
                   type="text"
                   value={supplierName}
@@ -252,33 +255,32 @@ setSelectedCountry("");
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Address</Form.Label>
+                <Form.Label>Country</Form.Label>
                 <Form.Control
                   as="select"
                   value={selectedCountry}
+                  isInvalid={!!errors.country}
                   onChange={handleEvent<HTMLSelectElement>(handleCountryChange)}
                 >
                   <option value="">Select Country</option>
                   {countriesList.map((country) => (
-                    <option key={country.isoCode} value={country.isoCode}>
+                    <option key={country.isoCode} value={country.name}>
                       {country.name}
-                    </option>
-))}
-                </Form.Control>
-                <Form.Control
-                  as="select"
-                  value={selectedCity}
-                  onChange={handleEvent<HTMLSelectElement>(handleCityChange)}
-                  disabled={!selectedCountry}
-                >
-                  <option value="">Select City</option>
-                  {citiesList.map((city) => (
-                    <option key={city.code} value={city.code}>
-                      {city.name}
                     </option>
                   ))}
                 </Form.Control>
-
+                <Form.Control.Feedback type="invalid">
+                  {errors.country}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Address</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  isInvalid={!!errors.address}
+                />
                 <Form.Control.Feedback type="invalid">
                   {errors.address}
                 </Form.Control.Feedback>
@@ -345,7 +347,7 @@ setSelectedCountry("");
                 style={{
                   border: "1px solid #ccc",
                   color: "black",
-background: "white",
+                  background: "white",
                 }}
                 onClick={handleCloseModal}
               >

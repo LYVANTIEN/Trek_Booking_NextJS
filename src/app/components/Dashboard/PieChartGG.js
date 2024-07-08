@@ -36,7 +36,7 @@ const PieChartGG = () => {
     loadGoogleCharts();
   }, []);
 
-  return <div id="piechart" style={{ width: "500px", height: "400px" }}></div>;
+  return <div id="piechart"   style={{ width: "100%", height: "400px" }}></div>;
 };
 
 export default PieChartGG;

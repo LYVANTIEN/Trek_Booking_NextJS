@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
 import Link from "../../../node_modules/next/link";
 import "../../../public/css/authen.css";
@@ -57,14 +58,14 @@ const Page = () => {
             </div>
           </div>
         </div>
-        <div className="image-authen overflow-x-hidden pb-8">
-          <div className="flex justify-around">
-            <div className="image-intro-gis">
-              <img src="/image/confirm1.png" alt="" />
+        <div className="container image-authen overflow-x-hidden pb-8">
+          <div className="row justify-around">
+            <div className="col-6 image-intro-gis">
+              <img src="/image/confirm1.png" className="w-full" style={{borderRadius: "10px", height: "400px"}} alt="" />
             </div>
-            <div className="image-intro-gis">
-              <img src="/image/confirm2.png" alt="" />
-              <img className="ptop-10" src="/image/confirm3.png" alt="" />
+            <div className="col-6 image-intro-gis">
+              <img src="/image/confirm2.png" className="w-full" style={{borderRadius: "10px", height: "195px"}} alt="" />
+              <img className="mt-2 w-full"   style={{borderRadius: "10px", height: "195px"}} src="/image/confirm3.png" alt="" />
             </div>
           </div>
         </div>

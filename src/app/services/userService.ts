@@ -44,7 +44,7 @@ const userService: IUserService = {
         throw new Error("Failed to fetch user");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+ 
       return data;
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -79,7 +79,7 @@ const userService: IUserService = {
         data = await response.text();
       }
 
-      console.log(data);
+   
       return data;
     } catch (error) {
       console.error("Error updating user:", error);

@@ -51,7 +51,7 @@ function DetailHotel(props: IProps) {
       setHotelInformation(hotel.hotelInformation);
     }
   }, [hotel]);
-  console.log("List Hotel" + hotel);
+  
 
   const handleClosedDetail = () => {
     setHotel(null);

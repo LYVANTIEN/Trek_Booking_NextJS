@@ -1,6 +1,4 @@
-// components/DonutChart.js
 import { useEffect } from "react";
-
 const DonutChart = () => {
   useEffect(() => {
     const loadGoogleCharts = () => {
@@ -42,7 +40,7 @@ const DonutChart = () => {
   }, []);
 
   return (
-    <div id="donutchart" style={{ width: "500px", height: "400px" }}></div>
+    <div id="donutchart"   style={{ width: "100%", height: "400px" }}></div>
   );
 };
 

@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import hotelService from "@/app/services/hotelService";
 import { Button, Form, Modal } from "react-bootstrap";
 import { cities, countries } from "country-cities";
+import supplierService from "@/app/services/supplierService";
 
 interface Iprops {
   showHotelCreate: boolean;
@@ -42,6 +43,7 @@ function CreateHotel(props: Iprops) {
   const [citiesList, setCitiesList] = useState<any[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [selectedCity, setSelectedCity] = useState<string>("");
+  const [supplierId, setSupplierId] = useState<number | null>(null);
   //
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isTouched, setIsTouched] = useState<{ [key: string]: boolean }>({
@@ -53,7 +55,17 @@ function CreateHotel(props: Iprops) {
     hotelCity: false,
     hotelInformation: false,
   });
-
+  useEffect(() => {
+    const fetchSupplierId = async () => {
+      try {
+        const supplier = await supplierService.getSupplierById();
+        setSupplierId(supplier.supplierId);
+      } catch (error) {
+        toast.error("Failed to fetch supplier ID");
+      }
+    };
+    fetchSupplierId();
+  }, []);
   useEffect(() => {
     const loadCountries = async () => {
       const allCountries = await countries.all();
@@ -67,10 +79,10 @@ function CreateHotel(props: Iprops) {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const countryCode = event.target.value;
-    console.log("Fetched country: ", countryCode);
+   
     setSelectedCountry(countryCode);
     const city = await cities.getByCountry(countryCode);
-    console.log("Fetched cities: ", city);
+
     setCitiesList(city || []);
     setSelectedCity("");
   };
@@ -189,7 +201,7 @@ function CreateHotel(props: Iprops) {
   // End Validate Input //
 
   const handleSubmit = async () => {
-    const supplierId = localStorage.getItem("supplierId");
+
     const validationErrors = {
       hotelName: validateHotelName(hotelName),
       hotelPhone: validateHotelPhone(hotelPhone),
@@ -217,8 +229,9 @@ function CreateHotel(props: Iprops) {
         hotelDistrict ,
         hotelCity:`${selectedCity},${selectedCountry}`,
         hotelInformation,
-        isVerify: true, // Default value is true
+        isVerify: false, 
         supplierId: Number(supplierId),
+        services: [],
       };
       const response = await hotelService.createHotel(hotel);
       toast.success("Create Hotel Success");
@@ -339,15 +352,6 @@ function CreateHotel(props: Iprops) {
             </Form.Group>
             <Form.Group className="mb-3" controlId="formHotelCity">
               <Form.Label>Hotel City</Form.Label>
-              {/* <Form.Control
-                type="text"
-                placeholder="Please enter hotel city"
-                value={hotelCity}
-                onChange={(e: any) => setHotelCity(e.target.value)}
-                onBlur={() => handleBlur("hotelCity")}
-                isInvalid={!!errors.hotelCity}
-              /> */}
-
               <Form.Control
                 as="select"
                 value={selectedCountry}

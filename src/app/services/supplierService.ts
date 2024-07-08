@@ -16,7 +16,7 @@ const supplierService: ISupplierService = {
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, 
           },
         }
       );
@@ -24,7 +24,7 @@ const supplierService: ISupplierService = {
         throw new Error("Failed to fetch supplier staff list");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+     
       return data;
     } catch (error) {
       console.error("Error fetching supplier staff list:", error);
@@ -59,7 +59,7 @@ const supplierService: ISupplierService = {
         data = await response.text();
       }
 
-      console.log(data);
+   
       return data;
     } catch (error) {
       console.error("Error updating supplier:", error);

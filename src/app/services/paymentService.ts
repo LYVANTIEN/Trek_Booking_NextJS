@@ -101,9 +101,40 @@ const handleTourPayment = async (paymentData: any) => {
     console.error('Payment error:', error);
   }
 };
+const clearCart = async (roomId: number) => {
+  try {
+    const token = Cookies.get("tokenUser");
+    if (!token) {
+      throw new Error("Token not found");
+    }
+
+    const response = await fetch(`${BASE_URL}/StripePayment/${roomId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      console.error('Error response:', responseText);
+      console.error('HTTP status code:', response.status);
+      throw new Error('Failed to clear cart');
+    }
+
+    console.log('Success response:', responseText);
+    toast.success('Cart cleared successfully!');
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+    toast.error('Failed to clear cart.');
+  }
+};
 
 export default {
   handlePayment,
   createBooking,
-  handleTourPayment
+  handleTourPayment,
+  clearCart
 };

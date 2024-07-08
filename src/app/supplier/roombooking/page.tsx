@@ -1,27 +1,54 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import Link from "next/link";
-import useSWR from "swr";
-import bookingService from "@/app/services/bookingService";
-import { Button } from "react-bootstrap";
-import { useState } from "react";
-import UpdateBooking from "./update_booking";
+import { useEffect, useState } from "react";
 import BookingDetail from "./booking_detail";
+import orderHotelHeaderService from "@/app/services/orderHotelHeaderService";
+import orderHotelDetailService from "@/app/services/orderHotelDetailService";
+import useSWR from "swr";
 
-const BookingListOfSupplier = () => {
-  const { data: bookingList, error } = useSWR("bookingList", () =>
-    bookingService.getBookingsBySupplierId()
-  );
-  const [showModalEdit, setShowModalEdit] = useState<boolean>(false);
-  const [showModalBookingDetail, setShowModalBookingDetail] = useState<boolean>(false);
-  const [booking, setBooking] = useState<IBooking | null>(null);
-  if (!bookingList) {
-    return <div>Loading...</div>;
-  }
+const BookingListOfSupplier = () => {  
+  const [showModalBookingDetail, setShowModalBookingDetail] =
+    useState<boolean>(false);
+  const [orderHotelHeaders, setOrderHotelHeaders] = useState<
+    IOrderHotelHeader[]
+  >([]);
+  const [orderHotelHeader, setOrderHotelHeader] =
+    useState<IOrderHotelHeader | null>(null);
+  const [orderHotelDetail, setOrderHotelDetail] =
+    useState<IOrderHotelDetail | null>(null);
+  const [hotelDetails, setHotelDetails] = useState<{
+    [key: number]: IOrderHotelDetail[];
+  }>({});
+  const fetcher = async () => {
+    const headers =
+      await orderHotelHeaderService.getOrderHotelHeaderBySupplierId();
+    setOrderHotelHeaders(headers);
+    const detailPromises = headers.map((header) =>
+      orderHotelDetailService.getOrderHotelDetailByOrderHotelHeaderId(header.id)
+    );
 
-  if (error) {
-    return <div>Error loading bookings</div>;
-  }
+    const detailsArray = (await Promise.all(detailPromises))
+      .filter(Boolean)
+      .flat();
+    const detailsMap: { [key: number]: IOrderHotelDetail[] } = {};
+
+    detailsArray.forEach((detail) => {
+      if (!detailsMap[detail.orderHotelHeaderlId]) {
+        detailsMap[detail.orderHotelHeaderlId] = [];
+      }
+      detailsMap[detail.orderHotelHeaderlId].push(detail);
+    });
+    setHotelDetails(detailsMap);
+    return { headers, details: detailsMap };
+  };
+
+  const { data, error } = useSWR("orderHotelData", fetcher);
+  console.log(data);
+  if (error) return <div>Error loading data</div>;
+  if (!data) return <div>Loading...</div>;
+
+  const { headers, details } = data;
   return (
     <div className="relative">
       <div className="search-add ">
@@ -46,28 +73,33 @@ const BookingListOfSupplier = () => {
                         BookingId
                       </th>
                       <th scope="col" className="px-6 py-4 text-center">
-                        User Name
+                        Full Name
+                      </th>                      
+                      
+                      <th scope="col" className="px-6 py-4">
+                        Check-in Date
                       </th>
                       <th scope="col" className="px-6 py-4">
-                        Hotel Name
+                        Check-out Date
                       </th>
                       <th scope="col" className="px-6 py-4">
-                        IsConfirmed
+                        Total Price
+                      </th>
+                      <th scope="col" className="px-6 py-4">
+                        Process
                       </th>
                       <th scope="col" className="px-6 py-4">
                         View Detail
                       </th>
-                      <th scope="col" className="px-6 py-4">
-                        Action
-                      </th>
+                     
                     </tr>
                   </thead>
                   <tbody>
-                    {bookingList.length > 0 ? (
-                      bookingList.map((item: IBooking, index) => {
-                        // Parse the tourTime to a Date object if it's a string
-                        const checkInDate = new Date(item.checkInDate);
-                        const checkOutDate = new Date(item.checkOutDate);
+                    {orderHotelHeaders.length > 0 ? (
+                      orderHotelHeaders.map((header) => {
+                        const detail = details[header.id] || [];
+                        const checkInDate = new Date(header.checkInDate);
+                        const checkOutDate = new Date(header.checkOutDate);
                         const formattedCheckInTime =
                           checkInDate.toLocaleDateString(undefined, {
                             year: "numeric",
@@ -82,60 +114,53 @@ const BookingListOfSupplier = () => {
                           });
                         return (
                           <tr
-                            key={index}
+                            key={header.id}
                             className="border-b border-neutral-200 dark:border-white/10 text-center"
                           >
                             <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {item.bookingId}
+                              {header.id}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {item.user?.email}
+                              {header.fullName}
+                            </td>                            
+                            
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
+                              {formattedCheckInTime}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {item.hotel?.hotelName}
+                              {formattedCheckOutTime}
                             </td>
-
-                           
-
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
+                              {header.totalPrice}
+                            </td>
                             <td
                               className={`whitespace-nowrap px-6 py-4 ${
-                                item.isConfirmed ? "color-active" : "color-stop"
+                                header.process ? "color-active" : "color-stop"
                               }`}
                             >
-                              {item.isConfirmed ? "Confirmed" : "Pending..."}
+                              {header.process ? "Success" : "Pending..."}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4">
-                                <div className="flex justify-center">
-                                  <img className="w-5 h-5 cursor-pointer"
+                              <div className="flex justify-center">
+                                <img
+                                  className="w-5 h-5 cursor-pointer"
                                   src="/image/viewdetail.png"
                                   alt="View Detail"
                                   onClick={() => {
-                                    setBooking(item);
+                                    setOrderHotelHeader(header);
+                                    setOrderHotelDetail(details[header.id][0]);
                                     setShowModalBookingDetail(true);
                                   }}
                                 />
-                                </div>
-                                
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 flex justify-center">
-                              <img
-                                className="w-5 h-5 cursor-pointer"
-                                src="/image/pen.png"
-                                alt="Edit"
-                                onClick={() => {
-                                  setBooking(item);
-                                  setShowModalEdit(true);
-                                }}
-                              />
-                              
-                            </td>
+                              </div>
+                            </td>                            
                           </tr>
                         );
                       })
                     ) : (
                       <tr>
                         <td
-                          colSpan={9}
+                          colSpan={12}
                           className="text-center py-4 text-red-600 font-bold"
                         >
                           No bookings found
@@ -143,18 +168,14 @@ const BookingListOfSupplier = () => {
                       </tr>
                     )}
                   </tbody>
-                </table>
-                <UpdateBooking
-                  showModalEditBooking={showModalEdit}
-                  setShowModalEditBooking={setShowModalEdit}
-                  booking={booking}
-                  setBooking={setBooking}
-                />
+                </table>                
                 <BookingDetail
                   showModalBookingDetail={showModalBookingDetail}
                   setShowModalBookingDetail={setShowModalBookingDetail}
-                  booking={booking}
-                  setBooking={setBooking}
+                  orderHotelHeader={orderHotelHeader}
+                  setOrderHotelHeader={setOrderHotelHeaders}
+                  orderHotelDetail={orderHotelDetail}
+                  setOrderHotelDetail={setOrderHotelDetail}
                 />
               </div>
             </div>

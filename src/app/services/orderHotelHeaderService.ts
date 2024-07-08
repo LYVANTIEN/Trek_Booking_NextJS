@@ -3,6 +3,7 @@ import BASE_URL from './apiService';
 
 interface IOrderHotelHeaderService {
   getOrderHotelHeaderByUserId(): Promise<IOrderHotelHeader[]>;
+  getOrderHotelHeaderBySupplierId(): Promise<IOrderHotelHeader[]>;
   getRevenueYearBySupplierId(): Promise<IAnnualRevenue[]>;
   countTotalOrderHotelBySupplierId(): Promise<number>;
   getPercentChangeFromLastWeek(): Promise<number>;
@@ -28,7 +29,31 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+    
+      return data;
+    } catch (error) {
+      console.error("Error fetching order hotel headers:", error);
+      throw error;
+    }
+  },
+  async getOrderHotelHeaderBySupplierId() {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/getOrderHotelHeaderBySupplierId`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch order hotel headers");
+      }
+      const data = await response.json();
+     
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
@@ -38,7 +63,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
   async getRevenueYearBySupplierId() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getRevenueYearBySupplierId`,
+        `${BASE_URL}/getRevenueYearBySupplierId`,
         {
           method: "GET",
           headers: {
@@ -52,7 +77,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+     
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
@@ -62,7 +87,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
   async countTotalOrderHotelBySupplierId() {
     try {
       const response = await fetch(
-        `https://localhost:7132/countTotalOrderHotelBySupplierId`,
+        `${BASE_URL}/countTotalOrderHotelBySupplierId`,
         {
           method: "GET",
           headers: {
@@ -76,7 +101,6 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
@@ -88,7 +112,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
   async getPercentChangeFromLastWeek() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getPercentChangeFromLastWeek`,
+        `${BASE_URL}/getPercentChangeFromLastWeek`,
         {
           method: "GET",
           headers: {
@@ -102,7 +126,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+    
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
@@ -113,7 +137,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
   async getTotalRevenueHotelBySupplierId() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getTotalRevenueHotelBySupplierId`,
+        `${BASE_URL}/getTotalRevenueHotelBySupplierId`,
         {
           method: "GET",
           headers: {
@@ -127,7 +151,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
@@ -138,7 +162,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
   async getPercentChangeRevenueFromLastWeek() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getPercentChangeRevenueFromLastWeek`,
+        `${BASE_URL}/getPercentChangeRevenueFromLastWeek`,
         {
           method: "GET",
           headers: {
@@ -152,13 +176,15 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+    
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
       throw error;
     }
   },
+
+
 };
 
 export default orderHotelHeaderService;

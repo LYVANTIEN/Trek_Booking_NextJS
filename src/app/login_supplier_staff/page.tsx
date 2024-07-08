@@ -72,12 +72,12 @@ export default function LoginSupplierStaff() {
               onChange={(e) => setStaffPassword(e.target.value)}
               required
             />
-            <img
+            {/* <img
               src="/image/hide.png"
               className="inout-hide cursor-pointer"
               onClick={togglePasswordVisibility}
               alt="Toggle Password Visibility"
-            />
+            /> */}
             {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
             <div className="flex justify-center">
               <button

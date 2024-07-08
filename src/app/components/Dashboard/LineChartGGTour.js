@@ -10,12 +10,11 @@ const LineChartGGTour = () => {
     const fetchRevenueData = async () => {
       try {
         const data = await orderTourHeaderService.getRevenueTourBySupplierId();
-        console.log("Fetched data:", data);
         const formattedData = [
           ["Year", "Revenue"],
           ...data.map((item) => [item.year.toString(), item.revenue]),
         ];
-        console.log("Formatted data:", formattedData);
+ 
         setChartData(formattedData);
       } catch (error) {
         console.error("Failed to fetch revenue data", error);
@@ -76,7 +75,7 @@ const LineChartGGTour = () => {
         <div
           ref={chartRef}
           id="chart_div"
-          style={{ width: "500px", height: "400px" }}
+          style={{ width: "100%", height: "400px" }}
         ></div>
       )}
     </div>

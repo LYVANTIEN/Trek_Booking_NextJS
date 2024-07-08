@@ -7,6 +7,7 @@ interface IOrderTourHeader{
     sessionId: number;
     paymentIntentId: number;
     fullName: string;
+    email: string;
     phone: string;
     process: string;
     completed: boolean;

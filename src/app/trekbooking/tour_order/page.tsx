@@ -14,6 +14,7 @@ import paymentService from '@/app/services/paymentService';
 const TourOrder = () => {
   const [bookingCart, setBookingCart] = useState<BookingCartTour[]>([]);
   const [tourDetails, setTourDetails] = useState<ITour | null>(null);
+  
   const searchParams = useSearchParams();
   const tourId = Number(searchParams.get('tourId'));
   const quantity = Number(searchParams.get('quantity'));
@@ -84,13 +85,14 @@ const TourOrder = () => {
           phone: phone,   
           totalPrice: finalPrice,
           tourOrderDate: getCurrentDate(),
-          process: "Not",
-          completed: false
+          process: "Pending",
+          completed: false,
+          supplierId: tourDetails?.supplierId
         },
         orderDetails: bookingCart.map(cartItem => ({
           tourId: cartItem.tourId,
           tourName: tourDetails?.tourName,
-          tourOrderQuantity: quantity,
+tourOrderQuantity: quantity,
           tourTotalPrice: finalPrice,
         })),
       },
@@ -178,7 +180,7 @@ const TourOrder = () => {
                                             value={email} // Cập nhật giá trị từ trạng thái
                                             onChange={(e) => setEmail(e.target.value)} // Theo dõi sự thay đổi
                                             type='text'
-                                            className='border w-full py-2 px-1'
+className='border w-full py-2 px-1'
                                             style={{ borderRadius: '10px', borderColor: '#D2D2D2' }}
                                         />
                 </div>
@@ -241,7 +243,7 @@ const TourOrder = () => {
                     <p className="text-2xl font-semibold">{finalPrice} US$</p>
                   </div>
                 </div>
-              </div>
+</div>
             </div>
            
           </div>

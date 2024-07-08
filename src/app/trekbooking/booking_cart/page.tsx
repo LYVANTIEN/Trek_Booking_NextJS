@@ -11,6 +11,7 @@ import { BookingCartTour } from "@/app/entities/BookingCartTour";
 import tourService from "@/app/services/tourService";
 import { ITour } from "@/app/entities/tour";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 
 const formatRoomDescription = (description: string) => {
@@ -63,12 +64,21 @@ const BookingCart = () => {
 
   useEffect(() => {
     const fetchCartTours = async () => {
+      const token = Cookies.get("tokenUser");
+      if (!token) {
+        return;
+      }
+
       try {
         const tours = await getCartTourByUserId();
-        setCartTours(tours);
+        if (tours && tours.length === 0) {
+          return;
+        }
+          setCartTours(tours);
 
+     
         const imagesMap: { [key: number]: string } = {};
-        const namesMap: { [key: number]: ITour } = {};
+const namesMap: { [key: number]: ITour } = {};
       
         const imagesPromises = tours.map((tour: ITour) => tourService.getTourImageByTourId(tour.tourId));
         const namesPromises = tours.map((tour: ITour) => tourService.getTourById(tour.tourId));
@@ -95,8 +105,17 @@ const BookingCart = () => {
 
   useEffect(() => {
     const fetchBookingCart = async () => {
+      const token = Cookies.get("tokenUser");
+      if (!token) {
+         
+        return;
+      }
+
       try {
         const result = await getBookingCartByUserId();
+        if (result && result.length === 0) {
+          return;
+        }
         setBookingCart(result);
 
         const roomDetailPromises = result.map((item: BookingCartItem) => getRoomById(item.roomId));
@@ -139,10 +158,10 @@ const BookingCart = () => {
       return prevCartTours.map(tour => {
         if (tour.tourId === tourId) {
           const newQuantity = tour.tourQuantity + delta;
-          if (newQuantity >= 1 && newQuantity <= 10) {
+          if (newQuantity >= 1 && newQuantity <= 20) {
             return { ...tour, tourQuantity: newQuantity };
           }
-        }
+}
         return tour;
       });
     });
@@ -246,7 +265,7 @@ const BookingCart = () => {
                   </div>
                   <div className="col-md-5 row">
                     <div className="col-md-4 text-center">
-                      <span
+<span
                         className="font-bold text-lg"
                         style={{ color: "#305A61" }}
                       >
@@ -306,7 +325,7 @@ const BookingCart = () => {
                 )) : (
                   <div className="col-12">
                     <p className="text-center py-4 text-red-600 font-bold">
-                      No tours in your cart
+No tours in your cart
                     </p>
                   </div>
                 )}
@@ -368,7 +387,7 @@ const BookingCart = () => {
                               ) : (
                                 <img className="w-full h-60 border rounded-lg" src={images[0]?.roomImageURL} alt="room thumbnail" />
                               )}
-                            </div>
+</div>
 
                             <div className="col-lg-8 col-md-12 border" style={{ borderRadius: "10px" }}>
                               <div className="row">
@@ -414,7 +433,7 @@ const BookingCart = () => {
                                 <div className="col-4">
                                   <div className="row">
                                     <div className="col-6">
-                                      <p className="text-center text-sm font-semibold pt-3" style={{ color: "#305A61" }}>
+<p className="text-center text-sm font-semibold pt-3" style={{ color: "#305A61" }}>
                                         Guest(s)
                                       </p>
                                       <div className="flex flex-wrap items-center pb-1 w-3/4 mx-auto">
@@ -459,7 +478,7 @@ const BookingCart = () => {
                                         <div className="pt-3">
                                           <Link
                                             href=""
-                                            className="px-1 py-1 border text-white no-underline font-medium text-xs"
+className="px-1 py-1 border text-white no-underline font-medium text-xs"
                                             style={{
                                               backgroundColor: "#305A61",
                                               borderRadius: "10px",

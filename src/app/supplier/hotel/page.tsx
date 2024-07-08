@@ -150,7 +150,7 @@ const HotelListOfSupplier = () => {
     try {
       const storageRef = ref(analytics, imageUrl);
       await deleteObject(storageRef);
-      //   console.log("Image deleted successfully from Firebase Storage");
+
     } catch (error) {
       console.error("Error deleting image from Firebase Storage:", error);
     }
@@ -158,9 +158,9 @@ const HotelListOfSupplier = () => {
   //Delete Hotel avatar in cloud storage after update new avatar
   const handleDeleteHotelAvatar = async (imageUrl: string) => {
     try {
-      //   console.log("Deleting room image with ID:", roomImageId);
+    
       await deleteImageFromStorage(imageUrl);
-      //toast.success("Delete Image Successful")
+ 
     } catch (error) {
       console.error("Error deleting room image:", error);
       alert("Failed to delete room image");
@@ -214,7 +214,7 @@ const HotelListOfSupplier = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-  console.log(hotelList);
+  
   return (
     <div className="relative">
       <div className="search-add ">
@@ -228,7 +228,7 @@ const HotelListOfSupplier = () => {
         </div>
         {role === "supplier" ? (
           <button
-            className="ml-8 button-add ml-4rem"
+            className="ml-8 button-add relative z-10"
             onClick={() => setShowHotelCreate(true)}
           >
             + Add hotel
@@ -254,9 +254,9 @@ const HotelListOfSupplier = () => {
                       <th scope="col" className="px-6 py-4">
                         Avatar
                       </th>
-                      <th scope="col" className="px-6 py-4">
+                      {/* <th scope="col" className="px-6 py-4">
                         Isverify
-                      </th>
+                      </th> */}
                       <th scope="col" className="px-6 py-4">
                         Manage Hotel Image
                       </th>
@@ -306,10 +306,6 @@ const HotelListOfSupplier = () => {
                                     setOldAvatarUrl(item.hotelAvatar);
                                     setHotelId(item.hotelId);
                                     setShowHotelAvatar(true);
-                                    console.log(
-                                      "HotelID: " + item.hotelId,
-                                      item
-                                    );
                                   }}
                                 >
                                   Upload Avatar
@@ -324,23 +320,20 @@ const HotelListOfSupplier = () => {
                                     setOldAvatarUrl(item.hotelAvatar);
                                     setHotelId(item.hotelId);
                                     setShowHotelAvatar(true);
-                                    console.log(
-                                      "HotelID: " + item.hotelId,
-                                      item
-                                    );
+                                   
                                   }}
                                   onError={() => handleImageError(item.hotelId)}
                                 />
                               )}
                             </Link>
                           </td>
-                          <td
+                          {/* <td
                             className={`whitespace-nowrap px-6 py-4 ${
                               item.isVerify ? "color-active" : "color-stop"
                             }`}
                           >
                             {item.isVerify ? "Active" : "Stopped"}
-                          </td>
+                          </td> */}
                           <td className="whitespace-nowrap px-6 py-4">
                             <Link
                               className="flex justify-center"
@@ -382,7 +375,7 @@ const HotelListOfSupplier = () => {
                                 onClick={() => {
                                   setHotel(item);
                                   setShowHotelDetail(true);
-                                  console.log("HotelID: " + item.hotelId, item);
+                                 
                                 }}
                               />
                             </Link>
@@ -420,10 +413,7 @@ const HotelListOfSupplier = () => {
                                     setHotelId(item.hotelId);
                                     setHotel(item);
                                     setShowHotelUpdate(true);
-                                    console.log(
-                                      "HotelID: " + item.hotelId,
-                                      item
-                                    );
+                                  
                                   }}
                                 />
 

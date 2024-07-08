@@ -68,8 +68,8 @@ function CreateRoom3DImage(props: Iprops) {
       toast.error("Please choose at least one image!!!");
       return;
     }
-    if (fileUploads.length + listRoomImage > 5) {
-      toast.error("You can only add up to 5 images for this tour.");
+    if (fileUploads.length + listRoomImage > 7) {
+      toast.error("You can only add up to 7 images for this tour.");
       return;
     }
 
@@ -106,7 +106,7 @@ function CreateRoom3DImage(props: Iprops) {
       <Modal show={showRoomImageCreate} onHide={handleCloseModal} size="lg" centered>
         <Modal.Body className="p-4">
           <h2 className="font-bold pb-4">Add 3D Image Pictures</h2>
-          <h4 className="font-bold pb-4">Room 3D Image: {listRoomImage}/5 </h4>
+          <h4 className="font-bold pb-4">Room 3D Image: {listRoomImage}/7 </h4>
           <div className="flex justify-center flex-wrap">
             {previewImageURLs.length > 0 ? (
               previewImageURLs.map((url, index) => (

@@ -1,61 +1,56 @@
-import hotelService from "@/app/services/hotelService";
-import roomService from "@/app/services/roomService";
-import tourService from "@/app/services/tourService";
-import userService from "@/app/services/userService";
-
 import { useEffect, useState } from "react";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Form, Modal } from "react-bootstrap";
 import useSWR from "swr";
 
 interface IProps {
   showModalTourOrderDetail: boolean;
   setShowModalTourOrderDetail: (value: boolean) => void;
-  tourOrder: ITourOrder | null;
-  setTourOrder: (value: ITourOrder | null) => void;
+  orderTourHeader: IOrderTourHeader | null;
+  setOrderTourHeader: (value: IOrderTourHeader[]) => void;
+  orderTourDetail: IOrderTourDetail | null;
+  setOrderTourDetail: (value: IOrderTourDetail) => void;
 }
 
 const TourOrderDetail = (props: IProps) => {
   const {
     showModalTourOrderDetail,
     setShowModalTourOrderDetail,
-    tourOrder,
-    setTourOrder,
+    orderTourHeader,
+    setOrderTourHeader,
+    orderTourDetail,
+    setOrderTourDetail,
   } = props;
-  const [tourOrderId, seTourOrderId] = useState<number>(0);
+
+  const [orderHotelHeaderlId, setOrderHotelHeaderId] = useState<number>(0);
   const [userId, setUserId] = useState<number>(0);
   const [tourId, setTourId] = useState<number>(0);
   const [tourOrderQuantity, setTourOrderQuantity] = useState<number>(0);
   const [tourOrderDate, setTourOrderDate] = useState<string | Date>("");
-  const [tourTotalPrice, setTourTotalPrice] = useState<number>(0);
-  const [supplierId, setSupplierId] = useState<number>(0);
-  const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
-  const [status, setStatus] = useState<boolean>(false);
+  const [fullName, setFullName] = useState<string>("");
+  const [tourName, setTourName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [completed, setIsCompleted] = useState<boolean>(false);
+  const [process, setProcess] = useState<string>("");
 
   useEffect(() => {
-    if (tourOrder && tourOrder.tourOrderId) {
-    seTourOrderId(tourOrder.tourOrderId);
-      setUserId(tourOrder.userId);
-      setTourId(tourOrder.tourId);
-      setTourOrderQuantity(tourOrder.tourOrderQuantity);
-      setTourOrderDate(tourOrder.tourOrderDate);
-      setTourTotalPrice(tourOrder.tourTotalPrice);
-      setSupplierId(tourOrder.supplierId);
-      setIsConfirmed(tourOrder.isConfirmed);
-      setStatus(tourOrder.status);
+    if (orderTourHeader && orderTourDetail) {
+      setOrderHotelHeaderId(orderTourHeader.id);
+      setUserId(orderTourHeader.userId);
+      setTourId(orderTourDetail.tourId);
+      setTourOrderQuantity(orderTourDetail.tourOrderQuantity);
+      setTourOrderDate(orderTourHeader.tourOrderDate);
+      setTotalPrice(orderTourHeader.totalPrice);
+      setIsCompleted(orderTourHeader.completed);
+      setProcess(orderTourHeader.process);
+      setTourName(orderTourDetail.tourName);
+      setFullName(orderTourHeader.fullName);
+      setPhone(orderTourHeader.phone);
+      setEmail(orderTourHeader.email);
     }
-  }, [tourOrder]);
+  }, [orderTourHeader, orderTourDetail]);
 
-  const { data: listTour } = useSWR("tourList", tourService.getTours);
-  const { data: listUser } = useSWR("userList", userService.getUsers);
-  const getItemName = (
-    list: any[] | undefined,
-    id: number,
-    idField: string,
-    nameField: string
-  ) => {
-    const item = list?.find((item: any) => item[idField] === id);
-    return item ? item[nameField] : "N/A";
-  };
   const handleCloseModal = () => {
     setShowModalTourOrderDetail(false);
   };
@@ -69,30 +64,30 @@ const TourOrderDetail = (props: IProps) => {
         size="lg"
       >
         <Modal.Header closeButton>
+          <Modal.Title>Booking Tour Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <div className="row">
               <Form.Group className="mb-3 col-6" controlId="userName">
-                <Form.Label className="font-bold text-xl">User Name</Form.Label>
-                <p>{getItemName(listUser, userId, "userId", "email")}</p>
+                <Form.Label className="font-bold text-xl">Full Name</Form.Label>
+                <p>{fullName}</p>
+              </Form.Group>
+              <Form.Group className="mb-3 col-6" controlId="userName">
+                <Form.Label className="font-bold text-xl">Email</Form.Label>
+                <p>{email}</p>
+              </Form.Group>
+              <Form.Group className="mb-3 col-6" controlId="userName">
+                <Form.Label className="font-bold text-xl">Phone</Form.Label>
+                <p>{phone}</p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="hotelName">
-                <Form.Label className="font-bold text-xl">
-                  Tour Name
-                </Form.Label>
-                <p>{getItemName(listTour, tourId, "tourId", "tourName")}</p>
+                <Form.Label className="font-bold text-xl">Tour Name</Form.Label>
+                <p>{tourName}</p>
               </Form.Group>
-              
               <Form.Group className="mb-3 col-6" controlId="checkInDate">
-                <Form.Label className="font-bold text-xl">
-                 Tour Date
-                </Form.Label>
-                <p>
-                  {tourOrderDate
-                    ? new Date(tourOrderDate).toISOString().substr(0, 10)
-                    : ""}
-                </p>
+                <Form.Label className="font-bold text-xl">Tour Date</Form.Label>
+                <p>{new Date(tourOrderDate).toLocaleDateString()}</p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="checkOutDate">
                 <Form.Label className="font-bold text-xl">
@@ -104,18 +99,16 @@ const TourOrderDetail = (props: IProps) => {
                 <Form.Label className="font-bold text-xl">
                   Total Price
                 </Form.Label>
-                <p>{tourTotalPrice}</p>
+                <p>{totalPrice}</p>
               </Form.Group>
               <Form.Group className="mb-3 col-6" controlId="isConfirmed">
-                <Form.Label className="font-bold text-xl">
-                  Is Confirmed
-                </Form.Label>
+                <Form.Label className="font-bold text-xl">Process</Form.Label>
                 <p
                   className={`whitespace-nowrap ${
-                    isConfirmed ? "color-active" : "color-stop"
+                    process ? "color-active" : "color-stop"
                   }`}
                 >
-                  {isConfirmed ? "Confirmed" : "Pending..."}
+                  {process ? "Success" : "Pending..."}
                 </p>
               </Form.Group>
             </div>

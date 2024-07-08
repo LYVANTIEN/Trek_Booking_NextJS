@@ -178,7 +178,7 @@ const ListVoucher = ({ params }: { params: { hotelId: string } }) => {
           <img src="/image/search.png" alt="" />
         </div>
         <button
-          className="ml-8 button-add ml-4rem"
+          className="ml-8 button-add relative z-10"
           onClick={() => setShowVoucherCreate(true)}
         >
           + Add voucher

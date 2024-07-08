@@ -10,6 +10,8 @@ interface IOrderHotelHeader{
     fullName: string;
     email:string;
     phone: string;
+    requirement: string;
+    voucherCode: string; 
     process: string;
     completed: boolean;
 }

@@ -18,7 +18,17 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ title }) => {
   const [userName, setUserName] = useState<string | null>(null);
   const router = useRouter();
-  const { data: user, error } = useSWR("user", () => userService.getUserById());
+  const fetchUser = () => {
+    const token = Cookies.get("tokenUser");
+    if (token) {
+        return userService.getUserById();
+    } else {
+        return null;
+    }
+};
+
+
+const { data: user, error } = useSWR("user", fetchUser);
   useEffect(() => {
     const cookieUserName = Cookies.get("userName");
     setUserName(cookieUserName ?? null);
@@ -79,7 +89,7 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
                     alt=""
                     className="pr-2"
                   />
-                  <span className="no-underline text-accent font-bold">
+<span className="no-underline text-accent font-bold">
                     Cart(1)
                   </span>
                 </Link>
@@ -148,7 +158,7 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
                           className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
                           href="signup_client"
                           onClick={handleLogout}
-                        >
+>
                           Logout
                         </Link>
                       </div>
@@ -225,7 +235,7 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
                       </div>
                       <div className="backgourd-li1 text-center">
                         <Link
-                          className="no-underline text-accent font-bold block mt-3 mb-3 hover-nav-sub"
+className="no-underline text-accent font-bold block mt-3 mb-3 hover-nav-sub"
                           href="/trekbooking/profile"
                         >
                           Manager profile
@@ -301,7 +311,7 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
               <Link
                 href="/trekbooking/list_hotel"
                 className={`font-bold text-decoration-none link-text ${
-                  pathname === "/trekbooking/list_hotel" ||
+pathname === "/trekbooking/list_hotel" ||
                   pathname === "/trekbooking/search"
                     ? "link-style"
                     : ""
