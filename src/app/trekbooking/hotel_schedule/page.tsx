@@ -18,9 +18,6 @@ const ListHotels = () => {
   const [commentsCount, setCommentsCount] = useState<{ [key: number]: number }>(
     {}
   );
-
-  //filter
-  const [selectedCity, setSelectedCity] = useState<string>("");
   ///search
   const [city, setCity] = useState<string | null>(null);
   const [checkInDate, setCheckInDate] = useState<string | null>(null);
@@ -60,31 +57,31 @@ const ListHotels = () => {
   };
 
   //
-  // useEffect(() => {
-  //   const fetchHotelsAndRooms = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const [hotels, rooms] = await Promise.all([
-  //         hotelService.getHotels(),
-  //         roomService.getRooms(),
-  //       ]);
-  //       setHotelList(hotels);
-  //       setRoomList(rooms);
-  //       setLoading(false);
-  //     } catch (error) {
-  //       if (error instanceof Error) {
-  //         console.error("Error fetching hotel or room list:", error);
-  //         setError(error);
-  //       } else {
-  //         console.error("Unexpected error:", error);
-  //         setError(new Error("An unexpected error occurred"));
-  //       }
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchHotelsAndRooms = async () => {
+      setLoading(true);
+      try {
+        const [hotels, rooms] = await Promise.all([
+          hotelService.getHotels(),
+          roomService.getRooms(),
+        ]);
+        setHotelList(hotels);
+        setRoomList(rooms);
+        setLoading(false);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error("Error fetching hotel or room list:", error);
+          setError(error);
+        } else {
+          console.error("Unexpected error:", error);
+          setError(new Error("An unexpected error occurred"));
+        }
+        setLoading(false);
+      }
+    };
 
-  //   fetchHotelsAndRooms();
-  // }, []);
+    fetchHotelsAndRooms();
+  }, []);
 
   const fetchCommentsCount = useCallback(async () => {
     const counts: { [key: number]: number } = {};
@@ -138,7 +135,7 @@ const ListHotels = () => {
       </div>
     );
   }
-  //if (error) return <p>Error loading data.</p>;
+  if (error) return <p>Error loading data.</p>;
 
   return (
     <>
@@ -152,16 +149,13 @@ const ListHotels = () => {
         >
           <div className="row mx-3">
             <div className="col-2">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
+              <Link href="#" className="text-white no-underline zoom-effect-container">
                 <div className="relative image-card">
                   <img
                     className="border w-full"
-                    style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/cantho.webp"
-                    alt="Can Tho"
+                    style={{ borderRadius: "20px",height: "231px" }}
+                    src="/image/dalat.png"
+                    alt="da lat"
                   />
                   <div
                     className="absolute z-10 w-full bottom-0 flex justify-center"
@@ -173,7 +167,7 @@ const ListHotels = () => {
                     }}
                   >
                     <span className="text-white font-semibold text-base">
-                      Can Tho
+                      Da Lat
                     </span>
                   </div>
                 </div>
@@ -182,24 +176,20 @@ const ListHotels = () => {
                 <Link
                   className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  //filter city can tho
-                  href={`/trekbooking/hotel_city?city=Cần Thơ`}
+                  href=""
                 >
                   Find hotel
                 </Link>
               </div>
             </div>
             <div className="col-2">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
+              <Link href="#" className="text-white no-underline zoom-effect-container">
                 <div className="relative image-card">
                   <img
                     className="border w-full"
-                    style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/vungtau.jpg"
-                    alt="Vung Tau"
+                    style={{ borderRadius: "20px",height: "231px" }}
+                    src="/image/phuquoc.png"
+                    alt="da lat"
                   />
                   <div
                     className="absolute z-10 w-full bottom-0 flex justify-center"
@@ -211,7 +201,7 @@ const ListHotels = () => {
                     }}
                   >
                     <span className="text-white font-semibold text-base">
-                      Vung Tau
+                      Phu Quoc
                     </span>
                   </div>
                 </div>
@@ -220,23 +210,20 @@ const ListHotels = () => {
                 <Link
                   className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href={`/trekbooking/hotel_city?city=Vũng Tàu`}
+                  href=""
                 >
                   Find hotel
                 </Link>
               </div>
             </div>
             <div className="col-2">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
+              <Link href="#" className="text-white no-underline zoom-effect-container">
                 <div className="relative image-card">
                   <img
                     className="border w-full"
-                    style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/ninhbinh.jpg"
-                    alt="ninh binh"
+                    style={{ borderRadius: "20px",height: "231px" }}
+                    src="/image/halong.png"
+                    alt="da lat"
                   />
                   <div
                     className="absolute z-10 w-full bottom-0 flex justify-center"
@@ -248,7 +235,7 @@ const ListHotels = () => {
                     }}
                   >
                     <span className="text-white font-semibold text-base">
-                      Ninh Binh
+                      Ha Long
                     </span>
                   </div>
                 </div>
@@ -257,21 +244,18 @@ const ListHotels = () => {
                 <Link
                   className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href={`/trekbooking/hotel_city?city=Ninh Bình`}
+                  href=""
                 >
                   Find hotel
                 </Link>
               </div>
             </div>
             <div className="col-2">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
+              <Link href="#" className="text-white no-underline zoom-effect-container">
                 <div className="relative image-card">
                   <img
                     className="border w-full"
-                    style={{ borderRadius: "20px", height: "231px" }}
+                    style={{ borderRadius: "20px",height: "231px" }}
                     src="/image/hcm.png"
                     alt="da lat"
                   />
@@ -294,21 +278,18 @@ const ListHotels = () => {
                 <Link
                   className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href={`/trekbooking/hotel_city?city=Ho Chi Minh`}
+                  href=""
                 >
                   Find hotel
                 </Link>
               </div>
             </div>
             <div className="col-2">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
+              <Link href="#" className="text-white no-underline zoom-effect-container">
                 <div className="relative image-card">
                   <img
                     className="border w-full"
-                    style={{ borderRadius: "20px", height: "231px" }}
+                    style={{ borderRadius: "20px",height: "231px" }}
                     src="/image/hanoi.png"
                     alt="da lat"
                   />
@@ -322,7 +303,7 @@ const ListHotels = () => {
                     }}
                   >
                     <span className="text-white font-semibold text-base">
-                      Ha Noi
+                     Ha Noi
                     </span>
                   </div>
                 </div>
@@ -331,23 +312,20 @@ const ListHotels = () => {
                 <Link
                   className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href={`/trekbooking/hotel_city?city=Hanoi`}
+                  href=""
                 >
                   Find hotel
                 </Link>
               </div>
             </div>
             <div className="col-2">
-              <Link
-                href="#"
-                className="text-white no-underline zoom-effect-container"
-              >
+              <Link href="#" className="text-white no-underline zoom-effect-container">
                 <div className="relative image-card">
                   <img
                     className="border w-full"
                     style={{ borderRadius: "20px", height: "231px" }}
-                    src="/image/phanthiet.jpg"
-                    alt="phan thiet"
+                    src="/image/phocohoian.jpg"
+                    alt="da lat"
                   />
                   <div
                     className="absolute z-10 w-full bottom-0 flex justify-center"
@@ -359,7 +337,7 @@ const ListHotels = () => {
                     }}
                   >
                     <span className="text-white font-semibold text-base">
-                     Phan Thiết
+                     Nghe An
                     </span>
                   </div>
                 </div>
@@ -368,7 +346,7 @@ const ListHotels = () => {
                 <Link
                   className="no-underline text-white border px-3 font-medium text-sm"
                   style={{ backgroundColor: "#305A61", borderRadius: "10px" }}
-                  href={`/trekbooking/hotel_city?city=Phan Thiết`}
+                  href=""
                 >
                   Find hotel
                 </Link>

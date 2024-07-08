@@ -112,11 +112,7 @@ const signUpClient = () => {
                 >
                   You have a account?
                 </Link>
-                <p
-                  className="pt-2 text-right text-base cursor-pointer"
-                >
-                  Forget your password
-                </p>
+                
               </div>
             </div>
           </form>

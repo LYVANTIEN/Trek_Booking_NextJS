@@ -5,7 +5,12 @@ import tourService from "@/app/services/tourService";
 import { ITour } from "@/app/entities/tour";
 import useSWR, { mutate } from "swr";
 import Link from "next/link";
-
+import { toast } from "react-toastify";
+import { addToBookingCartTour, getCartTourByUserId } from "@/app/services/bookingCartTourService";
+import userService from "@/app/services/userService";
+import Cookies from "js-cookie";
+import { useRouter } from "../../../../../../node_modules/next/navigation";
+import { Oval } from 'react-loader-spinner'; 
 const fetchTourImages = async (
   tourId: number,
   setTourImages: (images: string[]) => void
@@ -16,19 +21,59 @@ const fetchTourImages = async (
 };
 
 const TourDetail = ({ params }: { params: { tourId: string } }) => {
+  const token = Cookies.get("tokenUser");
   const [tour, setTour] = useState<ITour | null>(null);
   const [tourImages, setTourImages] = useState<string[]>([]);
 
   const { data: tourDetail } = useSWR(`tour_detail/${params.tourId}`, () =>
     tourService.getTourById(Number(params.tourId))
   );
-
+  const router = useRouter();
   useEffect(() => {
     if (tourDetail) {
       setTour(tourDetail);
       fetchTourImages(Number(params.tourId), setTourImages);
     }
+  
   }, [tourDetail, params.tourId]);
+  const handleAddToCart = async () => {
+    try {
+      const existingCart = await getCartTourByUserId();
+      const tourExists = existingCart.some((item: any) => item.tourId === tour?.tourId);
+
+      if (tourExists) {
+        toast.error('Tour is already in the cart');
+        return;
+      }
+
+      if (!token) {
+        toast.error('You must login to book the room!');
+        setTimeout(() => {
+          router.push(`/login_client?redirect=/trekbooking/tour/tour_detail/${params.tourId}`);
+        }, 2000);
+        return;
+      }
+      const userData = await userService.getUserById();
+      const tourCartItem = {
+        userId: (await userData).userId,
+        tourId: Number(params.tourId),
+        tourQuantity: 1,
+        tourPrice: tour?.tourPrice
+      };
+  
+      await addToBookingCartTour(tourCartItem);
+      toast.success('Tour added to cart!');
+      router.push("/trekbooking/booking_cart")
+    } catch (error:any) {
+      console.error('Error adding to cart:', error);
+  
+      if (error.message.includes('CartTour already exists')) {
+        toast.error('Tour is already in the cart');
+      } else {
+        toast.error('Error adding tour to cart.');
+      }
+    }
+  };
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -42,7 +87,20 @@ const TourDetail = ({ params }: { params: { tourId: string } }) => {
   }, [tourDetail, params.tourId]);
 
   if (!tour) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Oval
+          height={80}
+          width={80}
+          color="#305A61"
+          visible={true}
+          ariaLabel="oval-loading"
+          secondaryColor="#4f9a94"
+          strokeWidth={2}
+          strokeWidthSecondary={2}
+        />
+      </div>
+    );
   }
   const tourTime = new Date(tour.tourTime);
   const formattedTime = tourTime.toLocaleTimeString([], {
@@ -56,8 +114,8 @@ const TourDetail = ({ params }: { params: { tourId: string } }) => {
   });
 
   return (
-    <div>
-      <div className="backgr-home">
+    <div className="backgr-home pt-1">
+     
         <div className="container pb-4">
           <div
             className="font-semibold text-xl my-5"
@@ -99,7 +157,7 @@ const TourDetail = ({ params }: { params: { tourId: string } }) => {
                 <div className="col-md-6">
                   <img
                     src={tourImages[0]}
-                    className="h-full border"
+                    className="h-full border "
                     style={{ borderRadius: "10px" }}
                     alt="Image 1"
                   />
@@ -145,7 +203,7 @@ const TourDetail = ({ params }: { params: { tourId: string } }) => {
                 </div>
               </div>
             </div>
-            <div className="col-md-4 ">
+            <div className="col-md-4 max-[768px]:pt-4">
               <div className="pt-8 pb-14 px-5 bg-white" style={{borderRadius: "20px" , boxShadow: "0 4px 4px 0 #7F7F7F",}}>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
@@ -184,19 +242,19 @@ const TourDetail = ({ params }: { params: { tourId: string } }) => {
                   </div>
                 </div>
                 <div className="flex float-end pb-4">
-                  <a
+                  <button
                     className="no-underline px-4 py-1 text-base font-medium text-white"
                     style={{ borderRadius: "12px", backgroundColor: "#305A61" }}
-                    href=""
+                    onClick={handleAddToCart}
                   >
                     Add to cart
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      
     </div>
   );
 };

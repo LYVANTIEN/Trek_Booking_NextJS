@@ -5,22 +5,52 @@ import { useState } from "react";
 import tourOrderService from "@/app/services/tourOrderService";
 import UpdateTourOrder from "./update_tour_order";
 import TourOrderDetail from "./tour_order_detail";
+import orderTourHeaderService from "@/app/services/orderTourHeaderService";
+import orderTourDetailService from "@/app/services/orderTourDetailService";
 
 const TourOrderListOfSupplier = () => {
-  const supplierId = localStorage.getItem("supplierId");
-  const { data: tourOrderList, error } = useSWR("tourOrderList", () =>
-    tourOrderService.getTourOrderBySupplierId(Number(supplierId))
-  );
   const [showModalEdit, setShowModalEdit] = useState<boolean>(false);
-  const [showModalTourOrderDetail, setShowModalTourOrderDetail] = useState<boolean>(false);
-  const [tourOrder, setTourOrder] = useState<ITourOrder | null>(null);
-  if (!tourOrderList) {
-    return <div>Loading...</div>;
-  }
+  const [showModalTourOrderDetail, setShowModalTourOrderDetail] =
+    useState<boolean>(false);
+  const [orderTourHeaders, setOrderTourHeaders] = useState<IOrderTourHeader[]>(
+    []
+  );
+  const [orderTourHeader, setOrderTourHeader] =
+    useState<IOrderTourHeader | null>(null);
+  const [orderTourDetail, setOrderTourDetail] =
+    useState<IOrderTourDetail | null>(null);
+  const [tourDetails, setTourDetails] = useState<{
+    [key: number]: IOrderTourDetail[];
+  }>({});
+  const fetcher = async () => {
+    const headers =
+      await orderTourHeaderService.getOrderTourHeaderBySupplierId();
+    setOrderTourHeaders(headers);
+    const detailPromises = headers.map((header) =>
+      orderTourDetailService.getOrderTourDetailByOrderTourHeaderId(header.id)
+    );
 
-  if (error) {
-    return <div>Error loading tour orders</div>;
-  }
+    const detailsArray = (await Promise.all(detailPromises))
+      .filter(Boolean)
+      .flat();
+    const detailsMap: { [key: number]: IOrderTourDetail[] } = {};
+
+    detailsArray.forEach((detail) => {
+      if (!detailsMap[detail.orderTourHeaderlId]) {
+        detailsMap[detail.orderTourHeaderlId] = [];
+      }
+      detailsMap[detail.orderTourHeaderlId].push(detail);
+    });
+    setTourDetails(detailsMap);
+    return { headers, details: detailsMap };
+  };
+
+  const { data, error } = useSWR("orderTourData", fetcher);
+  console.log(data);
+  if (error) return <div>Error loading data</div>;
+  if (!data) return <div>Loading...</div>;
+
+  const { headers, details } = data;
   return (
     <div className="relative">
       <div className="search-add ">
@@ -45,13 +75,22 @@ const TourOrderListOfSupplier = () => {
                         TourOrderId
                       </th>
                       <th scope="col" className="px-6 py-4 text-center">
-                        User Name
+                        Full Name
                       </th>
                       <th scope="col" className="px-6 py-4">
-                        Tour Name
+                        Email
                       </th>
                       <th scope="col" className="px-6 py-4">
-                        IsConfirmed
+                        Phone
+                      </th>
+                      <th scope="col" className="px-6 py-4">
+                        Date
+                      </th>
+                      <th scope="col" className="px-6 py-4">
+                        Total Price
+                      </th>
+                      <th scope="col" className="px-6 py-4">
+                        Complete
                       </th>
                       <th scope="col" className="px-6 py-4">
                         View Detail
@@ -62,58 +101,61 @@ const TourOrderListOfSupplier = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {tourOrderList.length > 0 ? (
-                      tourOrderList.map((item: ITourOrder, index) => {
-                        // Parse the tourTime to a Date object if it's a string
-                        // const checkInDate = new Date(item.checkInDate);
-                        // const checkOutDate = new Date(item.checkOutDate);
-                        // const formattedCheckInTime =
-                        //   checkInDate.toLocaleDateString(undefined, {
-                        //     year: "numeric",
-                        //     month: "numeric",
-                        //     day: "numeric",
-                        //   });
-                        // const formattedCheckOutTime =
-                        //   checkOutDate.toLocaleDateString(undefined, {
-                        //     year: "numeric",
-                        //     month: "numeric",
-                        //     day: "numeric",
-                        //   });
+                    {orderTourHeaders.length > 0 ? (
+                      orderTourHeaders.map((header) => {
+                        const detail = details[header.id] || [];
+                        const tourOrderDate = new Date(header.tourOrderDate);
+                        const formattedTourOrderDate =
+                          tourOrderDate.toLocaleDateString(undefined, {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                          });
                         return (
                           <tr
-                            key={index}
+                            key={header.id}
                             className="border-b border-neutral-200 dark:border-white/10 text-center"
                           >
                             <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {item.tourOrderId}
+                              {header.id}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {item.user?.email}
+                              {header.fullName}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {item.tour?.tourName}
+                              {header.email}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
+                              {header.phone}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
+                              {formattedTourOrderDate}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
+                              {header.totalPrice}
                             </td>
                             <td
                               className={`whitespace-nowrap px-6 py-4 ${
-                                item.isConfirmed ? "color-active" : "color-stop"
+                                header.completed ? "color-active" : "color-stop"
                               }`}
                             >
-                              {item.isConfirmed ? "Confirmed" : "Pending..."}
+                              {header.completed ? "Success" : "Pending..."}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4">
-                                <div className="flex justify-center">
-                                  <img className="w-5 h-5 cursor-pointer"
+                              <div className="flex justify-center">
+                                <img
+                                  className="w-5 h-5 cursor-pointer"
                                   src="/image/viewdetail.png"
                                   alt="View Detail"
                                   onClick={() => {
-                                    setTourOrder(item);
+                                    setOrderTourHeader(header);
+                                    setOrderTourDetail(details[header.id][0]);
                                     setShowModalTourOrderDetail(true);
                                   }}
                                 />
-                                </div>
-                                
+                              </div>
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 flex justify-center">
+                            {/* <td className="whitespace-nowrap px-6 py-4 flex justify-center">
                               <img
                                 className="w-5 h-5 cursor-pointer"
                                 src="/image/pen.png"
@@ -123,8 +165,7 @@ const TourOrderListOfSupplier = () => {
                                   setShowModalEdit(true);
                                 }}
                               />
-                              
-                            </td>
+                            </td> */}
                           </tr>
                         );
                       })
@@ -140,17 +181,19 @@ const TourOrderListOfSupplier = () => {
                     )}
                   </tbody>
                 </table>
-                <UpdateTourOrder
+                {/* <UpdateTourOrder
                   showModalEditTourOrder={showModalEdit}
                   setShowModalEditTourOrder={setShowModalEdit}
                   tourOrder={tourOrder}
                   setTourOrder={setTourOrder}
-                />
+                /> */}
                 <TourOrderDetail
                   showModalTourOrderDetail={showModalTourOrderDetail}
                   setShowModalTourOrderDetail={setShowModalTourOrderDetail}
-                  tourOrder={tourOrder}
-                  setTourOrder={setTourOrder}
+                  orderTourHeader={orderTourHeader}
+                  setOrderTourHeader={setOrderTourHeaders}
+                  orderTourDetail={orderTourDetail}
+                  setOrderTourDetail={setOrderTourDetail}
                 />
               </div>
             </div>

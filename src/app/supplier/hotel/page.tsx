@@ -258,6 +258,9 @@ const HotelListOfSupplier = () => {
                         Isverify
                       </th>
                       <th scope="col" className="px-6 py-4">
+                        Manage Hotel Image
+                      </th>
+                      <th scope="col" className="px-6 py-4">
                         Manage Voucher
                       </th>
                       <th scope="col" className="px-6 py-4">
@@ -337,6 +340,17 @@ const HotelListOfSupplier = () => {
                             }`}
                           >
                             {item.isVerify ? "Active" : "Stopped"}
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4">
+                            <Link
+                              className="flex justify-center"
+                              href={`/supplier/hotel/hotelImage/${item.hotelId}`}
+                            >
+                              <img
+                                src="/image/managevoucher.png"
+                                alt="Manage Hotel Image"
+                              />
+                            </Link>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
                             <Link

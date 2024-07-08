@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 import Link from 'next/link';
 import Slider from 'react-slick';
@@ -52,7 +53,7 @@ const BookingInfo = () => {
                 setRoomDetails(room);
                 setHotelDetails(hotel);
                 const images = await getRoomImagesByRoomId(roomId);
-                console.log('Room Images:', images);
+                // console.log('Room Images:', images);
                 setRoomImages(images);
                 const fetchedVouchers = await voucherService.getVouchersByHotelId(hotelId);
                 setVouchers(fetchedVouchers);
@@ -102,6 +103,8 @@ const BookingInfo = () => {
               checkInDate: item?.checkInDate,
               checkOutDate: item?.checkOutDate,
               requirement: requirement,
+              process: "Not",
+              completed: false
             },
             orderDetails: bookingCart.map(cartItem => ({
               roomId: cartItem.roomId,

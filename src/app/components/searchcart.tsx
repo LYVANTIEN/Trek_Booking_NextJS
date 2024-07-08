@@ -1,3 +1,4 @@
+'use client'
 import { countries, cities } from "country-cities";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -117,13 +118,15 @@ const Searchcart = () => {
                 <Form.Label>Check-out Date</Form.Label>
                 <Form.Control type="date" value={checkOutDate} onChange={handleCheckOutDateChange} />
               </Form.Group>
-              <Link
-                href={`/trekbooking/hotel_schedule?checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&city=${selectedCity}`}
+              <a
+                //href={`/trekbooking/hotel_schedule?checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&city=${selectedCity}`}
+                
+                href={`/trekbooking/search?checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&city=${selectedCity}`}
                 className={`btn btn-primary ${!(selectedCity && checkInDate && checkOutDate) ? 'disabled' : ''}`}
                 onClick={e => !(selectedCity && checkInDate && checkOutDate) && e.preventDefault()}
               >
                 Search
-              </Link>
+              </a>
             </Form>
           </div>
         </div>

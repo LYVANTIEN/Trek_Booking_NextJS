@@ -4,13 +4,13 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { ChangeEvent, use, useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
+import roomService from "@/app/services/roomService";
 import { mutate } from "swr";
 import { toast } from "react-toastify";
 import userService from "@/app/services/userService";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { analytics } from "../../../../public/firebase/firebase-config";
 import { countries, cities } from "country-cities";
-
 interface IProps {
   showUserUpdate: boolean;
   setShowUserUpdate: (value: boolean) => void;
@@ -49,9 +49,9 @@ function UpdateProfile(props: IProps) {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [countriesList, setCountriesList] = useState<any[]>([]);
-  const [citiesList, setCitiesList] = useState<any[]>([]);
+  //const [citiesList, setCitiesList] = useState<any[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
-  const [selectedCity, setSelectedCity] = useState<string>("");
+  //const [selectedCity, setSelectedCity] = useState<string>("");
 
   useEffect(() => {
     const loadCountries = async () => {
@@ -67,16 +67,16 @@ function UpdateProfile(props: IProps) {
     const countryCode = event.target.value;
     console.log("Fetched country: ", countryCode);
     setSelectedCountry(countryCode);
-    const city = await cities.getByCountry(countryCode);
-    console.log("Fetched cities: ", city);
-    setCitiesList(city || []);
-    setSelectedCity("");
+    // const city = await cities.getByCountry(countryCode);
+    // console.log("Fetched cities: ", city);
+    // setCitiesList(city || []);
+    // setSelectedCity("");
   };
 
-  const handleCityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const cityCode = event.target.value;
-    setSelectedCity(cityCode);
-  };
+  // const handleCityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+//   const cityCode = event.target.value;
+  //   setSelectedCity(cityCode);
+  // };
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const file = event.target.files ? event.target.files[0] : null;
@@ -113,18 +113,23 @@ function UpdateProfile(props: IProps) {
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
-    if (!userName) {
+    if (!userName || userName.trim() === "") {
       newErrors.userName = "UserName is required";
     } else if (/[^a-zA-Z\s]/.test(userName)) {
       newErrors.userName =
         "UserName must not contain numbers or special characters";
     }
 
-    if (!phone || isNaN(parseInt(phone)))
-      newErrors.roomAvailable = "Available must be a number";
+    if (!phone || phone.trim() === "") {
+      newErrors.phone = "Please enter phone number";
+    } else if (isNaN(parseInt(phone))) {
+      newErrors.phone = "Phone must be a number";
+    }
     if (!email) newErrors.email = "Email is required";
-    if (!selectedCity || !selectedCountry)
-      newErrors.address = "Address must be fully selected";
+    if (!selectedCountry) newErrors.country = "Please select a country";
+    if (!address || address.trim() === "") {
+      newErrors.address = "Address is required";
+    }
     return newErrors;
   };
 
@@ -134,7 +139,7 @@ function UpdateProfile(props: IProps) {
     // setAvatar("");
     // setAddress("");
     setErrors({});
-    setUser(null);
+    // setUser(null);
     setFileUpload(null);
     setPreviewImageURL(null);
     setUploadedImageURLs([]);
@@ -142,38 +147,30 @@ function UpdateProfile(props: IProps) {
   };
 
   useEffect(() => {
-    if (user && user.userId) {
+    if (showUserUpdate && user && user.userId) {
       setUserName(user.userName);
-      setAvatar(user.avatar || "/image/addpicture.png");
+      setAvatar(user.avatar);
       setPhone(user.phone);
       setPassword(user.password);
       setEmail(user.email);
       setRoleId(user.roleId);
-      setAddress(user.address);
 
-      // Kiểm tra nếu user.address không phải là null hoặc undefined
       if (user.address) {
-        const addressParts = user.address.split(", ");
-        if (addressParts.length === 2) {
-          setSelectedCity(addressParts[0]);
-          setSelectedCountry(addressParts[1]);
-          // Load cities for the selected country
-          const city = cities.getByCountry(addressParts[1]);
-          setCitiesList(city || []);
+        const addressParts = user.address.split(",");
+        if (addressParts.length > 1) {
+          const displayAddress = addressParts.slice(0, -1).join(",").trim();
+          setAddress(displayAddress);
+          setSelectedCountry(addressParts[addressParts.length - 1].trim());
         } else {
-          // Xử lý khi địa chỉ không có đúng định dạng mong muốn
-          setSelectedCity("");
+          setAddress(user.address);
           setSelectedCountry("");
-          setCitiesList([]);
         }
       } else {
-        // Xử lý khi user.address là null hoặc undefined
-        setSelectedCity("");
+        setAddress("");
         setSelectedCountry("");
-        setCitiesList([]);
       }
     }
-  }, [user]); // Được khuyến khích bổ sung tất cả các định ngĩa
+}, [showUserUpdate, user]);
 
   const handleSubmit = async () => {
     const validationErrors = validate();
@@ -194,7 +191,7 @@ function UpdateProfile(props: IProps) {
         avatar: imageURLs,
         phone,
         email,
-        address: `${selectedCity}, ${selectedCountry}`,
+        address: `${address},${selectedCountry}`,
         password: password,
         status: true,
         isVerify: true,
@@ -246,43 +243,54 @@ function UpdateProfile(props: IProps) {
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Phone</Form.Label>
+                {/* <PhoneInput
+                  placeholder="Enter phone number"
+                  value={phone}
+                  onChange={(value) => setPhone(value || "")}
+                  inputClass={`form-control ${
+                    errors.phone ? "is-invalid" : ""
+                  }`}
+                />
+                {errors.phone && (
+                  <div className="invalid-feedback d-block">{errors.phone}</div>
+                )} */}
                 <Form.Control
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  isInvalid={!!errors.phone}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.phone}
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Address</Form.Label>
+                <Form.Label>Country</Form.Label>
                 <Form.Control
                   as="select"
                   value={selectedCountry}
+isInvalid={!!errors.country}
                   onChange={handleEvent<HTMLSelectElement>(handleCountryChange)}
                 >
                   <option value="">Select Country</option>
                   {countriesList.map((country) => (
-                    <option key={country.isoCode} value={country.isoCode}>
+                    <option key={country.isoCode} value={country.name}>
                       {country.name}
                     </option>
                   ))}
                 </Form.Control>
+                <Form.Control.Feedback type="invalid">
+                  {errors.country}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Address</Form.Label>
                 <Form.Control
-                  as="select"
-                  value={selectedCity}
-                  onChange={handleEvent<HTMLSelectElement>(handleCityChange)}
-                  disabled={!selectedCountry}
-                >
-                  <option value="">Select City</option>
-                  {citiesList.map((city) => (
-                    <option key={city.code} value={city.code}>
-                      {city.name}
-                    </option>
-                  ))}
-                </Form.Control>
-
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  isInvalid={!!errors.address}
+                />
                 <Form.Control.Feedback type="invalid">
                   {errors.address}
                 </Form.Control.Feedback>
@@ -322,12 +330,6 @@ function UpdateProfile(props: IProps) {
                     />
                   </div>
                 </Form.Label>
-                {/* <Form.Control
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  isInvalid={!!errors.address}
-                /> */}
               </Form.Group>
             </Col>
           </Row>
@@ -346,7 +348,7 @@ function UpdateProfile(props: IProps) {
             </Col>
             <Col xs="auto">
               <Button
-                style={{
+style={{
                   border: "1px solid #ccc",
                   color: "black",
                   background: "white",

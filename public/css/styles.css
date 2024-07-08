@@ -1,3 +1,6 @@
+.hleft-12{
+  left: -12px;
+}
 .history-title{
   background: #305A61;
 }
@@ -20,6 +23,9 @@
   border: 1px solid #ccc;
   font-weight: bold;
   margin-left: 12px;
+}
+.buyagain:hover{
+  opacity: 0.8;
 }
 .send{
   background-color: #305A61;
@@ -446,7 +452,7 @@ a {
     padding-bottom: 4px;
     width: 165px;
     position: absolute;
-    right: -44px;
+    right: -27px;
     top: -16px;
     background-color: white;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);

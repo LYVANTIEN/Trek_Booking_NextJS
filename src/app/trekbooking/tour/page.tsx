@@ -36,7 +36,9 @@ const fetchTourImages = async (
 const TourList = () => {
   const [tourImages, setTourImages] = useState<{ [key: number]: string }>({});
   const { data: tourList, error } = useSWR("tourList", tourService.getTours);
+  const [truncatedText, setTruncatedText] = useState('');
 
+  
   useEffect(() => {
     if (tourList) {
       fetchTourImages(tourList, setTourImages);
@@ -63,6 +65,7 @@ const TourList = () => {
   }  
   return (
     <div>
+     
       <div className="container">
         <div className="container">
         <div className="font-semibold text-xl my-5" style={{ color: "#305A61" }}>
@@ -91,7 +94,7 @@ const TourList = () => {
               <img className="mleft-8" src="/image/filtertour.png" alt="" />
             </div>
           </div>
-          <div className="col-lg-9 col-md-9 col-12 fix-768-tour">
+          <div className="col-lg-9 col-md-9 col-12 fix-768-tour ">
             <div className="row">
               {tourList.length > 0 ? (
                 tourList.map((item: ITour, index) => {
@@ -109,25 +112,25 @@ const TourList = () => {
                   return (
                     <div
                       key={index}
-                      className="col-lg-4 pb-9 col-md-4 hover-tour cursor-pointer">
+                      className="col-lg-4 pb-9 col-md-6 hover-tour cursor-pointer">
                         <Link href={`/trekbooking/tour/tour_detail/${item.tourId}`} className="fix-link">                        
-                        <div className="block-tour">                                                                                          
+                        <div className="block-tour content-tour fix-image-tour-client ">                                                                                          
                           <div className="img-tour">
                           <img
-                            src={tourImages[item.tourId]}
-                            className="w-100"
+                            src={tourImages[item.tourId] || "/image/tour.png"}
+                            className="w-100 fix-image-tour-client h-56"
                             alt="Tour"
                           />
                            </div>                   
-                        <div className="content-tour">
-                          <p className="color-black font-bold pt-2">
+                        <div className="py-1 px-6">
+                          <p className="color-black font-bold pt-2 text-left">
                             {item.tourName}
                           </p>
                           <div className="flex">
                             <p className="text-gach font-bold pr-10">
                               {item.tourPrice}US$
                             </p>
-                            <p>{newPrice}US$</p>
+                            <p className="text-black font-bold">{newPrice}US$</p>
                           </div>
                           <div className="row pb-2">
                             <div className="time flex cursor-pointer col-lg-4 col-md-12 col-sm-4 col-4">
@@ -146,7 +149,7 @@ const TourList = () => {
                                 src="/image/uptour.png"
                                 alt="Location"
                               />
-                              <p className="color-black ml-1 font-bold">
+                              <p className="color-black ml-1 font-bold fix-location-length">
                                 {item.tourAddress}
                               </p>
                             </div>

@@ -87,17 +87,11 @@ export default function LoginClient() {
                 <div className="nav-sign flex justify-between">
                   <Link
                     className="pt-2 text-right text-base cursor-pointer text-decoration"
-                    style={{ color: "#CED1D2" }}
                     href="signup_client"
                   >
                     You dont have a account?
                   </Link>
-                  <p
-                    className="pt-2 text-right text-base cursor-pointer"
-                    style={{ color: "#CED1D2" }}
-                  >
-                    Forget your password
-                  </p>
+                 
                 </div>
               </div>
             </form>

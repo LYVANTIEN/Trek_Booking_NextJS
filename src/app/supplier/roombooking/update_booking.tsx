@@ -1,9 +1,10 @@
 "use client";
 import bookingService from "@/app/services/bookingService";
 import hotelService from "@/app/services/hotelService";
+import orderHotelHeaderService from "@/app/services/orderHotelHeaderService";
 import roomService from "@/app/services/roomService";
+import supplierService from "@/app/services/supplierService";
 import userService from "@/app/services/userService";
-
 import { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
@@ -12,49 +13,73 @@ import useSWR, { mutate } from "swr";
 interface IProps {
   showModalEditBooking: boolean;
   setShowModalEditBooking: (value: boolean) => void;
-  booking: IBooking | null;
-  setBooking: (value: IBooking | null) => void;
+  orderHotelHeader: IOrderHotelHeader | null;
+  setOrderHotelHeader: (value: IOrderHotelHeader[]) => void;
+  orderHotelDetail: IOrderHotelDetail | null;
+  setOrderHotelDetail: (value: IOrderHotelDetail) => void;
+  // booking: IBooking | null;
+  // setBooking: (value: IBooking | null) => void;
 }
 
 const UpdateBooking = (props: IProps) => {
-  const supplierId = localStorage.getItem("supplierId");
-  const { showModalEditBooking, setShowModalEditBooking, booking, setBooking } =
-    props;
-  const [bookingId, setBookingId] = useState<number>(0);
+  const [supplierId, setSupplierId] = useState<number | null>(null);
+  useEffect(() => {
+    const fetchSupplierId = async () => {
+      try {
+        const supplier = await supplierService.getSupplierById();
+        setSupplierId(supplier.supplierId);
+      } catch (error) {
+        toast.error("Failed to fetch supplier ID");
+      }
+    };
+    fetchSupplierId();
+  }, []);
+  const {
+    showModalEditBooking,
+    setShowModalEditBooking,
+    orderHotelHeader,
+    setOrderHotelHeader,
+    orderHotelDetail,
+    setOrderHotelDetail,
+  } = props;
+  const [orderHotelHeaderlId, setOrderHotelHeaderId] = useState<number>(0);
   const [userId, setUserId] = useState<number>(0);
   const [hotelId, setHotelId] = useState<number>(0);
   const [roomId, setRoomId] = useState<number>(0);
+  const [hotelName, setHotelName] = useState<string>("");
   const [checkInDate, setCheckInDate] = useState<string | Date>("");
   const [checkOutDate, setCheckOutDate] = useState<string | Date>("");
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [voucherCode, setVoucherCode] = useState<string>("");
   const [roomQuantity, setRoomQuantity] = useState<number>(0);
-  const [userNote, setUserNote] = useState<string>("");
-  const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
-  const [status, setStatus] = useState<boolean>(false);
+  const [fullName, setFullName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [process, setProcess] = useState<string>("");
+  const [completed, setCompleted] = useState<boolean>(false);
 
   useEffect(() => {
-    if (booking) {
-      setBookingId(booking.bookingId);
-      setUserId(booking.userId);
-      setHotelId(booking.hotelId);
-      setRoomId(booking.roomId);
-      setCheckInDate(booking.checkInDate);
-      setCheckOutDate(booking.checkOutDate);
-      setTotalPrice(booking.totalPrice);
-      setVoucherCode(booking.voucherCode);
-      setRoomQuantity(booking.roomQuantity);
-      setUserNote(booking.userNote);
-      setIsConfirmed(booking.isConfirmed);
-      setStatus(booking.status);
+    if (orderHotelHeader && orderHotelDetail) {
+      setOrderHotelHeaderId(orderHotelHeader.id);
+      setUserId(orderHotelHeader.userId);
+      setHotelId(orderHotelDetail.hotelId);
+      setRoomId(orderHotelDetail.roomId);
+      setCheckInDate(orderHotelHeader.checkInDate);
+      setCheckOutDate(orderHotelHeader.checkOutDate);
+      setTotalPrice(orderHotelHeader.totalPrice);
+      setVoucherCode(orderHotelHeader.voucherCode);
+      setRoomQuantity(orderHotelDetail.roomQuantity);
+      setFullName(orderHotelHeader.fullName);
+      setEmail(orderHotelHeader.email);
+      setPhone(orderHotelHeader.phone);
+      setProcess(orderHotelHeader.process);
+      setCompleted(orderHotelHeader.completed);
     }
-  }, [booking]);
-  //   console.log(booking)
+  }, [orderHotelHeader, orderHotelDetail]);
   const { data: listUser } = useSWR("userList", userService.getUsers);
   const { data: listHotel } = useSWR("hotelList", hotelService.getHotels);
   const { data: listRoom } = useSWR("roomList", roomService.getRooms);
-  //   console.log(listUser);
-  
+
   const handleCloseModal = () => {
     setShowModalEditBooking(false);
   };
@@ -69,19 +94,8 @@ const UpdateBooking = (props: IProps) => {
   };
   const handleSubmit = async () => {
     try {
-      const response = await bookingService.updateBooking({
-        bookingId,
-        userId,
-        hotelId,
-        roomId,
-        checkInDate,
-        checkOutDate,
-        totalPrice,
-        roomQuantity,
-        voucherCode,
-        userNote,
-        status,
-        isConfirmed,
+      const response = await orderHotelHeaderService.updateOrderHotelHeader({
+        completed,
       });
       if (typeof response === "string") {
         toast.success(response);
@@ -96,7 +110,7 @@ const UpdateBooking = (props: IProps) => {
     }
   };
 
-  if (!booking) {
+  if (!orderHotelHeader) {
     return null; // or a loading indicator if needed
   }
 
@@ -173,7 +187,7 @@ const UpdateBooking = (props: IProps) => {
                     onChange={(e) => setVoucherCode(e.target.value)}
                   />
                 </Form.Group>
-                <Form.Group className="mb-3">
+                {/* <Form.Group className="mb-3">
                   <Form.Label className="font-semibold">User Note</Form.Label>
                   <Form.Control
                     readOnly
@@ -183,7 +197,7 @@ const UpdateBooking = (props: IProps) => {
                     value={userNote}
                     onChange={(e) => setUserNote(e.target.value)}
                   />
-                </Form.Group>
+                </Form.Group> */}
               </div>
               <div className="col-6">
                 <Form.Group className="mb-3">
@@ -193,7 +207,12 @@ const UpdateBooking = (props: IProps) => {
                     className="font-semibold"
                     readOnly
                     type="text"
-                    value={getItemName(listHotel, hotelId, "hotelId", "hotelName")}
+                    value={getItemName(
+                      listHotel,
+                      hotelId,
+                      "hotelId",
+                      "hotelName"
+                    )}
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
@@ -232,32 +251,20 @@ const UpdateBooking = (props: IProps) => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label className="font-semibold">
-                    Is Confirmed
-                  </Form.Label>
+                  <Form.Label className="font-semibold">Process</Form.Label>
                   <Form.Control
-                    className={isConfirmed ? "color-active" : "color-stop"}
+                    className={process ? "color-active" : "color-stop"}
                     as="select"
-                    value={isConfirmed ? "confirmed" : "not confirmed"}
-                    onChange={(e) =>
-                      setIsConfirmed(e.target.value === "confirmed")
-                    }
+                    value={process ? "success" : "pending"}
+                    onChange={(e) => setCompleted(e.target.value === "success")}
                   >
-                    <option className="color-active" value="confirmed">
-                      Confirmed
+                    <option className="color-active" value="success">
+                      Success
                     </option>
-                    <option className="color-stop" value="not confirmed">
+                    <option className="color-stop" value="pending">
                       Pending...
                     </option>
                   </Form.Control>
-                </Form.Group>
-                <Form.Group className="mb-3 hidden">
-                  <Form.Label>Status</Form.Label>
-                  <Form.Check
-                    type="checkbox"
-                    checked={status}
-                    onChange={(e) => setStatus(e.target.checked)}
-                  />
                 </Form.Group>
               </div>
             </div>

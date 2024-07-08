@@ -1,38 +1,24 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import Link from "next/link";
 import { FaRegTimesCircle } from "react-icons/fa";
 import { usePathname } from "next/navigation";
-import authenticateService from "../services/authenticateService";
-import { toast } from "react-toastify";
-import router from "next/router";
-import Cookies from "js-cookie";
-import supplierService from "../services/supplierService";
-import useSWR from "swr";
 interface HeaderSupplierProps {
   title: string;
 }
 
 const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
-  const [supplierName, setSupplierName] = useState<string | null>(null);
-  const [role, setRole] = useState<string>("");
   const [isDivVisible, setDivVisible] = useState(false);
   const pathname = usePathname();
   const handleMenuClick = () => {
     setDivVisible(!isDivVisible);
   };
-  const { data: supplier, error } = useSWR("supplier", () =>
-    supplierService.getSupplierById()
-  );
   let currentTitle = title;
   if (pathname === "/supplier/hotel") {
     currentTitle = "HOTEL";
   } else if (pathname === "/supplier/tour") {
     currentTitle = "TOUR";
-  } else if (pathname === "/supplier/profile") {
-    currentTitle = "PROFILE";
   } else if (pathname === "/supplier/dashboard") {
     currentTitle = "DASHBOARD";
   } else if (pathname === "/supplier/staff") {
@@ -60,25 +46,6 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
     setDivVisible(false);
   };
 
-  useEffect(() => {
-    const cookieSupplierName = Cookies.get("supplierName");
-    setSupplierName(cookieSupplierName ?? null);
-  }, []);
-  useEffect(() => {
-    const roleName = Cookies.get("roleName") || ""; // Thêm giá trị mặc định là chuỗi rỗng nếu roleName là undefined
-    setRole(roleName);
-  }, []);
-
-  const handleLogoutSupplier = async () => {
-    await authenticateService.logOutSupplier();
-    toast.success("Logout Success..");
-    router.push("/login_supplier");
-  };
-  const handleLogoutStaff = async () => {
-    await authenticateService.logOutStaff();
-    toast.success("Logout Success..");
-    router.push("/login_supplier_staff");
-  };
   return (
     <div className="fix-border flex justify-between ml-96 p-8 pr-11">
       <div
@@ -100,49 +67,11 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
           src="/image/bell.png"
           alt="Bell Icon"
         />
-        <li className="flex hover-bold cursor-pointer dropdown relative z-10">
-          <div className="flex relative z-2 color-mess">
-            {supplier && (
-              <div className="flex">
-                <div className="flex items-center relative z-2 color-mess">
-                  <img
-                    src={supplier.avatar ? supplier.avatar : "/image/usersupplier.png"}
-                    alt=""
-                    className="h-7 w-7 rounded-full cursor-pointer m-2 object-cover"
-                  />
-                  <Link className="no-underline text-accent font-bold" href="#">
-                    {supplier.supplierName}
-                  </Link>
-                </div>
-                <div className="backgourd-li text-center space-y-1">
-                  <Link
-                    className="no-underline text-accent font-bold block mt-3 hover-nav-sub"
-                    href="/supplier/profile"
-                  >
-                    Manager profile
-                  </Link>
-                  {role === "supplier" ? (
-                    <Link
-                      href="/login_supplier"
-                      className="no-underline text-accent font-bold block hover-nav-sub"
-                      onClick={handleLogoutSupplier}
-                    >
-                      Log out
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/login_supplier_staff"
-                      className="no-underline text-accent font-bold block hover-nav-sub"
-                      onClick={handleLogoutStaff}
-                    >
-                      Log out
-                    </Link>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        </li>
+        <img
+          className="h-10 w-10 cursor-pointer"
+          src="/image/usersupplier.png"
+          alt="User Icon"
+        />
       </div>
       {isDivVisible && (
         <div className="pc-none">
@@ -248,6 +177,17 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
                   </Link>
                 </li>
               </ul>
+            </div>
+            <div className="border-t-2 border-white pt-3">
+              <Link
+                href="/"
+                className="bottom-logout flex justify-center items-center no-underline text-white"
+              >
+                <img className="w-7 h-7" src="/image/out.png" alt="Log out" />
+                <p className="color-white mb-0 ml-1 font-semibold text-xl">
+                  Log out
+                </p>
+              </Link>
             </div>
           </header>
         </div>
