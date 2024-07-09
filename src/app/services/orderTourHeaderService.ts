@@ -1,5 +1,5 @@
-import Cookies from "js-cookie";
-import BASE_URL from "./apiService";
+import Cookies from 'js-cookie';
+import BASE_URL from './apiService';
 
 interface IOrderTourHeaderService {
   getOrderTourHeaderByUserId(): Promise<IOrderTourHeader[]>;
@@ -10,13 +10,13 @@ const orderTourHeaderService: IOrderTourHeaderService = {
   async getOrderTourHeaderByUserId() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getOrderTourHeaderByUserId`,
+        `${BASE_URL}/getOrderTourHeaderByUserId`,
         {
           method: "GET",
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("token")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${Cookies.get("tokenUser")}`, // Retrieve token from localStorage
           },
         }
       );
@@ -34,7 +34,7 @@ const orderTourHeaderService: IOrderTourHeaderService = {
   async getOrderTourHeaderBySupplierId() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getOrderTourHeaderBySupplierId`,
+        `${BASE_URL}/getOrderTourHeaderBySupplierId`,
         {
           method: "GET",
           headers: {

@@ -90,9 +90,7 @@ const ListCommentOfHotel = ({ params }: { params: { hotelId: string } }) => {
                       <th scope="col" className="px-6 py-4">
                         Date Submitted
                       </th>
-                      <th scope="col" className="px-6 py-4">
-                        Action
-                      </th>
+                      
                     </tr>
                   </thead>
                   <tbody>
@@ -130,21 +128,7 @@ const ListCommentOfHotel = ({ params }: { params: { hotelId: string } }) => {
                             <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {formattedCommentTime}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 flex">
-                              <Link href="#">
-                                <img
-                                  className="w-5 h-5 cursor-pointer"
-                                  src="/image/pen.png"
-                                  alt="Edit"
-                                />
-                              </Link>
-                              <img
-                                className="w-5 h-5 cursor-pointer ml-3"
-                                src="/image/unlock.png"
-                                alt="Delete"
-                                // onClick={() => handleDeleteHotel(item.hotelId)}
-                              />
-                            </td>
+                            
                           </tr>
                         );
                       })

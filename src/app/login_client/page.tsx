@@ -1,7 +1,5 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable @next/next/no-img-element */
 "use client";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, Suspense } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -9,10 +7,10 @@ import authenticateService from "../services/authenticateService"; // Adjust the
 import "../../../public/css/authen.css"; // Adjust the path as needed
 import { useSearchParams } from "next/navigation";
 
-export default function LoginClient() {
+function LoginClient() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const searchParams = useSearchParams(); 
+  const searchParams = useSearchParams();
   const [password, setPassword] = useState("");
   const [isPassword, setIsPassword] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -43,14 +41,11 @@ export default function LoginClient() {
         <div className="image-bk">
           <div className="login">
             <div className="text-login">
-              
               <h3 className="text-center font-bold color-black">Log In</h3>
             </div>
             <form onSubmit={handleSubmit}>
               <div className="text-input relative">
-                <p className="color-black m-0 pt-2 pb-1">
-                  Enter your email
-                </p>
+                <p className="color-black m-0 pt-2 pb-1">Enter your email</p>
                 <input
                   className="input-text"
                   type="text"
@@ -69,36 +64,42 @@ export default function LoginClient() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <img
+                {/* <img
                   src="/image/hide.png"
                   className="inout-hide cursor-pointer"
                   onClick={togglePasswordVisibility}
                   alt=""
-                />
+                /> */}
                 {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-                 <div className="flex justify-center">
-                <button
+                <div className="flex justify-center">
+                  <button
                     className="w-4/5 text-xl text-white button-text mt-4"
                     style={{ backgroundColor: "#305A61", borderRadius: "20px" }}
                   >
                     Continue
                   </button>
-              </div>
-                <div className="nav-sign flex justify-between">
+                </div>
+                <div className="nav-sign flex justify-between pt-3 pb-4">
                   <Link
                     className="pt-2 text-right text-base cursor-pointer text-decoration"
                     href="signup_client"
                   >
                     You dont have a account?
                   </Link>
-                 
                 </div>
               </div>
             </form>
-           
           </div>
         </div>
       </div>
     </>
+  );
+}
+
+export default function WrappedLoginClient() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginClient />
+    </Suspense>
   );
 }

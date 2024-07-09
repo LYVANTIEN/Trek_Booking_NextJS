@@ -4,7 +4,7 @@ import { ITour } from '../entities/tour';
 import BASE_URL from './apiService';
 
 interface ITourService {
-  getToursBySuppierId(supplierId: number): Promise<ITour[]>;
+  getToursBySuppierId(): Promise<ITour[]>;
   getTourImageByTourId(tourId: number): Promise<ITourImage[]>;
   getTourById(tourId: number): Promise<ITour>;
   getTours(): Promise<any[]>;
@@ -72,9 +72,9 @@ export const tourService: ITourService = {
     }
   },
 
-  async getToursBySuppierId(supplierId: number) {
+  async getToursBySuppierId() {
     try {
-      const response = await fetch(`${BASE_URL}/getTourBySupplierId/${supplierId}`, {
+      const response = await fetch(`${BASE_URL}/getTourBySupplierId`, {
         method: "GET",
         headers: {
           Accept: "application/json, text/plain, */*",

@@ -186,13 +186,12 @@ detailsArray
   }
 
   const settings = {
-    dots: true,
     infinite: true,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
 draggable: false,
-    autoplay: false,
+autoplay: false,
     autoplaySpeed: 1000,
   };
 
@@ -247,50 +246,50 @@ draggable: false,
                 >
                   <div className="px-10 pt-7 pb-12">
                     <div className="row border-solid border-b-2 border-black pb-3">
-                      <div className="col-md-6">
+                      <div className="col-lg-6 col-md-4 max-[768px]:hidden">
                         <span
-                          className="font-bold text-lg"
+                          className="font-bold text-lg max-[555px]:text-xs"
                           style={{ color: "#305A61" }}
                         >
                           Tours
                         </span>
                       </div>
-                      <div className="col-md-6 row">
-                        <div className="col-md-4 text-center">
+                      <div className="col-lg-6 col-md-8 col-12 row">
+                        <div className="col-lg-4 col-md-3 col-3 max-[400px]:col-3 text-center max-[400px]:hidden">
                           <span
-                            className="font-bold text-lg"
+                            className="font-bold text-lg max-[555px]:text-xs"
                             style={{ color: "#305A61" }}
                           >
-                            TourOrderDate
+                            OrderDate
                           </span>
                         </div>
-                        <div className="col-md-2 text-center">
+                        <div className="col-lg-2 col-md-3 col-2 max-[400px]:col-4 text-center ">
                           <span
-                            className="font-bold text-lg"
+                            className="font-bold text-lg max-[555px]:text-xs"
                             style={{ color: "#305A61" }}
                           >
                             Quantity
                           </span>
                         </div>
-                        <div className="col-md-2 text-center">
+<div className="col-lg-2 col-md-2 col-2 max-[400px]:col-2 max-[400px]:ml-6 text-center ">
                           <span
-                            className="font-bold text-lg"
+                            className="font-bold text-lg max-[555px]:text-xs  max-[370px]:ml-2"
                             style={{ color: "#305A61" }}
                           >
-Total
+                             Total
                           </span>
                         </div>
-                        <div className="col-md-2 text-center">
+                        <div className="col-lg-2 col-md-2 col-2 max-[400px]:col-3 max-[400px]:ml-2 text-center ">
                           <span
-                            className="font-bold text-lg"
+                            className="font-bold text-lg max-[555px]:text-xs  max-[370px]:ml-3"
                             style={{ color: "#305A61" }}
                           >
                             Status
                           </span>
                         </div>
-                        <div className="col-md-2 text-center">
+                        <div className="col-lg-2 col-md-2 col-3 max-[400px]:col-2 text-center max-[400px]:ml-4">
                           <span
-                            className="font-bold text-lg"
+                            className="font-bold text-lg max-[555px]:text-xs max-[370px]:ml-6"
                             style={{ color: "#305A61" }}
                           >
                             Action
@@ -301,8 +300,8 @@ Total
                     {orderTourHeader.length > 0 ? (
                       orderTourHeader.map((header, index) => (
                         <div className="row pt-10" key={index}>
-                          <div className="col-md-6 flex justify-evenly items-center">
-                            <div className="col-md-2">
+                          <div className="col-lg-6 col-md-4 col-0 flex items-center">
+                            <div className="col-lg-2 col-md-6 col-12 max-[768px]:hidden">
                               {tourImages.length >= 0 ? (
                                 <Slider {...settings}>
                                   {tourImages
@@ -326,13 +325,13 @@ Total
                               ) : (
                                 <img
                                   style={{ borderRadius: "10px" }}
-                                  className="w-full h-12 border rounded-lg"
+className="w-full h-12 border rounded-lg"
                                   src="/path/to/default/image.jpg"
                                   alt="default thumbnail"
                                 />
                               )}
                             </div>
-                            <div className="w-2/5">
+                            <div className="w-2/5 ml-4 max-[992px]:text-xs max-[768px]:hidden">
                               <span>
                                 {tourDetails[header.id]
                                   ?.map((detail) => detail.tourName)
@@ -340,34 +339,34 @@ Total
                               </span>
 </div>
                           </div>
-                          <div className="col-md-6 row ">
-                            <div className="col-md-4 flex items-center content-center justify-evenly">
+                          <div className="col-lg-6 col-md-8 col-12 row ">
+                            <div className="col-lg-4 col-md-4 col-3 flex items-center content-center justify-evenly  max-[400px]:hidden">
                               <div>
-                                <span>
+                                <span className="max-[500px]:text-xs ">
                                   {new Date(
                                     header.tourOrderDate
                                   ).toLocaleDateString()}
                                 </span>
                               </div>
                             </div>
-                            <div className="col-md-2 flex items-center content-center justify-evenly">
-                              <div>
+                            <div className="col-lg-2 col-md-2 col-2 max-[400px]:col-4 max-[400px]:ml-2 flex items-center content-center justify-evenly ">
+                              <div className="max-[500px]:text-xs">
                                 {tourDetails[header.id]
                                   ?.map((detail) => detail.tourOrderQuantity)
                                   .join(", ")}
                               </div>
                             </div>
-                            <div className="col-md-2 flex items-center content-center justify-evenly">
-                              <div>
+                            <div className="col-lg-2 col-md-2 col-2 max-[400px]:col-3 max-[400px]:ml-2 flex items-center content-center justify-evenly ">
+                              <div className="max-[500px]:text-xs">
                                 {tourDetails[header.id]
                                   ?.map((detail) => detail.tourTotalPrice)
                                   .join(", ")}
                                 $
                               </div>
                             </div>
-                            <div className="col-md-2 flex items-center content-center justify-evenly">
+                            <div className="col-lg-2 col-md-2 col-2 max-[400px]:col-2 max-[400px]:ml-4 flex items-center content-center justify-evenly max-[500px]:text-xs ">
                               <div
-                                className={`whitespace-nowrap ${
+                                className={`whitespace-nowrap max-[500px]:text-xs ${
                                   header.completed
                                     ? "color-active"
                                     : "color-stop"
@@ -376,11 +375,11 @@ Total
                                 {header.completed ? "Confirmed" : "Pending..."}
                               </div>
                             </div>
-                            <div className="col-md-2 flex items-center content-center justify-evenly">
+<div className="col-lg-2 col-md-2 col-3  max-[400px]:col-2    flex items-center content-center justify-evenly max-[400px]:ml-4 ">
                               <a href="#" style={{ display: "flex" }}>
                                 <img src="/image/trash.png" alt="" />
                                 <img src="/image/trash.png" alt="" />
-                                <img src="/image/trash.png" alt="" />
+                      
                               </a>
                             </div>
                           </div>
@@ -443,7 +442,7 @@ type="text/css"
                                   href={`/trekbooking/image360/${room.roomId}`}
                                 >
                                   <img
-                                    src="/image/view3D.png"
+src="/image/view3D.png"
                                     className="w-10 h-10"
                                     alt="view 3D"
                                   />
@@ -499,7 +498,7 @@ alt="room thumbnail"
                                         style={{ color: "#305A61" }}
                                       >
                                         Room information
-                                      </p>
+</p>
                                       <div className="w-3/4 m-auto">
                                         {new Date(
                                           header.checkOutDate
@@ -550,7 +549,7 @@ alt="room thumbnail"
                                         <div className="flex items-center pb-1 ">
                                           <img
                                             className="w-2 h-2 mr-2"
-                                            src="/image/tick.png"
+src="/image/tick.png"
                                             alt="tick"
                                           />
                                           <span className="font-medium text-xs">
@@ -600,7 +599,7 @@ Guest(s)
                                             <span className="text-center text-xl font-bold pb-3 ">
                                               {/* {totalPrice}$ */}
                                             </span>
-                                            <span
+<span
                                               className="text-center text-xs font-light pb-3 md:mr-3"
                                               style={{ color: "#8E8D8A" }}
                                             >
@@ -656,7 +655,7 @@ Guest(s)
                         </p>
                       </div>
                     )}
-                  </div>
+</div>
                 </div>
               </>
             </div>

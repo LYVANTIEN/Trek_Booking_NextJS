@@ -1,25 +1,25 @@
 import Cookies from "js-cookie";
-import BASE_URL from './apiService';
+import BASE_URL from "./apiService";
 
 interface ISupplierService {
   getSupplierById(): Promise<ISupplier>;
+  getEmailBySupplierId(): Promise<ISupplier>;
+  checkPasswordSupplier(email: string, password: string): Promise<any>;
   updateSupplier(supplier: ISupplier): Promise<ISupplier>;
+  changePasswordSupplier(supplier: ISupplier): Promise<ISupplier>;
 }
 
 const supplierService: ISupplierService = {
   async getSupplierById() {
     try {
-      const response = await fetch(
-        `${BASE_URL}/getSupplierbyId`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
-          },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/getSupplierbyId`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+        },
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch supplier staff list");
       }
@@ -34,18 +34,15 @@ const supplierService: ISupplierService = {
 
   async updateSupplier(supplier) {
     try {
-      const response = await fetch(
-        `${BASE_URL}/updateSupplier`,
-        {
-          method: "PUT",
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, 
-          },
-          body: JSON.stringify(supplier),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/updateSupplier`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
+        },
+        body: JSON.stringify(supplier),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to update supplier");
@@ -63,6 +60,110 @@ const supplierService: ISupplierService = {
       return data;
     } catch (error) {
       console.error("Error updating supplier:", error);
+      throw error;
+    }
+  },
+  async changePasswordSupplier(supplier) {
+    try {
+      const response = await fetch(
+        `https://localhost:7132/changePasswordSupplier`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
+          },
+          body: JSON.stringify(supplier),
+        }
+      );
+
+      const text = await response.text();
+      if (!response.ok) {
+        try {
+          const errorData = JSON.parse(text);
+          throw new Error(errorData.message);
+        } catch (e) {
+          throw new Error(text);
+        }
+      }
+
+      if (response.headers.get("content-type")?.includes("application/json")) {
+        const data = JSON.parse(text);
+        return data;
+      } else {
+        return text; // Return the plain text response
+      }
+    } catch (error) {
+      console.error("Error updating supplier:", error);
+      throw error;
+    }
+  },
+
+  async checkPasswordSupplier(email, password) {
+    try {
+      const response = await fetch(
+        `https://localhost:7132/checkPasswordSupplier`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      const text = await response.text();
+      if (!response.ok) {
+        try {
+          const errorData = JSON.parse(text);
+          return { success: false, message: errorData.message };
+        } catch (e) {
+          return { success: false, message: text };
+        }
+      }
+
+      if (response.headers.get("content-type")?.includes("application/json")) {
+        const data = JSON.parse(text);
+        return { success: true, data };
+      } else {
+        console.log(text);
+        return { success: true, data: text };
+      }
+    } catch (error) {
+      console.error("Error fetching supplier password:", error);
+      let errorMessage = "An unknown error occurred";
+      if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      return { success: false, message: errorMessage };
+    }
+  },
+  async getEmailBySupplierId() {
+    try {
+      const response = await fetch(
+        `https://localhost:7132/getEmailBySupplierId`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to get email ");
+      }
+      const data = await response.json();
+      console.log(data); // Trigger refetch after fetching
+      return data;
+    } catch (error) {
+      console.error("Error fetching supplier email:", error);
       throw error;
     }
   },

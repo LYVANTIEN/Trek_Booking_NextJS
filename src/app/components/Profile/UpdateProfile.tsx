@@ -207,6 +207,7 @@ function UpdateProfile(props: IProps) {
       }
       handleCloseModal();
       mutate("profile");
+      mutate("user");
     } catch (error) {
       toast.error("Failed to update profile");
       console.error(error);

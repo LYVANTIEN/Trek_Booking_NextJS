@@ -1,17 +1,15 @@
-import Cookies from "js-cookie";
-import BASE_URL from "./apiService";
+import Cookies from 'js-cookie';
+import BASE_URL from './apiService';
 
 interface IOrderTourDetailService {
-  getOrderTourDetailByOrderTourHeaderId(
-    orderTourHeaderId: number
-  ): Promise<IOrderTourDetail>;
+  getOrderTourDetailByOrderTourHeaderId(orderTourHeaderId: number): Promise<IOrderTourDetail>;
 }
 
 const orderTourDetailService: IOrderTourDetailService = {
   async getOrderTourDetailByOrderTourHeaderId(orderTourHeaderId) {
     try {
       const response = await fetch(
-        `https://localhost:7132/getOrderTourDetailByOrderTourHeaderId/${orderTourHeaderId}`,
+        `${BASE_URL}/getOrderTourDetailByOrderTourHeaderId/${orderTourHeaderId}`,
         {
           method: "GET",
           headers: {

@@ -14,6 +14,4 @@ interface IOrderHotelHeader{
     voucherCode: string; 
     process: string;
     completed: boolean;
-    require
-    
 }

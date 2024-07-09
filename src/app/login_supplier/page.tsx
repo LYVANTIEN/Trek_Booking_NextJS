@@ -1,15 +1,14 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import authenticateService from "../services/authenticateService"; // Adjust the path as needed
 import "../../../public/css/authen.css"; // Adjust the path as needed
 
-export default function LoginSupplier() {
-
+function LoginSupplier() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
@@ -25,6 +24,7 @@ export default function LoginSupplier() {
       toast.error("You are not authorized to access this page.");
     }
   }, [searchParams]);
+
   const togglePasswordVisibility = () => {
     setIsPassword((prevState) => !prevState);
   };
@@ -54,9 +54,7 @@ export default function LoginSupplier() {
             </div>
             <form onSubmit={handleSubmit}>
               <div className="text-input relative">
-                <p className="color-black m-0 pt-2 pb-1">
-                  Enter your email
-                </p>
+                <p className="color-black m-0 pt-2 pb-1">Enter your email</p>
                 <input
                   className="input-text"
                   type="text"
@@ -75,36 +73,42 @@ export default function LoginSupplier() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <img
+                {/* <img
                   src="/image/hide.png"
                   className="inout-hide cursor-pointer"
                   onClick={togglePasswordVisibility}
                   alt=""
-                />
+                /> */}
                 {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
                 <div className="flex justify-center">
-                <button
+                  <button
                     className="w-4/5 text-xl text-white button-text mt-4"
                     style={{ backgroundColor: "#305A61", borderRadius: "20px" }}
                   >
                     Continue
                   </button>
-              </div>
-                <div className="nav-sign flex justify-between">
+                </div>
+                <div className="nav-sign flex justify-between pt-3 pb-4">
                   <Link
                     className="pt-2 text-right text-base cursor-pointer text-decoration"
                     href="signup_supplier"
                   >
                     You dont have a account?
                   </Link>
-                  
                 </div>
               </div>
             </form>
-            
           </div>
         </div>
       </div>
     </>
+  );
+}
+
+export default function WrappedLoginSupplier() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginSupplier />
+      </Suspense>
   );
 }

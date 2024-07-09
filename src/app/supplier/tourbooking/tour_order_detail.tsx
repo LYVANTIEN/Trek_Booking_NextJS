@@ -1,10 +1,5 @@
-import hotelService from "@/app/services/hotelService";
-import roomService from "@/app/services/roomService";
-import tourService from "@/app/services/tourService";
-import userService from "@/app/services/userService";
-
 import { useEffect, useState } from "react";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Form, Modal } from "react-bootstrap";
 import useSWR from "swr";
 
 interface IProps {

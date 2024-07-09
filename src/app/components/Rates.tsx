@@ -40,7 +40,7 @@ function Rates(props: Iprops) {
             </div>
          </div>
          <div className="input-rate-text px-6 py-1">
-         <textarea className='outline-none review-text' name="" id=""  rows="5" placeholder='Enter your review...............'></textarea>
+         <textarea className='outline-none review-text'  placeholder='Enter your review...............'></textarea>
          </div>
          <div className="rateting-star px-6 pt-4 flex justify-between max-[540px]:text-xs">
           <p>How do you feel <br/> about the product?</p>

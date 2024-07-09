@@ -119,7 +119,7 @@ const NavSupplier = () => {
             </li>
           </ul>
         </div>
-        <div className="border-t-2">
+        {/* <div className="border-t-2">
           {role === "supplier" ? (
             <Link
               href="/"
@@ -143,7 +143,7 @@ const NavSupplier = () => {
               </p>
             </Link>
           )}
-        </div>
+        </div> */}
       </header>
     </div>
   );

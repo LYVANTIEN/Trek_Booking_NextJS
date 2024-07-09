@@ -179,12 +179,13 @@ const SearchPage = () => {
     (hotelId: number) => {
       const rooms = roomList.filter((room) => room.hotelId === hotelId);
       if (rooms.length > 0) {
-        return Math.min(
+        const lowestPrice = Math.min(
           ...rooms.map(
             (room) =>
               room.roomPrice - room.roomPrice * (room.discountPercent / 100)
           )
         );
+        return lowestPrice.toFixed(2); // Trả về chuỗi với 2 chữ số thập phân
       }
       return null;
     },
@@ -250,15 +251,15 @@ const SearchPage = () => {
             >
               <div className="row mx-3">
                 <div className="col-2">
-                  <Link
-                    href="#"
+                  <a
+                    href={`/trekbooking/search_city?city=Cần Thơ`}
                     className="text-white no-underline zoom-effect-container"
                   >
                     <div className="relative image-card">
                       <img
                         className="border w-full"
                         style={{ borderRadius: "20px", height: "231px" }}
-                        src="/image/cantho.webp"
+                        src="/image/cantho.png"
                         alt="Can Tho"
                       />
                       <div
@@ -275,7 +276,7 @@ const SearchPage = () => {
                         </span>
                       </div>
                     </div>
-                  </Link>
+                  </a>
                   <div className="flex justify-center my-3">
                     <a
                       className="no-underline text-white border px-3 font-medium text-sm"
@@ -291,8 +292,8 @@ const SearchPage = () => {
                   </div>
                 </div>
                 <div className="col-2">
-                  <Link
-                    href="#"
+                  <a
+                    href={`/trekbooking/search_city?city=Vũng Tàu`}
                     className="text-white no-underline zoom-effect-container"
                   >
                     <div className="relative image-card">
@@ -316,7 +317,7 @@ const SearchPage = () => {
                         </span>
                       </div>
                     </div>
-                  </Link>
+                  </a>
                   <div className="flex justify-center my-3">
                     <a
                       className="no-underline text-white border px-3 font-medium text-sm"
@@ -331,8 +332,8 @@ const SearchPage = () => {
                   </div>
                 </div>
                 <div className="col-2">
-                  <Link
-                    href="#"
+                  <a
+                    href={`/trekbooking/search_city?city=Ninh Bình`}
                     className="text-white no-underline zoom-effect-container"
                   >
                     <div className="relative image-card">
@@ -356,7 +357,7 @@ const SearchPage = () => {
                         </span>
                       </div>
                     </div>
-                  </Link>
+                  </a>
                   <div className="flex justify-center my-3">
                     <a
                       className="no-underline text-white border px-3 font-medium text-sm"
@@ -371,8 +372,8 @@ const SearchPage = () => {
                   </div>
                 </div>
                 <div className="col-2">
-                  <Link
-                    href="#"
+                  <a
+                    href={`/trekbooking/search_city?city=Ho Chi Minh`}
                     className="text-white no-underline zoom-effect-container"
                   >
                     <div className="relative image-card">
@@ -396,7 +397,7 @@ const SearchPage = () => {
                         </span>
                       </div>
                     </div>
-                  </Link>
+                  </a>
                   <div className="flex justify-center my-3">
                     <a
                       className="no-underline text-white border px-3 font-medium text-sm"
@@ -411,8 +412,8 @@ const SearchPage = () => {
                   </div>
                 </div>
                 <div className="col-2">
-                  <Link
-                    href="#"
+                  <a
+                    href={`/trekbooking/search_city?city=Hanoi`}
                     className="text-white no-underline zoom-effect-container"
                   >
                     <div className="relative image-card">
@@ -436,7 +437,7 @@ const SearchPage = () => {
                         </span>
                       </div>
                     </div>
-                  </Link>
+                  </a>
                   <div className="flex justify-center my-3">
                     <a
                       className="no-underline text-white border px-3 font-medium text-sm"
@@ -451,8 +452,8 @@ const SearchPage = () => {
                   </div>
                 </div>
                 <div className="col-2">
-                  <Link
-                    href="#"
+                  <a
+                    href={`/trekbooking/search_city?city=Phan Thiết`}
                     className="text-white no-underline zoom-effect-container"
                   >
                     <div className="relative image-card">
@@ -476,7 +477,7 @@ const SearchPage = () => {
                         </span>
                       </div>
                     </div>
-                  </Link>
+                  </a>
                   <div className="flex justify-center my-3">
                     <a
                       className="no-underline text-white border px-3 font-medium text-sm"

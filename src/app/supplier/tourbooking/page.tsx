@@ -2,8 +2,6 @@
 "use client";
 import useSWR from "swr";
 import { useState } from "react";
-import tourOrderService from "@/app/services/tourOrderService";
-import UpdateTourOrder from "./update_tour_order";
 import TourOrderDetail from "./tour_order_detail";
 import orderTourHeaderService from "@/app/services/orderTourHeaderService";
 import orderTourDetailService from "@/app/services/orderTourDetailService";

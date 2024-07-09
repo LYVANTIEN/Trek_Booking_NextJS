@@ -9,6 +9,7 @@ interface IComment{
         userId: number;
         email: string;
         userName: string;
+        avatar: string;
     };
     hotelId: number;
     hotel: {

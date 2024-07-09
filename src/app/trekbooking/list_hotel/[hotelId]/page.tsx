@@ -20,13 +20,14 @@ import { Oval } from "react-loader-spinner"; // Import spinner
 import Cookies from "js-cookie";
 import userService from "@/app/services/userService";
 import hotelImageService from "@/app/services/hotelImageService";
+import serviceOfRoom from "@/app/services/serviceOfRoom";
 
 const formatRoomDescription = (description: string) => {
   return description.split(".").map((sentence, index) => {
     if (sentence.trim() === "") return null; // Skip empty strings resulting from splitting
     return (
       <div key={index} className="flex items-baseline pb-2">
-        <img className="w-2 h-2 mr-2" src="/image/tick.png" alt="tick" />
+        <img className="w-3 h-3 mr-2" src="/image/greenTick.png" alt="tick" />
         <span className="font-medium text-xs">{sentence.trim()}.</span>
       </div>
     );
@@ -53,10 +54,11 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
   const [userData, setUserData] = useState<any>(null);
   const [roomList, setRoomList] = useState<IRoom[]>([]);
   const [roomImages, setRoomImages] = useState<{ [key: number]: IRoomImage[] }>(
-
     {}
   );
-
+  const [roomServices, setRoomServices] = useState<{ [key: number]: IService[] }>(
+    {}
+  );
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -75,8 +77,11 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
   }, [token]);
   const averageRating = () => {
     if (combinedList.length === 0) return 0;
-  
-    const totalRates = combinedList.reduce((acc, curr) => acc + (curr.rateValue || 0), 0);
+
+    const totalRates = combinedList.reduce(
+      (acc, curr) => acc + (curr.rateValue || 0),
+      0
+    );
     return totalRates / combinedList.length;
   };
   const { data: hotel, error } = useSWR("detailHotel", () =>
@@ -96,8 +101,19 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
     if (listRoom) {
       setRoomList(listRoom);
       fetchRoomImages(listRoom);
+      fetchRoomServices(listRoom);
     }
   }, [listRoom]);
+  const fetchRoomServices = async (rooms: IRoom[]) => {
+    const servicesMap: { [key: number]: IService[] } = {};
+    for (const room of rooms) {
+      const services: IService[] = await serviceOfRoom.getServiceByRoomId(room.roomId);
+      if (services.length > 0) {
+        servicesMap[room.roomId] = services;
+      }
+    }
+    setRoomServices(servicesMap);
+  };
   useEffect(() => {
     if (listComment) {
       setCommentList(listComment);
@@ -126,9 +142,8 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
     if (hotel) {
       fetchHotelImages(Number(params.hotelId), setHotelImages);
     }
-  
   }, [hotel, params.hotelId]);
-   // const userData = userService.getUserById();
+  // const userData = userService.getUserById();
   const fetchRoomImages = async (rooms: IRoom[]) => {
     const imagesMap: { [key: number]: IRoomImage[] } = {};
     for (const room of rooms) {
@@ -203,26 +218,26 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
       toast.error("Stay duration must be at least 1 day");
       return;
     }
+    if (!token) {
+      toast.error("You must login to book the room!");
+      setTimeout(() => {
+        router.push(
+          `/login_client?redirect=/trekbooking/list_hotel/${params.hotelId}`
+        );
+      }, 2000);
+
+      return;
+    }
+
+    const existingCart = await getBookingCartByUserId();
+    const roomExists = existingCart.some(
+      (item: any) => item.roomId === room.roomId
+    );
+    if (roomExists) {
+      toast.error("Room is already in the cart");
+      return;
+    }
     try {
-      const existingCart = await getBookingCartByUserId();
-      const roomExists = existingCart.some(
-        (item: any) => item.roomId === room.roomId
-      );
-      if (roomExists) {
-        toast.error("Room is already in the cart");
-        return;
-      }
-
-      if (!token) {
-        toast.error("You must login to book the room!");
-        setTimeout(() => {
-          router.push(
-            `/login_client?redirect=/trekbooking/list_hotel/${params.hotelId}`
-          );
-        }, 2000);
-
-        return;
-      }
       const bookingData = {
         bookingCartId: 0,
         userId: (await userData).userId, // Thay bằng giá trị thực tế
@@ -246,6 +261,11 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
     } catch (error) {
       console.error("Error adding to booking cart:", error);
     }
+  };
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  const toggleExpand = (index: number) => {
+    setExpandedIndex(expandedIndex === index ? null : index);
   };
   if (isLoading || !listRoom || !listComment || !combinedList) {
     return (
@@ -297,7 +317,7 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
         href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
       />
       <div className="container">
-        <div className="font-semibold text-xl" style={{ color: "#305A61" }}>
+        <div className="font-semibold text-xl mt-8" style={{ color: "#305A61" }}>
           <Link
             className="no-underline underline_hv"
             style={{ color: "#305A61" }}
@@ -316,7 +336,7 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
           <span>/</span> <span>{hotel?.hotelName}</span>
         </div>
       </div>
-      <div className="container my-20">
+      <div className="container mt-2 mb-10">
         <div className="py-8 px-3">
           <div className="row">
             <div className="col-md-8">
@@ -334,7 +354,7 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
                   {renderStars(averageRating())}
                 </div>
                 <div className="ml-4">
-                  <img src="/image/map-pin.png" alt="" />
+                  <img className="w-4" src="/image/map-ping.png" alt="" />
                 </div>
                 <div className="ml-4">
                   <span className="text-base font-normal">
@@ -365,25 +385,25 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
           </div>
           <div className="row">
             <div className="col-md-12 max-[767px]:mb-8">
-            <div className="row">
+              <div className="row">
                 <div className="col-md-6">
                   <div className="">
                     <img
+                      className="w-full"
                       src={hotel?.hotelAvatar}
-                      className="  border "
-                      style={{ borderRadius: "10px" }}
+                      style={{ borderRadius: "10px", height: "410px" }}
                       alt="Image 1"
                     />
                   </div>
                 </div>
                 <div className="col-md-6">
                   <div className="grid h-full grid-cols-2 gap-x-2 gap-y-2">
-                  {hotelImages.map((image, index) => (
-                      <div key={index}>
+                    {hotelImages.map((image, index) => (
+                      <div key={image} style={{ height: "200px" }}>
                         <img
                           src={image}
                           style={{ borderRadius: "10px" }}
-                          className="h-full w-full border"
+                          className="w-full h-full"
                           alt={`Image ${index + 1}`}
                         />
                       </div>
@@ -391,13 +411,12 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
                   </div>
                 </div>
               </div>
-              
             </div>
           </div>
           <div className="row mt-4">
             <div className="col-md-8">
               <a
-                className="no-underline px-4 py-1 border text-base font-medium text-white"
+                className="no-underline px-4 py-1 text-base font-medium text-white"
                 style={{ borderRadius: "10px", backgroundColor: "#305A61" }}
                 href="#"
               >
@@ -416,10 +435,10 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
                   <span className="font-bold text-xl">Reviews and ratings</span>
                 </div>
                 <div className="flex items-center">
-                  <span className="font-bold text-xl pr-2 my-2">{averageRating().toFixed(1)}</span>
-                  <div className="flex h-3">
-                    {renderStars(averageRating())}
-                  </div>
+                  <span className="font-bold text-xl pr-2 my-2">
+                    {averageRating().toFixed(1)}
+                  </span>
+                  <div className="flex h-3">{renderStars(averageRating())}</div>
                 </div>
                 <span>Based on {combinedList.length} reviews</span>
               </div>
@@ -469,202 +488,179 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
             </div>
           </div>
           {listRoom.length > 0 ? (
-            listRoom.map((item: IRoom, index) => (
-              <>
-                <div
-                  className="border rounded-xl mt-3"
-                  style={{ boxShadow: "0 4px 4px 0 #7F7F7F" }}
-                >
-                  <div className="mx-5 mt-4 mb-2">
-                    <div className="flex justify-between">
-                      <span className="font-semibold text-xl">
-                        {item.roomName}
-                      </span>
-                      <Link
-                        className="mr-8"
-                        href={`/trekbooking/image360/${item.roomId}`}
-                      >
+            listRoom.map((item: IRoom) => (
+              <div
+                key={item.roomId}
+                className="border rounded-xl mt-3"
+                style={{ boxShadow: "0 4px 4px 0 #7F7F7F" }}
+              >
+                <div className="mx-5 mt-4 mb-2">
+                  <div className="flex justify-between">
+                    <span className="font-semibold text-xl">
+                      {item.roomName}
+                    </span>
+                    <Link
+                      className="mr-8"
+                      href={`/trekbooking/image360/${item.roomId}`}
+                    >
+                      <img
+                        src="/image/view3D.png"
+                        className="w-10 h-10"
+                        alt="view 3D"
+                      />
+                    </Link>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-lg-4 col-md-12">
+                      {roomImages[item.roomId]?.length >= 2 ? (
+                        <Slider {...settings}>
+                          {roomImages[item.roomId]?.map((image) => (
+                            <div key={image.roomImageId} className="slide-flex" >
+                              <img
+                                className="w-5/6 h-60 rounded-lg"
+                                src={image.roomImageURL}
+                                alt="room thumbnail"
+                              />
+                            </div>
+                          ))}
+                        </Slider>
+                      ) : (
                         <img
-                          src="/image/view3D.png"
-                          className="w-10 h-10"
-                          alt="view 3D"
+                          className="w-full h-60 border rounded-lg"
+                          src={roomImages[item.roomId]?.[0].roomImageURL}
+                          alt="room thumbnail"
                         />
-                      </Link>
+                      )}
                     </div>
 
-                    <div className="row">
-                      <div className="col-lg-4 col-md-12">
-                        {roomImages[item.roomId]?.length >= 2 ? (
-                          <Slider {...settings}>
-                            {roomImages[item.roomId]?.map((image) => (
-                              <div key={image.roomImageId}>
-                                <img
-                                  className="w-full h-60 border rounded-lg"
-                                  src={image.roomImageURL}
-                                  alt="room thumbnail"
-                                />
-                              </div>
-                            ))}
-                          </Slider>
-                        ) : (
-                          <img
-                            className="w-full h-60 border rounded-lg"
-                            src={roomImages[item.roomId]?.[0].roomImageURL}
-                            alt="room thumbnail"
-                          />
-                        )}
-                      </div>
-
-                      <div
-                        className="col-lg-8 col-md-12 border "
-                        style={{ borderRadius: "10px" }}
-                      >
-                        <div className="row">
-                          <div className="col-4 border-r border-gray">
-                            <p
-                              className="text-center text-sm font-semibold pt-3"
-                              style={{ color: "#305A61" }}
-                            >
-                              Room information
-                            </p>
-                            <div className="w-3/4 m-auto">
-                              {formatRoomDescription(item.roomDescription)}
-                            </div>
-                          </div>
-                          <div
-                            className="col-4 border-r border-gray"
-                            style={{ height: "290px" }}
+                    <div
+                      className="col-lg-8 col-md-12 border "
+                      style={{ borderRadius: "10px" }}
+                    >
+                      <div className="row">
+                        <div className="col-4 border-r border-gray">
+                          <p
+                            className="text-center text-sm font-semibold pt-3"
+                            style={{ color: "#305A61" }}
                           >
-                            <p
-                              className="text-center text-sm font-semibold pt-3"
-                              style={{ color: "#305A61" }}
-                            >
-                              Convenient
-                            </p>
-                            <div className="w-3/4 m-auto">
-                              <div className="flex items-center pb-1 ">
-                                <img
-                                  className="w-2 h-2 mr-2"
-                                  src="/image/tick.png"
-                                  alt="tick"
-                                />
-                                <span className="font-medium text-xs">
-                                  Lorem ipsum dolor sit
-                                </span>
-                              </div>
-                              <div className="flex items-center pb-1 ">
-                                <img
-                                  className="w-2 h-2 mr-2"
-                                  src="/image/tick.png"
-                                  alt="tick"
-                                />
-                                <span className="font-medium text-xs">
-                                  Lorem ipsum dolor sit
-                                </span>
-                              </div>
-                              <div className="flex items-center pb-1 ">
-                                <img
-                                  className="w-2 h-2 mr-2"
-                                  src="/image/tick.png"
-                                  alt="tick"
-                                />
-                                <span className="font-medium text-xs">
-                                  Lorem ipsum dolor sit
-                                </span>
-                              </div>
-                              <div className="flex items-center pb-1 ">
-                                <img
-                                  className="w-2 h-2 mr-2"
-                                  src="/image/tick.png"
-                                  alt="tick"
-                                />
-                                <span className="font-medium text-xs">
-                                  Lorem ipsum dolor sit
-                                </span>
+                            Room information
+                          </p>
+                          <div className="w-3/4 m-auto">
+                            {formatRoomDescription(item.roomDescription)}
+                          </div>
+                        </div>
+                        <div
+                          className="col-4 border-r border-gray"
+                          style={{ height: "290px" }}
+                        >
+                          <p
+                            className="text-center text-sm font-semibold pt-3"
+                            style={{ color: "#305A61" }}
+                          >
+                            Convenient
+                          </p>
+                          <div className="w-3/4 m-auto">
+                            {roomServices[item.roomId]?.map((service) => (
+                                <div className="flex items-center pb-3" key={service.serviceId}>
+                                  <img
+                                    className="w-3 h-3 mr-2"
+                                    src={service.serviceImage || "/image/greenTick.png"}
+                                    alt={service.serviceDescription}
+                                  />
+                                  <span className="font-medium text-xs">
+                                    {service.serviceName}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                        </div>
+                        <div className="col-4">
+                          <div className="row">
+                            <div className="col-6">
+                              <p
+                                className="text-center text-sm font-semibold pt-3"
+                                style={{ color: "#305A61" }}
+                              >
+                                Guest(s)
+                              </p>
+                              <div className="flex flex-wrap items-center pb-1 w-3/4 mx-auto">
+                                {/* Hiển thị số lượng khách */}
+                                {Array.from({
+                                  length: item.roomCapacity,
+                                }).map((_, i) => (
+                                  <img
+                                    key={i}
+                                    className="w-4 h-4 m-1"
+                                    src="/image/user.png"
+                                    alt="guest"
+                                  />
+                                ))}
                               </div>
                             </div>
-                          </div>
-                          <div className="col-4">
-                            <div className="row">
-                              <div className="col-6">
-                                <p
-                                  className="text-center text-sm font-semibold pt-3"
+                            <div
+                              className="col-lg-6 col-md-6"
+                              style={{
+                                height: "290px",
+                                border: "1px solid #D9D9D9",
+                                borderRadius: "10px",
+                                backgroundColor: "#F5F5F5",
+                              }}
+                            >
+                              <div className="grid justify-items-center">
+                                <span
+                                  className="text-center text-sm font-semibold pb-3 pt-3"
                                   style={{ color: "#305A61" }}
                                 >
-                                  Guest(s)
-                                </p>
-                                <div className="flex flex-wrap items-center pb-1 w-3/4 mx-auto">
-                                  {/* Hiển thị số lượng khách */}
-                                  {Array.from({
-                                    length: item.roomCapacity,
-                                  }).map((_, i) => (
-                                    <img
-                                      key={i}
-                                      className="w-4 h-4 m-1"
-                                      src="/image/user.png"
-                                      alt="guest"
-                                    />
-                                  ))}
+                                  Price
+                                </span>
+                                <span
+                                  className=" text-center text-xl font-bold pb-3 line-through"
+                                  style={{ color: "#8E8D8A" }}
+                                >
+                                  {item.roomPrice}$
+                                </span>
+                                <span
+                                  className="text-center text-xl font-bold pb-3"
+                                  style={{ color: "rgb(255, 94, 31)" }}
+                                >
+                                  {(item.roomPrice -
+                                    (item.roomPrice * item.discountPercent) /
+                                      100).toFixed(2)}
+                                  $
+                                </span>
+                                <span
+                                  className="text-center text-xs font-light pb-3"
+                                  style={{ color: "#8E8D8A" }}
+                                >
+                                  Exclude taxes & fees
+                                </span>
+
+                                <div className="pb-1">
+                                  <Link
+                                    href=""
+                                    className="px-2 py-1  text-white no-underline font-medium text-xs "
+                                    style={{
+                                      backgroundColor: "#305A61",
+                                      borderRadius: "10px",
+                                    }}
+                                    onClick={() => handleAddToCart(item)}
+                                  >
+                                    Choose
+                                  </Link>
                                 </div>
-                              </div>
-                              <div
-                                className="col-lg-6 col-md-6"
-                                style={{
-                                  height: "290px",
-                                  border: "1px solid #D9D9D9",
-                                  borderRadius: "10px",
-                                  backgroundColor: "#F5F5F5",
-                                }}
-                              >
-                                <div className="grid justify-items-center">
-                                  <span
-                                    className="text-center text-sm font-semibold pb-3 pt-3"
-                                    style={{ color: "#305A61" }}
-                                  >
-                                    Price
-                                  </span>
-                                  <span
-                                    className=" text-center text-xl font-bold pb-3 line-through"
-                                    style={{ color: "#8E8D8A" }}
-                                  >
-                                    {item.roomPrice}$
-                                  </span>
-                                  <span className="text-center text-xl font-bold pb-3" style={{color: "rgb(255, 94, 31)"}}>
-                                    {item.roomPrice}$
-                                  </span>
-                                  <span
-                                    className="text-center text-xs font-light pb-3"
-                                    style={{ color: "#8E8D8A" }}
-                                  >
-                                    Exclude taxes & fees
-                                  </span>
 
-                                  <div className="pb-1">
-                                    <Link
-                                      href=""
-                                      className="px-2 py-1 border text-white no-underline font-medium text-xs "
-                                      style={{
-                                        backgroundColor: "#305A61",
-                                        borderRadius: "10px",
-                                      }}
-                                      onClick={() => handleAddToCart(item)}
-                                    >
-                                      Choose
-                                    </Link>
-                                  </div>
-
-                                  <div className="pt-3">
-                                    <Link
-                                      href=""
-                                      className="px-1 py-1 border text-white no-underline font-medium text-xs"
-                                      style={{
-                                        backgroundColor: "#305A61",
-                                        borderRadius: "10px",
-                                      }}
-                                    >
-                                      View Detail
-                                    </Link>
-                                  </div>
+                                <div className="pt-3">
+                                  <Link
+                                    href=""
+                                    className="px-1 py-1  text-white no-underline font-medium text-xs"
+                                    style={{
+                                      backgroundColor: "#305A61",
+                                      borderRadius: "10px",
+                                    }}
+                                  >
+                                    View Detail
+                                  </Link>
                                 </div>
                               </div>
                             </div>
@@ -674,7 +670,7 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
                     </div>
                   </div>
                 </div>
-              </>
+              </div>
             ))
           ) : (
             <div className="col-12">
@@ -688,10 +684,14 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
         <p className="font-semibold text-3xl my-8">Reviews</p>
 
         <div className="row mb-5">
-          <Slider {...settingsComment}>
+        <Slider {...settingsComment}>
             {combinedList.length > 0 ? (
-              combinedList.map((item, index) => (
-                <>
+              combinedList.map((item, index) => {
+                const isExpanded = expandedIndex === index;
+                const message = item.message;
+                const maxChars = 25; // Giới hạn số ký tự
+
+                return (
                   <div key={index} className="py-5 px-3">
                     <div
                       className="border"
@@ -703,7 +703,7 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
                       <div className=" w-4/5 mx-auto mt-4 mb-10">
                         <div className="flex justify-items-center">
                           <img
-                            src="/image/user.png"
+                            src={item.user.avatar || "/image/user.png"}
                             alt="user"
                             className="rounded-full border w-16 h-16"
                           />
@@ -721,14 +721,27 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
                         <div className="flex h-3 my-3">
                           {renderStars(item.rateValue || 0)}
                         </div>
-                        <div>
-                          <span className="font-medium">{item.message}</span>
+                        <div className="comment-transition" style={{ maxHeight: isExpanded ? '500px' : '50px'}}>
+                          <span className="font-medium break-words">
+                            {isExpanded || message.length <= maxChars
+                              ? message
+                              : `${message.substring(0, maxChars)}...`}
+                            {message.length > maxChars && (
+                              <span
+                                onClick={() => toggleExpand(index)}
+                                className="font-bold cursor-pointer"
+                                style={{color: "rgb(48, 90, 97)"}}
+                              >
+                                {isExpanded ? "  See Less" : "  See More"}
+                              </span>
+                            )}
+                          </span>
                         </div>
                       </div>
                     </div>
                   </div>
-                </>
-              ))
+                );
+              })
             ) : (
               <div className="col-12">
                 <p className="text-center py-4 text-red-600 font-bold">

@@ -24,10 +24,10 @@ import DetailTour from "@/app/components/Tours/DetailTour";
     const [showTourDetail, setShowTourDetail] = useState<boolean>(false);
     
     const [loading, setLoading] = useState(false);
-    const supplierId = localStorage.getItem('supplierId');
+
     const { data: tourList, error } = useSWR(
       "tourList",
-      () => tourService.getToursBySuppierId(Number(supplierId))
+      () => tourService.getToursBySuppierId()
     );
     const handleImageClick = (tour: ITour) => {
       setSelectedTour(tour);

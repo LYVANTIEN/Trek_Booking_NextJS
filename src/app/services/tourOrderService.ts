@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import BASE_URL from './apiService';
 
 interface ITourOrderService {
-  getTourOrderBySupplierId(supplierId: number): Promise<ITourOrder[]>;
+  getTourOrderBySupplierId(): Promise<ITourOrder[]>;
   updateTourOrder(tourOrder: {
     tourOrderId: number;
     userId: number;
@@ -17,10 +17,10 @@ interface ITourOrderService {
 }
 
 const tourOrderService: ITourOrderService = {
-  async getTourOrderBySupplierId(supplierId) {
+  async getTourOrderBySupplierId() {
     try {
       const response = await fetch(
-        `${BASE_URL}/getTourOrderBySupplierId/${supplierId}`,
+        `${BASE_URL}/getTourOrderBySupplierId`,
         {
           method: "GET",
           headers: {

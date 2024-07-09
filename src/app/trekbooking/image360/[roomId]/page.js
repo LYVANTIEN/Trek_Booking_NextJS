@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useEffect, useState, useRef } from 'react';
 import '../../../../../public/css/imag360.css';
 import '../../../../../public/css/voucher.css';
@@ -9,13 +8,13 @@ const roomImage3DService = {
     console.log("Fetching images for room ID:", roomId);
     try {
       const response = await fetch(
-        `https://localhost:7132/getRoom3DImagebyRoomId/${roomId}`,
+        `https://trekbookingapi.azurewebsites.net/getRoom3DImagebyRoomId/${roomId}`,
         {
           method: "GET",
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+            // Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
           },
         }
       );

@@ -80,7 +80,7 @@ width: 100%;
 
 }
 .slick-dots {
-  bottom: -15px !important;
+  bottom: -24px !important;
 }
 .fix-logo{
   width: 200px;
@@ -458,10 +458,44 @@ a {
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     display: none;
 }
+.backgourd-li1{
+  z-index: 0;
+  padding: 40px 6px;
+  padding-bottom: 4px;
+  width: 165px;
+  position: absolute;
+  right: -48px;
+  top: -16px;
+  background-color: white;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  display: none;
+}
+.backgourd-li2{   
+    z-index: 0;
+    padding: 40px 6px;
+    padding-bottom: 11px;
+    width: 133px;
+    position: absolute;
+    right: -16px;
+    top: -17px;
+    background-color: white;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    display: none;
+}
+.comment-transition {
+  transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  overflow: hidden;
+}
 .dropdown:hover .color-mess .color-mon{
   color: #305a61 !important;
 }
 .dropdown:hover .backgourd-li{
+  display: block;
+}
+.dropdown:hover .backgourd-li1{
+  display: block;
+}
+.dropdown:hover .backgourd-li2{
   display: block;
 }
 .hover-nav-sub:hover{
@@ -469,7 +503,10 @@ a {
 color: #ffffff;
 background-color: #305A61;
 }
- 
+ .slide-flex{
+  display: flex !important;
+  justify-content: center ;
+ }
 @media all and (max-width: 1100px) {
   .cham {
     left: 48.6%;

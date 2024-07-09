@@ -9,13 +9,13 @@ const orderHotelDetailService: IOrderHotelDetailService = {
   async getOrderHotelDetailByOrderHotelHeaderId(orderHotelHeaderId) {
     try {
       const response = await fetch(
-        `https://localhost:7132/getOrderHotelDetailByOrderHotelHeaderId/${orderHotelHeaderId}`,
+        `${BASE_URL}/getOrderHotelDetailByOrderHotelHeaderId/${orderHotelHeaderId}`,
         {
           method: "GET",
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("token")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
           },
         }
       );

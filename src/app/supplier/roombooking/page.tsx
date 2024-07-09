@@ -2,14 +2,12 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import UpdateBooking from "./update_booking";
 import BookingDetail from "./booking_detail";
 import orderHotelHeaderService from "@/app/services/orderHotelHeaderService";
 import orderHotelDetailService from "@/app/services/orderHotelDetailService";
 import useSWR from "swr";
 
-const BookingListOfSupplier = () => {
-  const [showModalEdit, setShowModalEdit] = useState<boolean>(false);
+const BookingListOfSupplier = () => {  
   const [showModalBookingDetail, setShowModalBookingDetail] =
     useState<boolean>(false);
   const [orderHotelHeaders, setOrderHotelHeaders] = useState<
@@ -76,13 +74,8 @@ const BookingListOfSupplier = () => {
                       </th>
                       <th scope="col" className="px-6 py-4 text-center">
                         Full Name
-                      </th>
-                      <th scope="col" className="px-6 py-4 text-center">
-                        Email
-                      </th>
-                      <th scope="col" className="px-6 py-4 text-center">
-                        Phone
-                      </th>
+                      </th>                      
+                      
                       <th scope="col" className="px-6 py-4">
                         Check-in Date
                       </th>
@@ -98,9 +91,7 @@ const BookingListOfSupplier = () => {
                       <th scope="col" className="px-6 py-4">
                         View Detail
                       </th>
-                      <th scope="col" className="px-6 py-4">
-                        Action
-                      </th>
+                     
                     </tr>
                   </thead>
                   <tbody>
@@ -131,13 +122,8 @@ const BookingListOfSupplier = () => {
                             </td>
                             <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {header.fullName}
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {header.email}
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {header.phone}
-                            </td>
+                            </td>                            
+                            
                             <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {formattedCheckInTime}
                             </td>
@@ -167,19 +153,7 @@ const BookingListOfSupplier = () => {
                                   }}
                                 />
                               </div>
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 flex justify-center">
-                              <img
-                                className="w-5 h-5 cursor-pointer"
-                                src="/image/pen.png"
-                                alt="Edit"
-                                onClick={() => {
-                                  setOrderHotelHeader(header);
-                                  setOrderHotelDetail(details[header.id][0]);
-                                  setShowModalEdit(true);
-                                }}
-                              />
-                            </td>
+                            </td>                            
                           </tr>
                         );
                       })
@@ -194,15 +168,7 @@ const BookingListOfSupplier = () => {
                       </tr>
                     )}
                   </tbody>
-                </table>
-                <UpdateBooking
-                  showModalEditBooking={showModalEdit}
-                  setShowModalEditBooking={setShowModalEdit}
-                  orderHotelHeader={orderHotelHeader}
-                  setOrderHotelHeader={setOrderHotelHeaders}
-                  orderHotelDetail={orderHotelDetail}
-                  setOrderHotelDetail={setOrderHotelDetail}
-                />
+                </table>                
                 <BookingDetail
                   showModalBookingDetail={showModalBookingDetail}
                   setShowModalBookingDetail={setShowModalBookingDetail}
