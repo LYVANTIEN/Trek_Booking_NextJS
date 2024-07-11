@@ -1,10 +1,12 @@
-import Cookies from 'js-cookie';
-import BASE_URL from './apiService';
+import Cookies from "js-cookie";
+import BASE_URL from "./apiService";
 
 interface IUserService {
   getUsers(): Promise<any[]>;
   getUserById(): Promise<IUser>;
   updateUser(user: IUser): Promise<IUser>;
+  checkPasswordUser(email: string, password: string): Promise<any>;
+  changePasswordUser(supplier: IUser): Promise<IUser>;
 }
 
 const userService: IUserService = {
@@ -29,17 +31,14 @@ const userService: IUserService = {
 
   async getUserById() {
     try {
-      const response = await fetch(
-        `${BASE_URL}/getUserById`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenUser")}`, // Retrieve token from localStorage
-          },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/getUserById`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("tokenUser")}`, // Retrieve token from localStorage
+        },
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch user");
       }
@@ -54,18 +53,15 @@ const userService: IUserService = {
 
   async updateUser(user) {
     try {
-      const response = await fetch(
-        `${BASE_URL}/updateUser`,
-        {
-          method: "PUT",
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenUser")}`,
-          },
-          body: JSON.stringify(user),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/updateUser`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("tokenUser")}`,
+        },
+        body: JSON.stringify(user),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to update user");
@@ -84,6 +80,83 @@ const userService: IUserService = {
     } catch (error) {
       console.error("Error updating user:", error);
       throw error;
+    }
+  },
+  async changePasswordUser(user) {
+    try {
+      const response = await fetch(
+        `https://localhost:7132/changePasswordUser`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenUser")}`,
+          },
+          body: JSON.stringify(user),
+        }
+      );
+
+      const text = await response.text();
+      if (!response.ok) {
+        try {
+          const errorData = JSON.parse(text);
+          throw new Error(errorData.message);
+        } catch (e) {
+          throw new Error(text);
+        }
+      }
+
+      if (response.headers.get("content-type")?.includes("application/json")) {
+        const data = JSON.parse(text);
+        return data;
+      } else {
+        return text; // Return the plain text response
+      }
+    } catch (error) {
+      console.error("Error updating user:", error);
+      throw error;
+    }
+  },
+
+  async checkPasswordUser(email, password) {
+    try {
+      const response = await fetch(`https://localhost:7132/checkPasswordUser`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("tokenUser")}`,
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const text = await response.text();
+      if (!response.ok) {
+        try {
+          const errorData = JSON.parse(text);
+          return { success: false, message: errorData.message };
+        } catch (e) {
+          return { success: false, message: text };
+        }
+      }
+
+      if (response.headers.get("content-type")?.includes("application/json")) {
+        const data = JSON.parse(text);
+        return { success: true, data };
+      } else {
+        console.log(text);
+        return { success: true, data: text };
+      }
+    } catch (error) {
+      console.error("Error fetching user password:", error);
+      let errorMessage = "An unknown error occurred";
+      if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      return { success: false, message: errorMessage };
     }
   },
 };

@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import ChangePasswordSupplier from "@/app/components/Supplier/ChangePasswordSupplier";
 import UpdateProfileSupplier from "@/app/components/Supplier/UpdateProfileSupplier";
 import supplierService from "@/app/services/supplierService";
 import Link from "next/link";
@@ -15,7 +14,6 @@ const Profile = () => {
   const [address, setAddress] = useState<string>("");
 
   const [showSupplierUpdate, setShowSupplierUpdate] = useState<boolean>(false);
-  const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [Supplier, setSupplier] = useState<ISupplier | null>(null);
 
   const { data: supplier, error } = useSWR("profile", () =>
