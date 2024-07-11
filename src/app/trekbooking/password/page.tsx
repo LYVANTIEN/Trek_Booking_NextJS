@@ -1,19 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import UpdateProfile from "@/app/components/Profile/UpdateProfile";
+
+import ChangePasswordUser from "@/app/components/User/ChangePasswordUser";
 import userService from "@/app/services/userService";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import Link from "../../../../node_modules/next/link";
 
-const Profile = () => {
+const ChangePassword = () => {
   const [userName, setUserName] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-  const [showUserUpdate, setShowUserUpdate] = useState<boolean>(false);
+  const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [User, setUser] = useState<IUser | null>(null);
 
   const { data: user, error } = useSWR("profile", () =>
@@ -24,9 +23,7 @@ const Profile = () => {
     if (user) {
       setUserName(user.userName);
       setAvatar(user.avatar);
-      setEmail(user.email);
-      setPhone(user.phone);
-      setAddress(user.address);
+      setPassword(user.password);
       setUser(user);
     } else if (error) {
       console.error("Failed to fetch user:", error);
@@ -34,8 +31,12 @@ const Profile = () => {
   }, [user, error]);
 
   if (!user) {
-    return <div>User ID not found in localStorage</div>;
+    return <div>User ID not found</div>;
   }
+
+  const maskPassword = (password: string) => {
+    return "*".repeat(password.length);
+  };
 
   return (
     <>
@@ -49,8 +50,7 @@ const Profile = () => {
             <img src="/image/user.png" alt="User" />
             <Link
               href="/trekbooking/profile"
-              className="text-hv font-semibold no-underline text-xl pl-2"
-              style={{ color: "#305A61" }}
+              className="text-hv font-semibold no-underline text-black text-xl pl-2"
             >
               Account information
             </Link>
@@ -59,7 +59,8 @@ const Profile = () => {
             <img src="/image/lock.png" alt="Lock" />
             <Link
               href="/trekbooking/password"
-              className="text-hv no-underline font-semibold text-black text-xl pl-2"
+              className="text-hv no-underline font-semibold text-xl pl-2"
+              style={{ color: "#305A61" }}
             >
               Change password
             </Link>
@@ -116,46 +117,15 @@ target.onerror = null;
                 style={{ display: "flex", marginTop: "20px" }}
               >
                 <div className="col-md-5">
-                  <label className="font-bold text-xl">Phone</label>
+                  <label className="font-bold text-xl">Password</label>
                 </div>
                 <div className="flex-1">
                   <label className="font-bold text-xl text-gray-400">
-                    {phone}
+                    {maskPassword(password)}
                   </label>
                 </div>
               </div>
               <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
-
-              <div
-                className="mb-3 col-6"
-                style={{ display: "flex", marginTop: "20px" }}
-              >
-                <div className="col-md-5">
-                  <label className="font-bold text-xl">Email</label>
-                </div>
-                <div className="flex-1">
-                  <label className="font-bold text-xl text-gray-400">
-                    {email}
-                  </label>
-                </div>
-              </div>
-              <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
-
-              <div
-                className="mb-3 col-6"
-                style={{ display: "flex", marginTop: "20px" }}
-              >
-                <div className="col-md-5">
-                  <label className="font-bold text-xl">Address</label>
-                </div>
-                <div className="flex-1">
-                  <label className="font-bold text-xl text-gray-400">
-                    {address}
-                  </label>
-                </div>
-              </div>
-              <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
-
               <div
                 className="flex justify-end pt-5 pb-4"
                 style={{ marginTop: "-20px" }}
@@ -164,16 +134,16 @@ target.onerror = null;
                   className="text-white font-medium py-2 px-6 text-lg border"
                   style={{ backgroundColor: "#305A61", borderRadius: "20px" }}
                   onClick={() => {
-                    setShowUserUpdate(true);
+                    setShowChangePassword(true);
                   }}
                 >
-                  Update
-</button>
+                  Change
+                </button>
               </div>
             </div>
-            <UpdateProfile
-              showUserUpdate={showUserUpdate}
-              setShowUserUpdate={setShowUserUpdate}
+            <ChangePasswordUser
+              showChangePassword={showChangePassword}
+              setShowChangePassword={setShowChangePassword}
               user={User}
               userId={Number(user.userId)}
               setUser={setUser}
@@ -185,4 +155,4 @@ target.onerror = null;
   );
 };
 
-export default Profile;
+export default ChangePassword;

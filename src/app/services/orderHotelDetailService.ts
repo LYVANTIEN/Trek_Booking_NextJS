@@ -17,7 +17,7 @@ const orderHotelDetailService: IOrderHotelDetailService = {
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            //Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Retrieve token from localStorage
           },
         }
       );
@@ -35,7 +35,7 @@ const orderHotelDetailService: IOrderHotelDetailService = {
   async getTop5RoomOrders() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getTop5RoomOrders`,
+        `${BASE_URL}/getTop5RoomOrders`,
         {
           method: "GET",
           headers: {
@@ -60,7 +60,7 @@ const orderHotelDetailService: IOrderHotelDetailService = {
   async getTop5RoomInWeek() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getTop5RoomInWeek`,
+        `${BASE_URL}/getTop5RoomInWeek`,
         {
           method: "GET",
           headers: {
@@ -81,7 +81,6 @@ const orderHotelDetailService: IOrderHotelDetailService = {
       throw error;
     }
   },
-  
 };
 
 export default orderHotelDetailService;

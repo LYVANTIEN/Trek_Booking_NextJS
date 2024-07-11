@@ -35,7 +35,7 @@ const orderTourDetailService: IOrderTourDetailService = {
   async getTop5TourOrders() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getTop5TourOrders`,
+        `${BASE_URL}/getTop5TourOrders`,
         {
           method: "GET",
           headers: {
@@ -59,7 +59,7 @@ const orderTourDetailService: IOrderTourDetailService = {
   async getTop5TourInWeek() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getTop5TourInWeek`,
+        `${BASE_URL}/getTop5TourInWeek`,
         {
           method: "GET",
           headers: {
@@ -80,7 +80,6 @@ const orderTourDetailService: IOrderTourDetailService = {
       throw error;
     }
   },
-  
 };
 
 export default orderTourDetailService;

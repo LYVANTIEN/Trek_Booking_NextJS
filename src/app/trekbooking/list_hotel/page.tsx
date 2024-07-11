@@ -126,7 +126,7 @@ const ListHotels = () => {
   return (
     <>
       <div className="container mb-20">
-        <div className="text-center">
+        <div className="text-center pt-3">
           <p className="font-bold text-4xl">The Best Place For Vacation </p>
         </div>
         <div

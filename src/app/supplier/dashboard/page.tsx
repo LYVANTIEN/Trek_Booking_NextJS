@@ -80,7 +80,7 @@ const DashBoard = () => {
       try {
         const percentTourChange =
           await orderTourHeaderService.getPercentChangeTourFromLastWeek();
-        setPercentTour(percentTourChange);
+setPercentTour(percentTourChange);
       } catch (error) {
         console.error("Failed to fetch percent tour change", error);
       }
@@ -158,7 +158,7 @@ const DashBoard = () => {
                 <div className="card-body">
                   <div className="d-flex align-items-center">
                     <div>
-                      <p className="mb-0 text-secondary">Total Hotel Revenue</p>
+<p className="mb-0 text-secondary">Total Hotel Revenue</p>
                       <h4 className="my-1 text-danger">
                         $
                         {totalRevenueHotel !== null
@@ -222,7 +222,7 @@ const DashBoard = () => {
                       <p className="mb-0 text-secondary">Total Tour Revenue</p>
                       <h4 className="my-1 text-warning">
                         $
-                        {totalRevenueTour !== null
+{totalRevenueTour !== null
                           ? totalRevenueTour.toLocaleString()
                           : "No revenue yet..."}
                       </h4>

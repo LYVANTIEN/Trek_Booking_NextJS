@@ -186,11 +186,11 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
       throw error;
     }
   },
-  
+
   async getCurrentWeekRevenueHotelBySupplierId() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getCurrentWeekRevenueHotelBySupplierId`,
+        `${BASE_URL}/getCurrentWeekRevenueHotelBySupplierId`,
         {
           method: "GET",
           headers: {
@@ -214,7 +214,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
   async getCurrentMonthOfYearRevenueHotelBySupplierId() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getCurrentMonthOfYearRevenueHotelBySupplierId`,
+        `${BASE_URL}/getCurrentMonthOfYearRevenueHotelBySupplierId`,
         {
           method: "GET",
           headers: {
@@ -238,7 +238,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
   async getCurrentQuarterOfYearRevenueHotelBySupplierId() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getCurrentQuarterOfYearRevenueHotelBySupplierId`,
+        `${BASE_URL}/getCurrentQuarterOfYearRevenueHotelBySupplierId`,
         {
           method: "GET",
           headers: {
@@ -259,8 +259,6 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
       throw error;
     }
   },
-  
-  
 };
 
 export default orderHotelHeaderService;

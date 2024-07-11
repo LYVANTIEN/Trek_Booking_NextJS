@@ -89,7 +89,7 @@ const Searchcart = () => {
           <div className="search-main p-12 relative">
             <Form>
               <Form.Group controlId="countrySelect">
-                <Form.Label>Country</Form.Label>
+                <Form.Label className='font-semibold'>Country</Form.Label>
                 <Form.Control as="select" value={selectedCountry} onChange={handleEvent(handleCountryChange)}>
                   <option value="">Select Country</option>
                   {countriesList.map((country) => (
@@ -100,7 +100,7 @@ const Searchcart = () => {
                 </Form.Control>
               </Form.Group>
               <Form.Group controlId="citySelect">
-                <Form.Label>City</Form.Label>
+                <Form.Label className='font-semibold mt-2'>City</Form.Label>
                 <Form.Control as="select" value={selectedCity} onChange={handleEvent(handleCityChange)} disabled={!selectedCountry}>
                   <option value="">Select City</option>
                   {citiesList.map((city) => (
@@ -111,18 +111,18 @@ const Searchcart = () => {
                 </Form.Control>
               </Form.Group>
               <Form.Group controlId="checkInDate">
-                <Form.Label>Check-in Date</Form.Label>
+                <Form.Label className='font-semibold mt-2' >Check-in Date</Form.Label>
                 <Form.Control type="date" value={checkInDate} onChange={handleCheckInDateChange} />
               </Form.Group>
-              <Form.Group controlId="checkOutDate">
-                <Form.Label>Check-out Date</Form.Label>
-                <Form.Control type="date" value={checkOutDate} onChange={handleCheckOutDateChange} />
+              <Form.Group controlId="checkOutDate ">
+                <Form.Label className='font-semibold mt-2'>Check-out Date</Form.Label>
+                <Form.Control  type="date" value={checkOutDate} onChange={handleCheckOutDateChange} />
               </Form.Group>
               <a
-                //href={`/trekbooking/hotel_schedule?checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&city=${selectedCity}`}
+              
                 
                 href={`/trekbooking/search?checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&city=${selectedCity}`}
-                className={`btn btn-primary ${!(selectedCity && checkInDate && checkOutDate) ? 'disabled' : ''}`}
+                className={`btn btn-primary mt-2 ${!(selectedCity && checkInDate && checkOutDate) ? 'disabled' : ''}`}
                 onClick={e => !(selectedCity && checkInDate && checkOutDate) && e.preventDefault()}
               >
                 Search

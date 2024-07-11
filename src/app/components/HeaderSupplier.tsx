@@ -80,7 +80,7 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
     router.push("/login_supplier_staff");
   };
   return (
-    <div className="fix-border flex justify-between ml-72 p-8 pr-11">
+    <div className="fix-border flex justify-between ml-72 p-8 pr-11 items-center">
       <div
         className={`overlay ${isDivVisible ? "show" : ""}`}
         onClick={handleMenuClick}
@@ -159,7 +159,8 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
             <div className="list-choose pt-10 px-4 pb-14">
               <ul className="pl-0">
                 <div className="py-2">
-                  <li className="flex items-center pb-6 pl-3">
+                  <li className="flex items-center pb-3">
+                  <Link className={`flex no-underline  nav-i-hover py-2 pl-3 pr-32 ${pathname === "/supplier/dashboard" ? "active-link" : ""} `} href="/supplier/dashboard">
                     <img
                       className="w-7 h-7"
                       src="/image/darhboard.png"
@@ -168,6 +169,7 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
                     <span className="text-white ml-2 text-xl font-semibold">
                       Dashboard
                     </span>
+                    </Link>
                   </li>
                 </div>
                 <li className="flex items-center pb-6">

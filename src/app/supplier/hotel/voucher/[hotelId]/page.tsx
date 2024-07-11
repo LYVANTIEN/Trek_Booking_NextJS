@@ -11,6 +11,7 @@ import UpdateVoucher from "@/app/components/Voucher/UpdateVoucher";
 import { toast } from "react-toastify";
 import { Button } from "react-bootstrap";
 import "../../../../../../public/css/voucher.css";
+import "../../../../../../public/css/room.css";
 const ListVoucher = ({ params }: { params: { hotelId: string } }) => {
   const [showVoucherCreate, setShowVoucherCreate] = useState<boolean>(false);
   const [showVoucherUpdate, setShowVoucherUpdate] = useState<boolean>(false);

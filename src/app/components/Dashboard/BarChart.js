@@ -75,7 +75,7 @@ const BarChart = () => {
 
     if (currentWeekRevenueHotel.length && currentWeekRevenueTour.length) {
       for (let i = 0; i < currentWeekRevenueHotel.length; i++) {
-        const hotelDate = new Date(currentWeekRevenueHotel[i].weekStartDate);
+const hotelDate = new Date(currentWeekRevenueHotel[i].weekStartDate);
         if (!isNaN(hotelDate)) {
           const formattedDate = `${hotelDate.getFullYear()}-${(
             hotelDate.getMonth() + 1
@@ -172,7 +172,7 @@ const BarChart = () => {
         } else if (timeRange === "quarter") {
           const dataQuarter =
             await orderHotelHeaderService.getCurrentQuarterOfYearRevenueHotelBySupplierId();
-          const dataQuarter2 =
+const dataQuarter2 =
             await orderTourHeaderService.getCurrentQuarterOfYearRevenueTourBySupplierId();
           setCurrentQuarterRevenueHotel(dataQuarter || []);
           setCurrentQuarterRevenueTour(dataQuarter2 || []);

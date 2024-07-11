@@ -1,19 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import UpdateProfileSupplier from "@/app/components/Supplier/UpdateProfileSupplier";
+import ChangePasswordSupplier from "@/app/components/Supplier/ChangePasswordSupplier";
 import supplierService from "@/app/services/supplierService";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import Link from "../../../../node_modules/next/link";
 
-const Profile = () => {
+const ChangePassword = () => {
   const [supplierName, setSupplierName] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-  const [showSupplierUpdate, setShowSupplierUpdate] = useState<boolean>(false);
+  const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [Supplier, setSupplier] = useState<ISupplier | null>(null);
 
   const { data: supplier, error } = useSWR("profile", () =>
@@ -24,9 +22,7 @@ const Profile = () => {
     if (supplier) {
       setSupplierName(supplier.supplierName);
       setAvatar(supplier.avatar);
-      setEmail(supplier.email);
-      setPhone(supplier.phone);
-      setAddress(supplier.address);
+      setPassword(supplier.password);
       setSupplier(supplier);
     } else if (error) {
       console.error("Failed to fetch supplier:", error);
@@ -37,6 +33,9 @@ const Profile = () => {
     return <div>Supplier ID not found</div>;
   }
 
+  const maskPassword = (password: string) => {
+    return "*".repeat(password.length);
+  };
   return (
     <div className="relative">
       <div className="table-profile">
@@ -52,8 +51,7 @@ const Profile = () => {
               <img src="/image/user.png" alt="User" />
               <Link
                 href="/supplier/profile"
-                className="text-hv font-semibold no-underline text-xl pl-2"
-                style={{ color: "#305A61" }}
+                className="text-hv font-semibold no-underline text-black text-xl pl-2"
               >
                 Account information
               </Link>
@@ -62,7 +60,8 @@ const Profile = () => {
               <img src="/image/lock.png" alt="Lock" />
               <Link
                 href="/supplier/password"
-                className="text-hv no-underline font-semibold text-black text-xl pl-2"
+                className="text-hv no-underline font-semibold text-xl pl-2"
+                style={{ color: "#305A61" }}
               >
                 Change password
               </Link>
@@ -78,14 +77,14 @@ const Profile = () => {
               }}
             >
               <div className="w-4/5 m-auto">
-                <span className="text-xl  max-[500px]:text-xs font-semibold">
+                <span className="text-xl font-semibold">
                   Account information
                 </span>
                 <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
                 <div style={{ marginTop: "20px", marginBottom: "20px" }}>
                   <div className="flex justify-center flex-wrap">
                     <img
-                      className="w-[70px] h-[70px] cursor-pointer m-2 rounded-full object-cover"
+className="w-[70px] h-[70px] cursor-pointer m-2 rounded-full object-cover"
                       src={avatar ? avatar : "/image/usersupplier.png"}
                       alt="Avatar"
                       onError={(e) => {
@@ -99,86 +98,56 @@ const Profile = () => {
                 <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
 
                 <div
-                  className="mb-3 row"
+                  className="mb-3 col-6"
                   style={{
                     display: "flex",
                     marginTop: "20px",
                   }}
                 >
-                  <div className="col-4 max-[500px]:w-full max-[500px]:pb-2">
-                    <label className="font-bold text-xl">Supplier Name:</label>
+                  <div className="col-md-5">
+                    <label className="font-bold text-xl">Supplier Name</label>
                   </div>
-                  <div className="flex-1 col-8 max-[500px]:w-full">
-                    <label className="font-bold text-xl text-gray-400 max-[500px]:text-xs">
+                  <div className="flex-1">
+                    <label className="font-bold text-xl text-gray-400">
                       {supplierName}
                     </label>
                   </div>
                 </div>
                 <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
-
                 <div
-                  className="mb-3 row"
+                  className="mb-3 col-6"
                   style={{ display: "flex", marginTop: "20px" }}
                 >
-                  <div className="col-4 max-[500px]:w-full max-[500px]:pb-2">
-                    <label className="font-bold text-xl">Phone:</label>
+                  <div className="col-md-5">
+                    <label className="font-bold text-xl">Password</label>
                   </div>
-                  <div className=" col-8 max-[500px]:w-full">
-                    <label className="font-bold text-xl text-gray-400 max-[500px]:text-xs">
-                      {phone}
+                  <div className="flex-1">
+                    <label className="font-bold text-xl text-gray-400">
+                      {maskPassword(password)}
                     </label>
                   </div>
                 </div>
-                <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
-
-                <div
-                  className="mb-3 row"
-                  style={{ display: "flex", marginTop: "20px" }}
-                >
-                  <div className="col-4 max-[500px]:w-full max-[500px]:pb-2">
-                    <label className="font-bold text-xl">Email:</label>
-                  </div>
-                  <div className="col-8 max-[500px]:w-full">
-                    <label className="font-bold text-xl text-gray-400 max-[500px]:text-xs">
-                      {email}
-                    </label>
-                  </div>
-                </div>
-                <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
-
-                <div
-                  className="mb-3 row"
-                  style={{ display: "flex", marginTop: "20px" }}
-                >
-                  <div className="col-4 max-[500px]:w-full max-[500px]:pb-2">
-                    <label className="font-bold text-xl">Address:</label>
-                  </div>
-                  <div className="col-8 max-[500px]:w-full">
-                    <label className="font-bold text-xl text-gray-400 max-[500px]:text-xs">
-                      {address}
-                    </label>
-                  </div>
-                </div>
-                <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
-
                 <div
                   className="flex justify-end pt-5 pb-4"
                   style={{ marginTop: "-20px" }}
                 >
                   <button
-                    className="text-white font-medium py-2 px-6 text-lg border max-[500px]:text-xs"
-                    style={{ backgroundColor: "#305A61", borderRadius: "20px" }}
+                    className="text-white font-medium py-2 px-6 text-lg border"
+                    style={{
+                      backgroundColor: "#305A61",
+                      borderRadius: "20px",
+                    }}
                     onClick={() => {
-                      setShowSupplierUpdate(true);
+                      setShowChangePassword(true);
                     }}
                   >
-                    Update
+                    Change
                   </button>
                 </div>
               </div>
-              <UpdateProfileSupplier
-                showSupplierUpdate={showSupplierUpdate}
-                setShowSupplierUpdate={setShowSupplierUpdate}
+              <ChangePasswordSupplier
+                showChangePassword={showChangePassword}
+                setShowChangePassword={setShowChangePassword}
                 supplier={Supplier}
                 supplierId={Number(supplier.supplierId)}
                 setSupplier={setSupplier}
@@ -191,4 +160,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default ChangePassword;

@@ -212,7 +212,7 @@ const Homepage = () => {
           </div>
 
           <div className="row pt-5 ">
-            <div className="col-md-4 col-4  grid items-center justify-items-center justify-center card1">
+            <div className="col-md-4 col-4  grid items-center justify-items-center justify-center card1 cursor-pointer">
               <Image
                 src={"/image/boat1.png"}
                 className="card1"
@@ -224,7 +224,7 @@ const Homepage = () => {
                 <p className="text-lg font-bold">Tours and Attraction</p>
               </div>
             </div>
-            <div className="col-md-4 col-4  grid items-center justify-items-center justify-center card1">
+            <div className="col-md-4 col-4  grid items-center justify-items-center justify-center card1 cursor-pointer">
               <Image
                 src={"/image/floatingHomeStay.png"}
                 className="card1"
@@ -236,7 +236,7 @@ const Homepage = () => {
                 <p className="text-lg font-bold">Fun Activities</p>
               </div>
             </div>
-            <div className="col-md-4 col-4  grid items-center justify-items-center justify-center card1">
+            <div className="col-md-4 col-4  grid items-center justify-items-center justify-center card1 cursor-pointer">
               <Image
                 src={"/image/tuktuk.png"}
                 className="card1"

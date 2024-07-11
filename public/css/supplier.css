@@ -55,9 +55,9 @@
 }
 .table-profile {
   position: absolute;
-  top: 95px;
-  width: 90%;
-  left: 290px; 
+  top: 120px;
+  width: 60%;
+  left: 400px;
 }
 .search-add {
   position: absolute;
@@ -67,6 +67,7 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  z-index: 20;
 }
 .breadcrumb{
   left: 396px;
@@ -183,7 +184,7 @@ border-radius: 12px;
     min-height: 100%;
     right: 0;
     display: block;
-    z-index: 2;
+    z-index: 100;
   }
   .fix-border {
     transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
@@ -197,7 +198,7 @@ border-radius: 12px;
     font-size: 37px;
     position: absolute;
     right: 20px;
-    top: 62px;
+    top: 20px;
     cursor: pointer;
   }
   .overlay {
@@ -207,7 +208,7 @@ border-radius: 12px;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5); /* Màu nền với độ mờ */
-    z-index: 1; /* Đảm bảo overlay được hiển thị trên các phần tử khác */
+    z-index: 100; /* Đảm bảo overlay được hiển thị trên các phần tử khác */
     display: none; /* Ban đầu ẩn overlay */
   }
 
@@ -215,6 +216,10 @@ border-radius: 12px;
     display: block; /* Hiển thị overlay khi được kích hoạt */
   }
   .search-add {
+    left: 0;
+  }
+  .table-profile{
+    width: 100%;
     left: 0;
   }
 }

@@ -12,7 +12,7 @@ import tourImageService from "@/app/services/tourImageService";
 import orderHotelHeaderService from "@/app/services/orderHotelHeaderService";
 import orderHotelDetailService from "@/app/services/orderHotelDetailService";
 import roomImageService from "@/app/services/roomImageService";
-import { green } from "@mui/material/colors";
+
 
 const formatRoomDescription = (description: string) => {
   return description.split(".").map((sentence, index) => {
@@ -82,8 +82,7 @@ const Booking_History = () => {
           detailsMap[detail.orderTourHeaderlId].push(detail);
         });
         setTourDetails(detailsMap);
-
-        // Fetch tour images
+// Fetch tour images
         const tourIds = new Set(
           detailsArray
             .filter(
@@ -188,7 +187,7 @@ const Booking_History = () => {
   const settings = {
     infinite: true,
     speed: 500,
-    slidesToShow: 1,
+slidesToShow: 1,
     slidesToScroll: 1,
     draggable: false,
     autoplay: false,
@@ -271,7 +270,7 @@ const Booking_History = () => {
                             Quantity
                           </span>
                         </div>
-                        <div className="col-lg-2 col-md-2 col-2 max-[400px]:col-2 max-[400px]:ml-6 text-center ">
+<div className="col-lg-2 col-md-2 col-2 max-[400px]:col-2 max-[400px]:ml-6 text-center ">
                           <span
                             className="font-bold text-lg max-[555px]:text-xs  max-[370px]:ml-2"
                             style={{ color: "#305A61" }}
@@ -325,7 +324,7 @@ const Booking_History = () => {
                               ) : (
                                 <img
                                   style={{ borderRadius: "10px" }}
-                                  className="w-full h-12 border rounded-lg"
+className="w-full h-12 border rounded-lg"
                                   src="/path/to/default/image.jpg"
                                   alt="default thumbnail"
                                 />
@@ -373,7 +372,7 @@ const Booking_History = () => {
                             <div className="col-lg-2 col-md-2 col-3  max-[400px]:col-2    flex items-center content-center justify-evenly max-[400px]:ml-4 ">
                               <a href="#" style={{ display: "flex" }}>
                                 <img src="/image/trash.png" alt="" />
-                                <img src="/image/trash.png" alt="" />
+<img src="/image/trash.png" alt="" />
                               </a>
                             </div>
                           </div>
@@ -440,7 +439,7 @@ const Booking_History = () => {
                             className="font-bold text-lg max-[555px]:text-xs  max-[370px]:ml-3"
                             style={{ color: "#305A61" }}
                           >
-                            Status
+Status
                           </span>
                         </div>
                         <div className="col-lg-2 col-md-2 col-3 max-[400px]:col-2 text-center max-[400px]:ml-4">
@@ -496,7 +495,7 @@ const Booking_History = () => {
                             </div>
                           </div>
                           <div className="col-lg-6 col-md-8 col-12 row ">
-                            <div className="col-lg-4 col-md-4 col-3 flex items-center content-center justify-evenly  max-[400px]:hidden">
+<div className="col-lg-4 col-md-4 col-3 flex items-center content-center justify-evenly  max-[400px]:hidden">
                               <div>
                                 <span className="max-[500px]:text-xs ">
                                   {new Date(

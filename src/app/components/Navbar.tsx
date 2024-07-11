@@ -2,9 +2,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
-import Link from "../../../node_modules/next/link";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRouter } from "../../../node_modules/next/navigation";
+import { useRouter } from "next/navigation";
 import authenticateService from "../services/authenticateService";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
@@ -18,21 +18,30 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ title }) => {
   const [userName, setUserName] = useState<string | null>(null);
   const router = useRouter();
-  const fetchUser = () => {
+
+  const fetchUser = async () => {
     const token = Cookies.get("tokenUser");
     if (token) {
-        return userService.getUserById();
-    } else {
-        return null;
+      const user = await userService.getUserById();
+      if (user && user.userName) {
+        return user;
+      }
     }
-};
+    return null;
+  };
 
+  const { data: user, error } = useSWR("user", fetchUser);
 
-const { data: user, error } = useSWR("user", fetchUser);
   useEffect(() => {
     const cookieUserName = Cookies.get("userName");
-    setUserName(cookieUserName ?? null);
-  }, []);
+    if (cookieUserName) {
+      setUserName(cookieUserName.substring(0, 7));
+    } else {
+      if (user && user.userName) {
+        setUserName(user.userName.substring(0, 7));
+      }
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     await authenticateService.logOutClient();
@@ -89,7 +98,7 @@ const { data: user, error } = useSWR("user", fetchUser);
                     alt=""
                     className="pr-2"
                   />
-<span className="no-underline text-accent font-bold">
+                  <span className="no-underline text-accent font-bold">
                     Cart(1)
                   </span>
                 </Link>
@@ -110,12 +119,12 @@ const { data: user, error } = useSWR("user", fetchUser);
               </li>
               <li className="flex hover-bold cursor-pointer dropdown relative z-10">
                 <div className="flex relative z-2 color-mess">
-                  {user ? (
+                  {userName ? (
                     <div className="flex">
                       <div className="flex relative z-2 color-mess hleft-12">
                         <img
                           src={
-                            user.avatar
+                            user && user.avatar
                               ? user.avatar
                               : "/image/usersupplier.png"
                           }
@@ -126,7 +135,7 @@ const { data: user, error } = useSWR("user", fetchUser);
                           className="no-underline text-accent font-bold"
                           href="#"
                         >
-                          {user.userName}
+                          {userName}
                         </Link>
                       </div>
                       <div className="backgourd-li text-center">
@@ -158,7 +167,7 @@ const { data: user, error } = useSWR("user", fetchUser);
                           className="no-underline text-accent font-bold block mb-3 hover-nav-sub"
                           href="signup_client"
                           onClick={handleLogout}
->
+                        >
                           Logout
                         </Link>
                       </div>
@@ -166,7 +175,7 @@ const { data: user, error } = useSWR("user", fetchUser);
                   ) : (
                     <div className="flex">
                       <img
-                        
+                        style={{ width: "30px", height: "25px" }}
                         src="/image/users.png"
                         alt=""
                         className="pr-2 w-7 h-6"
@@ -214,12 +223,12 @@ const { data: user, error } = useSWR("user", fetchUser);
                   </a>
                 </li>
                 <li className="flex pb-4 hover-bold">
-                {user ? (
+                  {userName ? (
                     <div className="flex dropdown">
                       <div className="flex relative z-2 color-mess">
                         <img
                           src={
-                            user.avatar
+                            user && user.avatar
                               ? user.avatar
                               : "/image/usersupplier.png"
                           }
@@ -230,12 +239,12 @@ const { data: user, error } = useSWR("user", fetchUser);
                           className="no-underline text-accent font-bold"
                           href="#"
                         >
-                          {user.userName}
+                          {userName}
                         </Link>
                       </div>
                       <div className="backgourd-li1 text-center">
                         <Link
-className="no-underline text-accent font-bold block mt-3 mb-3 hover-nav-sub"
+                          className="no-underline text-accent font-bold block mt-3 mb-3 hover-nav-sub"
                           href="/trekbooking/profile"
                         >
                           Manager profile
@@ -311,7 +320,7 @@ className="no-underline text-accent font-bold block mt-3 mb-3 hover-nav-sub"
               <Link
                 href="/trekbooking/list_hotel"
                 className={`font-bold text-decoration-none link-text ${
-pathname === "/trekbooking/list_hotel" ||
+                  pathname === "/trekbooking/list_hotel" ||
                   pathname === "/trekbooking/search"
                     ? "link-style"
                     : ""

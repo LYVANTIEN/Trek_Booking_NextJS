@@ -190,11 +190,10 @@ const orderTourHeaderService: IOrderTourHeaderService = {
       throw error;
     }
   },
-  
   async getCurrentWeekRevenueTourBySupplierId() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getCurrentWeekRevenueTourBySupplierId`,
+        `${BASE_URL}/getCurrentWeekRevenueTourBySupplierId`,
         {
           method: "GET",
           headers: {
@@ -218,7 +217,7 @@ const orderTourHeaderService: IOrderTourHeaderService = {
   async getCurrentMonthOfYearRevenueTourBySupplierId() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getCurrentMonthOfYearRevenueTourBySupplierId`,
+        `${BASE_URL}/getCurrentMonthOfYearRevenueTourBySupplierId`,
         {
           method: "GET",
           headers: {
@@ -242,7 +241,7 @@ const orderTourHeaderService: IOrderTourHeaderService = {
   async getCurrentQuarterOfYearRevenueTourBySupplierId() {
     try {
       const response = await fetch(
-        `https://localhost:7132/getCurrentQuarterOfYearRevenueTourBySupplierId`,
+        `${BASE_URL}/getCurrentQuarterOfYearRevenueTourBySupplierId`,
         {
           method: "GET",
           headers: {
@@ -263,9 +262,6 @@ const orderTourHeaderService: IOrderTourHeaderService = {
       throw error;
     }
   },
-
-  
-  
 };
 
 export default orderTourHeaderService;
