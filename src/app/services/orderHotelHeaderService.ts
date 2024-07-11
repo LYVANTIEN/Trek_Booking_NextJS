@@ -9,6 +9,9 @@ interface IOrderHotelHeaderService {
   getPercentChangeFromLastWeek(): Promise<number>;
   getTotalRevenueHotelBySupplierId(): Promise<number>;
   getPercentChangeRevenueFromLastWeek(): Promise<number>;
+  getCurrentWeekRevenueHotelBySupplierId(): Promise<IWeeklyRevenue>;
+  getCurrentMonthOfYearRevenueHotelBySupplierId(): Promise<IMonthlyRevenue>;
+  getCurrentQuarterOfYearRevenueHotelBySupplierId(): Promise<IQuarterlyRevenue>;
 }
 
 const orderHotelHeaderService: IOrderHotelHeaderService = {
@@ -183,8 +186,81 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
       throw error;
     }
   },
-
-
+  
+  async getCurrentWeekRevenueHotelBySupplierId() {
+    try {
+      const response = await fetch(
+        `https://localhost:7132/getCurrentWeekRevenueHotelBySupplierId`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch order hotel headers");
+      }
+      const data = await response.json();
+    
+      return data;
+    } catch (error) {
+      console.error("Error fetching order hotel headers:", error);
+      throw error;
+    }
+  },
+  async getCurrentMonthOfYearRevenueHotelBySupplierId() {
+    try {
+      const response = await fetch(
+        `https://localhost:7132/getCurrentMonthOfYearRevenueHotelBySupplierId`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch order hotel headers");
+      }
+      const data = await response.json();
+    
+      return data;
+    } catch (error) {
+      console.error("Error fetching order hotel headers:", error);
+      throw error;
+    }
+  },
+  async getCurrentQuarterOfYearRevenueHotelBySupplierId() {
+    try {
+      const response = await fetch(
+        `https://localhost:7132/getCurrentQuarterOfYearRevenueHotelBySupplierId`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch order hotel headers");
+      }
+      const data = await response.json();
+    
+      return data;
+    } catch (error) {
+      console.error("Error fetching order hotel headers:", error);
+      throw error;
+    }
+  },
+  
+  
 };
 
 export default orderHotelHeaderService;

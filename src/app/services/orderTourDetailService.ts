@@ -3,6 +3,8 @@ import BASE_URL from './apiService';
 
 interface IOrderTourDetailService {
   getOrderTourDetailByOrderTourHeaderId(orderTourHeaderId: number): Promise<IOrderTourDetail>;
+  getTop5TourOrders(): Promise<ITop5Tour>;
+  getTop5TourInWeek():Promise<ITopTour>;
 }
 
 const orderTourDetailService: IOrderTourDetailService = {
@@ -30,6 +32,55 @@ const orderTourDetailService: IOrderTourDetailService = {
       throw error;
     }
   },
+  async getTop5TourOrders() {
+    try {
+      const response = await fetch(
+        `https://localhost:7132/getTop5TourOrders`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch order hotel detail");
+      }
+      const data = await response.json();
+    
+      return data;
+    } catch (error) {
+      console.error("Error fetching order hotel detail:", error);
+      throw error;
+    }
+  },
+  async getTop5TourInWeek() {
+    try {
+      const response = await fetch(
+        `https://localhost:7132/getTop5TourInWeek`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch order hotel detail");
+      }
+      const data = await response.json();
+    
+      return data;
+    } catch (error) {
+      console.error("Error fetching order hotel detail:", error);
+      throw error;
+    }
+  },
+  
 };
 
 export default orderTourDetailService;
