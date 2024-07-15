@@ -203,7 +203,7 @@ const authenticateService: IAuthenticateService = {
       Cookies.remove("tokenUser");
       Cookies.remove("roleName");
       Cookies.remove("userName");
-      console.log("User logged out successfully.");
+    
     } catch (error) {
       console.error("Error logging out:", error);
       throw error;
@@ -216,7 +216,7 @@ const authenticateService: IAuthenticateService = {
       Cookies.remove("tokenSupplier");
       Cookies.remove("roleName");
       Cookies.remove("supplierName");
-      console.log("User logged out successfully.");
+    
     } catch (error) {
       console.error("Error logging out:", error);
       throw error;
@@ -230,7 +230,7 @@ const authenticateService: IAuthenticateService = {
       Cookies.remove("tokenSupplier");
       Cookies.remove("roleName");
       Cookies.remove("staffName");
-      console.log("User logged out successfully.");
+    
     } catch (error) {
       console.error("Error logging out:", error);
       throw error;

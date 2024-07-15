@@ -86,7 +86,7 @@ const ChangePassword = () => {
                     alt="Avatar"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.onerror = null;
+target.onerror = null;
                       target.src = "/image/usersupplier.png";
                     }}
                   />

@@ -104,7 +104,7 @@ const hotelService: IHotelService = {
         throw new Error("Failed to fetch hotel list");
       }
       const data = await response.json();
-      console.log(data);
+     
       return data;
     } 
     catch (error) {
@@ -234,7 +234,7 @@ const hotelService: IHotelService = {
         data = await response.text(); 
       }
   
-      console.log(data);
+   
       return data;
     } catch (error) {
       console.error("Error fetching hotel:", error);
@@ -267,7 +267,7 @@ const hotelService: IHotelService = {
         data = await response.text(); 
       }
   
-      console.log(data);
+     
       return data;
     } catch (error) {
       console.error("Error fetching hotel:", error);

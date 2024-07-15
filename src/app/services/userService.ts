@@ -1,5 +1,5 @@
-import Cookies from "js-cookie";
-import BASE_URL from "./apiService";
+import Cookies from 'js-cookie';
+import BASE_URL from './apiService';
 
 interface IUserService {
   getUsers(): Promise<any[]>;
@@ -31,19 +31,22 @@ const userService: IUserService = {
 
   async getUserById() {
     try {
-      const response = await fetch(`${BASE_URL}/getUserById`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json, text/plain, */*",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("tokenUser")}`, // Retrieve token from localStorage
-        },
-      });
+      const response = await fetch(
+        `${BASE_URL}/getUserById`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenUser")}`, // Retrieve token from localStorage
+          },
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch user");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+ 
       return data;
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -53,15 +56,18 @@ const userService: IUserService = {
 
   async updateUser(user) {
     try {
-      const response = await fetch(`${BASE_URL}/updateUser`, {
-        method: "PUT",
-        headers: {
-          Accept: "application/json, text/plain, */*",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("tokenUser")}`,
-        },
-        body: JSON.stringify(user),
-      });
+      const response = await fetch(
+        `${BASE_URL}/updateUser`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenUser")}`,
+          },
+          body: JSON.stringify(user),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to update user");
@@ -75,7 +81,7 @@ const userService: IUserService = {
         data = await response.text();
       }
 
-      console.log(data);
+   
       return data;
     } catch (error) {
       console.error("Error updating user:", error);
@@ -85,7 +91,7 @@ const userService: IUserService = {
   async changePasswordUser(user) {
     try {
       const response = await fetch(
-        `https://localhost:7132/changePasswordUser`,
+        `${BASE_URL}/changePasswordUser`,
         {
           method: "PUT",
           headers: {
@@ -121,7 +127,7 @@ const userService: IUserService = {
 
   async checkPasswordUser(email, password) {
     try {
-      const response = await fetch(`https://localhost:7132/checkPasswordUser`, {
+      const response = await fetch(`${BASE_URL}/checkPasswordUser`, {
         method: "POST",
         headers: {
           Accept: "application/json, text/plain, */*",

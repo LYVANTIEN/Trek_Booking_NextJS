@@ -126,8 +126,8 @@ const ListTourImage = ({ params }: { params: { tourId: string } }) => {
   };
 
   const handleAddImage = () => {
-    if (listTourImage.length >= 6) {
-      alert("You can only add up to 6 images for this tour.");
+    if (listTourImage.length >= 5) {
+      toast.error("You can only add up to 5 images for this tour.");
       return;
     }
     setTourId(Number(params.tourId));

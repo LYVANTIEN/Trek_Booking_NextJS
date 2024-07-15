@@ -96,10 +96,21 @@ tourOrderQuantity: quantity,
           tourTotalPrice: finalPrice,
         })),
       },
-      successUrl: '', // Thay thế bằng URL thành công thực tế của bạn
+      successUrl: 'trekbooking/booking_history', // Thay thế bằng URL thành công thực tế của bạn
       cancelUrl: 'trekbooking/booking_cart', // Thay thế bằng URL hủy thực tế của bạn
     };
-   
+    const bookingData = {
+      bookingId: 0,
+      userId: user?.userId,
+      supplierId: tourDetails?.supplierId,
+      tourId: item.tourId,
+      tourOrderDate: getCurrentDate(),
+      TourOrderQuantity: quantity,
+      TourTotalPrice: finalPrice,
+      status: true,
+      isConfirmed: true,
+    };
+    await paymentService.createTourOrder(bookingData);
       await paymentService.handleTourPayment(paymentData);
 
   };

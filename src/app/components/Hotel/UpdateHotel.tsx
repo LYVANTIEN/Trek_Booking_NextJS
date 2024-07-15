@@ -239,6 +239,7 @@ function UpdateHotel(props: Iprops) {
         hotelInformation,
         isVerify: true, // Default value is true
         supplierId: Number(supplierId),
+        services: []
       };
       const response = await hotelService.updateHotel(hotel);
       toast.success("Update Hotel Success");
@@ -268,8 +269,7 @@ function UpdateHotel(props: Iprops) {
       setHotelInformation(hotel.hotelInformation);
     }
   }, [hotel]);
-  console.log("List Hotel" + hotel);
-
+  
   const handleCloseModal = () => {
     setHotelName("");
     setHotelPhone("");

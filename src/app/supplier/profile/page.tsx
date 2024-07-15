@@ -2,9 +2,9 @@
 "use client";
 import UpdateProfileSupplier from "@/app/components/Supplier/UpdateProfileSupplier";
 import supplierService from "@/app/services/supplierService";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
+import Link from "../../../../node_modules/next/link";
 
 const Profile = () => {
   const [supplierName, setSupplierName] = useState<string>("");
@@ -78,7 +78,7 @@ const Profile = () => {
               }}
             >
               <div className="w-4/5 m-auto">
-                <span className="text-xl font-semibold">
+                <span className="text-xl  max-[500px]:text-xs font-semibold">
                   Account information
                 </span>
                 <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
@@ -99,17 +99,17 @@ const Profile = () => {
                 <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
 
                 <div
-                  className="mb-3 col-6"
+                  className="mb-3 row"
                   style={{
                     display: "flex",
                     marginTop: "20px",
                   }}
                 >
-                  <div className="col-md-5">
-                    <label className="font-bold text-xl">Supplier Name</label>
+                  <div className="col-4 max-[500px]:w-full max-[500px]:pb-2">
+                    <label className="font-bold text-xl">Supplier Name:</label>
                   </div>
-                  <div className="flex-1">
-                    <label className="font-bold text-xl text-gray-400">
+                  <div className="flex-1 col-8 max-[500px]:w-full">
+                    <label className="font-bold text-xl text-gray-400 max-[500px]:text-xs">
                       {supplierName}
                     </label>
                   </div>
@@ -117,14 +117,14 @@ const Profile = () => {
                 <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
 
                 <div
-                  className="mb-3 col-6"
+                  className="mb-3 row"
                   style={{ display: "flex", marginTop: "20px" }}
                 >
-                  <div className="col-md-5">
-                    <label className="font-bold text-xl">Phone</label>
+                  <div className="col-4 max-[500px]:w-full max-[500px]:pb-2">
+                    <label className="font-bold text-xl">Phone:</label>
                   </div>
-                  <div className="flex-1">
-                    <label className="font-bold text-xl text-gray-400">
+                  <div className=" col-8 max-[500px]:w-full">
+                    <label className="font-bold text-xl text-gray-400 max-[500px]:text-xs">
                       {phone}
                     </label>
                   </div>
@@ -132,14 +132,14 @@ const Profile = () => {
                 <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
 
                 <div
-                  className="mb-3 col-6"
+                  className="mb-3 row"
                   style={{ display: "flex", marginTop: "20px" }}
                 >
-                  <div className="col-md-5">
-                    <label className="font-bold text-xl">Email</label>
+                  <div className="col-4 max-[500px]:w-full max-[500px]:pb-2">
+                    <label className="font-bold text-xl">Email:</label>
                   </div>
-                  <div className="flex-1">
-                    <label className="font-bold text-xl text-gray-400">
+                  <div className="col-8 max-[500px]:w-full">
+                    <label className="font-bold text-xl text-gray-400 max-[500px]:text-xs">
                       {email}
                     </label>
                   </div>
@@ -147,14 +147,14 @@ const Profile = () => {
                 <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
 
                 <div
-                  className="mb-3 col-6"
+                  className="mb-3 row"
                   style={{ display: "flex", marginTop: "20px" }}
                 >
-                  <div className="col-md-5">
-                    <label className="font-bold text-xl">Address</label>
+                  <div className="col-4 max-[500px]:w-full max-[500px]:pb-2">
+                    <label className="font-bold text-xl">Address:</label>
                   </div>
-                  <div className="flex-1">
-                    <label className="font-bold text-xl text-gray-400">
+                  <div className="col-8 max-[500px]:w-full">
+                    <label className="font-bold text-xl text-gray-400 max-[500px]:text-xs">
                       {address}
                     </label>
                   </div>
@@ -166,11 +166,8 @@ const Profile = () => {
                   style={{ marginTop: "-20px" }}
                 >
                   <button
-                    className="text-white font-medium py-2 px-6 text-lg border"
-                    style={{
-                      backgroundColor: "#305A61",
-                      borderRadius: "20px",
-                    }}
+                    className="text-white font-medium py-2 px-6 text-lg border max-[500px]:text-xs"
+                    style={{ backgroundColor: "#305A61", borderRadius: "20px" }}
                     onClick={() => {
                       setShowSupplierUpdate(true);
                     }}

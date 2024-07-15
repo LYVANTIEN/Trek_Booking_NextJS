@@ -129,8 +129,8 @@ const ListRoomImage = ({ params }: { params: {hotelId:string, roomId: string } }
   };
 
   const handleAddImage = () => {
-    if (listRoomImage.length >= 6) {
-      alert("You can only add up to 6 images for this tour.");
+    if (listRoomImage.length >= 7) {
+      toast.error("You can only add up to 7 images for this tour.");
       return;
     }
     setRoomId(Number(params.roomId));
@@ -206,7 +206,7 @@ const ListRoomImage = ({ params }: { params: {hotelId:string, roomId: string } }
           />
           <img src="/image/search.png" alt="" />
         </div>
-        <button className="ml-8 button-add ml-4rem" onClick={handleAddImage}>
+        <button className="ml-8 button-add relative z-10" onClick={handleAddImage}>
           + Add Room 3D Image
         </button>
       </div>

@@ -104,6 +104,7 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
       fetchRoomServices(listRoom);
     }
   }, [listRoom]);
+  
   const fetchRoomServices = async (rooms: IRoom[]) => {
     const servicesMap: { [key: number]: IService[] } = {};
     for (const room of rooms) {

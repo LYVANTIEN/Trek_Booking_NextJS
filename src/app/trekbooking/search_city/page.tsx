@@ -11,6 +11,9 @@ import rateService from "@/app/services/rateService";
 import Slider from "react-slick";
 import hotelImageService from "@/app/services/hotelImageService";
 import Link from "next/link";
+import serviceOfRoom from "@/app/services/serviceOfRoom";
+
+
 
 const SearchPage = () => {
   const [hotelList, setHotelList] = useState<IHotel[]>([]);
@@ -18,6 +21,9 @@ const SearchPage = () => {
     [key: number]: number;
   }>({});
   const [roomList, setRoomList] = useState<IRoom[]>([]);
+  const [roomServices, setRoomServices] = useState<{
+    [key: number]: IService[];
+  }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [commentsCount, setCommentsCount] = useState<{ [key: number]: number }>(
@@ -27,24 +33,23 @@ const SearchPage = () => {
     [key: number]: IHotelImage[];
   }>({});
 
-  //filter city
-  const [selectedCity, setSelectedCity] = useState<string>("");
+  // Filter states
+  const [selectedRating, setSelectedRating] = useState<number[]>([]);
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
-  ///search
+  // Search states
   const [city, setCity] = useState<string | null>(null);
 
   useEffect(() => {
-    // This effect will run only once when the component mounts
     const searchParams = new URLSearchParams(window.location.search);
     const cityParam = searchParams.get("city");
+
     setCity(cityParam);
   }, []);
 
   useEffect(() => {
     if (city) {
       searchHotels(city);
-    } else {
-      //fetchHotelsAndRooms();
     }
   }, [city]);
 
@@ -64,7 +69,7 @@ const SearchPage = () => {
       );
     }
   };
-  //------------------ Fetch RateValue ---------------------//
+
   useEffect(() => {
     const fetchRates = async () => {
       const averages: { [key: number]: number } = {};
@@ -73,7 +78,7 @@ const SearchPage = () => {
           const rates = await rateService.getRatesByHotelId(hotel.hotelId);
           const averageRate =
             rates.reduce((sum, rate) => sum + rate.rateValue, 0) / rates.length;
-          averages[hotel.hotelId] = Math.round(averageRate); // Round to the nearest whole number
+          averages[hotel.hotelId] = Math.round(averageRate);
         } catch (error) {
           console.error(
             `Error fetching rates for hotel ${hotel.hotelId}:`,
@@ -89,40 +94,31 @@ const SearchPage = () => {
     }
   }, [hotelList]);
 
-  //------------------ Fetch Hotel List ---------------------//
-
   useEffect(() => {
     const fetchHotelsAndRooms = async () => {
       setLoading(true);
       try {
-        const [rooms] = await Promise.all([
-          //hotelService.getHotels(),
-          roomService.getRooms(),
-        ]);
-        //setHotelList(hotels);
+        const rooms = await roomService.getRooms();
         setRoomList(rooms);
         setLoading(false);
       } catch (error) {
-        if (error instanceof Error) {
-          console.error("Error fetching hotel or room list:", error);
-          setError(error);
-        } else {
-          console.error("Unexpected error:", error);
-          setError(new Error("An unexpected error occurred"));
-        }
+        setError(
+          error instanceof Error
+            ? error
+            : new Error("An unexpected error occurred")
+        );
         setLoading(false);
       }
     };
-
     fetchHotelsAndRooms();
   }, []);
+
   useEffect(() => {
     if (hotelList) {
-      //setHotelList(hotelList);
       fetchHotelImages(hotelList);
     }
   }, [hotelList]);
-  //------------------ Fetch Hotel Image List ---------------------//
+
   const fetchHotelImages = async (hotels: IHotel[]) => {
     const imagesMap: { [key: number]: IHotelImage[] } = {};
     for (const hotel of hotels) {
@@ -134,8 +130,6 @@ const SearchPage = () => {
     }
     setHotelImages(imagesMap);
   };
-
-  //------------------ Fetch Comment List ---------------------//
 
   const fetchCommentsCount = useCallback(async () => {
     const counts: { [key: number]: number } = {};
@@ -162,8 +156,6 @@ const SearchPage = () => {
     }
   }, [hotelList, fetchCommentsCount]);
 
-  //------------------ Get lowest price due to the room of Hotel List ---------------------//
-
   const getLowestPrice = useCallback(
     (hotelId: number) => {
       const rooms = roomList.filter((room) => room.hotelId === hotelId);
@@ -185,17 +177,57 @@ const SearchPage = () => {
               room.roomPrice - room.roomPrice * (room.discountPercent / 100)
           )
         );
-        return lowestPrice.toFixed(2); // Trả về chuỗi với 2 chữ số thập phân
+        return lowestPrice.toFixed(2);
       }
       return null;
     },
     [roomList]
   );
-  //------------------ Get 2 rooms of the Hotel ---------------------//
 
   const getRoomsByHotelId = (hotelId: number) => {
     return roomList.filter((room) => room.hotelId === hotelId).slice(0, 2);
   };
+
+  const handleRatingChange = (rating: number) => {
+    setSelectedRating((prevSelected) =>
+      prevSelected.includes(rating)
+        ? prevSelected.filter((item) => item !== rating)
+        : [...prevSelected, rating]
+    );
+  };
+
+  const handleServiceChange = (service: string) => {
+    setSelectedServices((prevSelected) =>
+      prevSelected.includes(service)
+        ? prevSelected.filter((item) => item !== service)
+        : [...prevSelected, service]
+    );
+  };
+
+  const filterHotels = () => {
+    return hotelList.filter((hotel) => {
+      const matchesRating =
+        selectedRating.length === 0 ||
+        selectedRating.includes(averageRatings[hotel.hotelId]);
+      const matchesService =
+        selectedServices.length === 0 ||
+        selectedServices.every((service) => hotel.services.includes(service));
+      return matchesRating && matchesService;
+    });
+  };
+  const fetchRoomServices = async (roomId: number) => {
+    try {
+      const services = await serviceOfRoom.getServiceByRoomId(roomId);
+      setRoomServices((prev) => ({ ...prev, [roomId]: services }));
+    } catch (error) {
+      console.error("Error fetching room services:", error);
+    }
+  };
+  useEffect(() => {
+    if (roomList.length > 0) {
+      roomList.forEach((room) => fetchRoomServices(room.roomId));
+    }
+  }, [roomList]);
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -284,7 +316,6 @@ const SearchPage = () => {
                         backgroundColor: "#305A61",
                         borderRadius: "10px",
                       }}
-                      //filter city can tho
                       href={`/trekbooking/search_city?city=Cần Thơ`}
                     >
                       Find hotel
@@ -494,352 +525,346 @@ const SearchPage = () => {
               </div>
             </div>
             <div className="row">
-              <div className="col-lg-3  col-md-4 col-12  ">
+              <div className="col-lg-3 col-md-4 col-12">
                 <div className="border-filter">
-                  <p className="text-center text-2xl  pb-8 font-bold color-black">
+                  <p className="text-center text-2xl pb-8 font-bold color-black">
                     Filters
                   </p>
                   <div className="range">
                     <p className="font-bold color-black">Price Range</p>
                     <p className="color-black">0 US$ - 170 US$</p>
-                    <div className="search-filter  pb-4">
+                    <div className="search-filter pb-4">
                       <img src="/image/searchfilter.png" alt="" />
                     </div>
-                    <div className="start flex justify-between ">
-                      <p className="font-bold ">Star Rating</p>
+                    <div className="start flex justify-between">
+                      <p className="font-bold">Star Rating</p>
                       <img
                         className="h-5 w-5 cursor-pointer"
-                        src="/image/down.png "
+                        src="/image/down.png"
                         alt=""
                       />
                     </div>
                     <div className="input-star flex pb-8">
-                      <input type="checkbox" className="h-5" />
-                      <img
-                        className=" input-star"
-                        src="/image/star.png"
-                        alt=""
-                      />
-                    </div>
-                    <div className="input-star flex  pb-8">
-                      <input type="checkbox" className="h-5" />
-                      <img
-                        className=" input-star"
-                        src="/image/star.png"
-                        alt=""
+                      <input
+                        type="checkbox"
+                        className="h-5"
+                        onChange={() => handleRatingChange(1)}
                       />
                       <img
-                        className=" input-star"
+                        className="input-star"
                         src="/image/star.png"
                         alt=""
                       />
                     </div>
                     <div className="input-star flex pb-8">
-                      <input type="checkbox" className="h-5" />
+                      <input
+                        type="checkbox"
+                        className="h-5"
+                        onChange={() => handleRatingChange(2)}
+                      />
                       <img
-                        className=" input-star"
+                        className="input-star"
                         src="/image/star.png"
                         alt=""
                       />
                       <img
-                        className=" input-star"
-                        src="/image/star.png"
-                        alt=""
-                      />
-                      <img
-                        className=" input-star"
-                        src="/image/star.png"
-                        alt=""
-                      />
-                    </div>
-                    <div className="input-star flex pb-8">
-                      <input type="checkbox" className="h-5" />
-                      <img
-                        className=" input-star"
-                        src="/image/star.png"
-                        alt=""
-                      />
-                      <img
-                        className=" input-star"
-                        src="/image/star.png"
-                        alt=""
-                      />
-                      <img
-                        className=" input-star"
-                        src="/image/star.png"
-                        alt=""
-                      />
-                      <img
-                        className=" input-star"
+                        className="input-star"
                         src="/image/star.png"
                         alt=""
                       />
                     </div>
                     <div className="input-star flex pb-8">
-                      <input type="checkbox" className="h-5" />
+                      <input
+                        type="checkbox"
+                        className="h-5"
+                        onChange={() => handleRatingChange(3)}
+                      />
                       <img
-                        className=" input-star"
+                        className="input-star"
                         src="/image/star.png"
                         alt=""
                       />
                       <img
-                        className=" input-star"
+                        className="input-star"
                         src="/image/star.png"
                         alt=""
                       />
                       <img
-                        className=" input-star"
+                        className="input-star"
+                        src="/image/star.png"
+                        alt=""
+                      />
+                    </div>
+                    <div className="input-star flex pb-8">
+                      <input
+                        type="checkbox"
+                        className="h-5"
+                        onChange={() => handleRatingChange(4)}
+                      />
+                      <img
+                        className="input-star"
                         src="/image/star.png"
                         alt=""
                       />
                       <img
-                        className=" input-star"
+                        className="input-star"
                         src="/image/star.png"
                         alt=""
                       />
                       <img
-                        className=" input-star"
+                        className="input-star"
+                        src="/image/star.png"
+                        alt=""
+                      />
+                      <img
+                        className="input-star"
+                        src="/image/star.png"
+                        alt=""
+                      />
+                    </div>
+                    <div className="input-star flex pb-8">
+                      <input
+                        type="checkbox"
+                        className="h-5"
+                        onChange={() => handleRatingChange(5)}
+                      />
+                      <img
+                        className="input-star"
+                        src="/image/star.png"
+                        alt=""
+                      />
+                      <img
+                        className="input-star"
+                        src="/image/star.png"
+                        alt=""
+                      />
+                      <img
+                        className="input-star"
+                        src="/image/star.png"
+                        alt=""
+                      />
+                      <img
+                        className="input-star"
+                        src="/image/star.png"
+                        alt=""
+                      />
+                      <img
+                        className="input-star"
                         src="/image/star.png"
                         alt=""
                       />
                     </div>
                   </div>
                   <div className="pb-4">
-                    <div className="start flex justify-between ">
-                      <p className="font-bold ">Facilities</p>
+                    <div className="start flex justify-between">
+                      <p className="font-bold">Services</p>
                       <img
                         className="h-5 w-5 cursor-pointer"
-                        src="/image/down.png "
+                        src="/image/down.png"
                         alt=""
                       />
                     </div>
                     <div className="input-star flex pb-8">
-                      <input type="checkbox" className="h-5" />
+                      <input
+                        type="checkbox"
+                        className="h-5"
+                        onChange={() => handleServiceChange("Parking")}
+                      />
                       <p className="text-faci">Parking</p>
                     </div>
                     <div className="input-star flex pb-8">
-                      <input type="checkbox" className="h-5" />
+                      <input
+                        type="checkbox"
+                        className="h-5"
+                        onChange={() => handleServiceChange("Elevator")}
+                      />
                       <p className="text-faci">Elevator</p>
                     </div>
                     <div className="input-star flex pb-8">
-                      <input type="checkbox" className="h-5" />
+                      <input
+                        type="checkbox"
+                        className="h-5"
+                        onChange={() => handleServiceChange("Restaurant")}
+                      />
                       <p className="text-faci">Restaurant</p>
                     </div>
                     <div className="input-star flex pb-8">
-                      <input type="checkbox" className="h-5" />
+                      <input
+                        type="checkbox"
+                        className="h-5"
+                        onChange={() => handleServiceChange("Fitness")}
+                      />
                       <p className="text-faci">Fitness</p>
                     </div>
                     <div className="input-star flex pb-8">
-                      <input type="checkbox" className="h-5" />
+                      <input
+                        type="checkbox"
+                        className="h-5"
+                        onChange={() => handleServiceChange("Wifi")}
+                      />
                       <p className="text-faci">Wifi</p>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="col-lg-9 col-md-8 col-12">
-                {hotelList.length > 0 ? (
-                  hotelList.map((item: IHotel) => (
-                    <>
-                      <div
-                        key={item.hotelId}
-                        className="row bg-white py-3 px-2 mb-4"
-                        style={{
-                          borderRadius: "20px",
-                          boxShadow: "0 4px 4px 0 #7F7F7F",
-                        }}
-                      >
-                        <div className="col-4 ">
-                          <div className="">
-                            <img
-                              className="w-full h-64"
-                              style={{ borderRadius: "10px" }}
-                              src={item.hotelAvatar}
-                              alt=""
-                            />
-                          </div>
-                          <div className="my-3">
-                            {/* <Slider {...settings}>
-                          <div className="">
-                            <img
-                              className=""
-                              
-                              src="/image/imgcart2.png"
-                              alt=""
-                            />
-                          </div>
-                          
-                        </Slider> */}
-                            {hotelImages[item.hotelId]?.length >= 2 ? (
-                              <Slider {...settings}>
-                                {hotelImages[item.hotelId]?.map((image) => (
-                                  <div key={image.hotelImageId}>
-                                    <img
-                                      className="w-full h-20 px-1"
-                                      style={{ borderRadius: "10px" }}
-                                      src={image.hotelImageURL}
-                                      alt="hotel thumbnail"
-                                    />
-                                  </div>
-                                ))}
-                              </Slider>
-                            ) : (
-                              <img
-                                className="w-full h-40 px-1"
-                                style={{ borderRadius: "10px" }}
-                                src={
-                                  hotelImages[item.hotelId]?.[0].hotelImageURL
-                                }
-                                alt="room thumbnail"
-                              />
-                            )}
-                            {/* <Slider {...settings}>
-                        {hotelImages[item.hotelId] && hotelImages[item.hotelId].length > 0 && (
-                          
-                            <div>
-                            {hotelImages[item.hotelId].map((image) => (
-                              <img key={image.hotelImageId} src={image.hotelImageURL} alt={`Hotel Image ${image.hotelImageId}`} style={{ borderRadius: "10px" }} />
-                            ))}
-                            </div>
-                            
-                         
-                        )}
-                         </Slider> */}
-                          </div>
+                {filterHotels().length > 0 ? (
+                  filterHotels().map((item: IHotel) => (
+                    <div
+                      key={item.hotelId}
+                      className="row bg-white py-3 px-2 mb-4"
+                      style={{
+                        borderRadius: "20px",
+                        boxShadow: "0 4px 4px 0 #7F7F7F",
+                      }}
+                    >
+                      <div className="col-4">
+                        <div className="">
+                          <img
+                            className="w-full h-64"
+                            style={{ borderRadius: "10px" }}
+                            src={item.hotelAvatar}
+                            alt=""
+                          />
                         </div>
-                        <div className="col-5 ">
-                          <div className="px-3">
-                            <span className="font-bold text-lg pt-2 color-black">
-                              {item.hotelName}
-                            </span>
-                            <div className="review flex items-center py-3">
-                              <span className=" color-primary disnone">
-                                Hotels
-                              </span>
-                              {averageRatings[item.hotelId] > 0 ? (
-                                [...Array(averageRatings[item.hotelId])].map(
-                                  (_, index) => (
-                                    <img
-                                      key={index}
-                                      className="inline ml-2"
-                                      src="/image/star.png"
-                                      alt=""
-                                    />
-                                  )
-                                )
-                              ) : (
-                                <span className="ml-2">No rating</span>
-                              )}
-                              <span
-                                style={{ color: "#8E8D8A" }}
-                                className="ml-3 disnone"
-                              >
-                                {" "}
-                                {commentsCount[item.hotelId] === 0 ||
-                                commentsCount[item.hotelId] === 1
-                                  ? `${commentsCount[item.hotelId] || 0} review`
-                                  : `${
-                                      commentsCount[item.hotelId] || 0
-                                    } reviews`}
-                              </span>
-                            </div>
-                            <div className="flex">
-                              <img
-                                className="w-5 h-5"
-                                src="/image/map.png"
-                                alt=""
-                              />
-                              <p className="ml-3 color-black">
-                                {" "}
-                                {item.hotelCity}
-                              </p>
-                            </div>
-                            <p className="font-bold color-primary">
-                              {getRoomsByHotelId(item.hotelId).map((room) => (
-                                <p key={room.roomId}>{room.roomName}</p>
+                        <div className="my-3">
+                          {hotelImages[item.hotelId]?.length >= 2 ? (
+                            <Slider {...settings}>
+                              {hotelImages[item.hotelId]?.map((image) => (
+                                <div key={image.hotelImageId}>
+                                  <img
+                                    className="w-full h-20 px-1"
+                                    style={{ borderRadius: "10px" }}
+                                    src={image.hotelImageURL}
+                                    alt="hotel thumbnail"
+                                  />
+                                </div>
                               ))}
-                            </p>
-                            <div className="flex">
-                              <img
-                                className="w-3 h-3 mt-2"
-                                src="/image/check1.png"
-                                alt=""
-                              />
-                              <p className="ml-2 color-black">
-                                Lorem ipsum dolor sit
-                              </p>
-                            </div>
-                            <div className="flex">
-                              <img
-                                className="w-3 h-3 mt-2"
-                                src="/image/check1.png"
-                                alt=""
-                              />
-                              <p className="ml-2 color-black">
-                                Lorem ipsum dolor sit
-                              </p>
-                            </div>
-                            <div className="flex">
-                              <img
-                                className="w-3 h-3 mt-2"
-                                src="/image/check1.png"
-                                alt=""
-                              />
-                              <p className="ml-2 color-black">
-                                Lorem ipsum dolor sit
-                              </p>
-                            </div>
-                            <div className="flex">
-                              <img
-                                className="w-3 h-3 mt-2"
-                                src="/image/check1.png"
-                                alt=""
-                              />
-                              <p className="ml-2 color-black">
-                                Lorem ipsum dolor sit
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          className="col-3"
-                          style={{
-                            borderRadius: "10px",
-                            backgroundColor: "#F5F5F5",
-                          }}
-                        >
-                          <div className="text-center pt-14">
-                            <p className="text-xl color-primary font-bold ">
-                              Holiday sale
-                            </p>
-                            <p
-                              className="font-bold decor text-2xl"
-                              style={{ color: "#8E8D8A" }}
-                            >
-                              {getLowestPrice(item.hotelId) || "N/A"}US$
-                            </p>
-                            <p
-                              className="color-black font-bold text-2xl"
-                              style={{ color: "rgb(255, 94, 31)" }}
-                            >
-                              {getLowestPriceDiscount(item.hotelId) || "N/A"}US$
-                            </p>
-                            <p style={{ color: "#8E8D8A" }}>
-                              Exclude taxes & fees
-                            </p>
-                            <Link
-                              href={`/trekbooking/list_hotel/${item.hotelId}`}
-                              className="text-white font-medium py-2 px-6 text-lg border no-underline"
-                              style={{
-                                backgroundColor: "#305A61",
-                                borderRadius: "20px",
-                              }}
-                            >
-                              Book now
-                            </Link>
-                          </div>
+                            </Slider>
+                          ) : (
+                            <img
+                              className="w-full h-40 px-1"
+                              style={{ borderRadius: "10px" }}
+                              src={hotelImages[item.hotelId]?.[0].hotelImageURL}
+                              alt="room thumbnail"
+                            />
+                          )}
                         </div>
                       </div>
-                    </>
+                      <div className="col-5">
+                        <div className="px-3">
+                          <span className="font-bold text-lg pt-2 color-black">
+                            {item.hotelName}
+                          </span>
+                          <div className="review flex items-center py-3">
+                            <span className="color-primary disnone">
+                              Hotels
+                            </span>
+                            {averageRatings[item.hotelId] > 0 ? (
+                              [...Array(averageRatings[item.hotelId])].map(
+                                (_, index) => (
+                                  <img
+                                    key={index}
+                                    className="inline ml-2"
+                                    src="/image/star.png"
+                                    alt=""
+                                  />
+                                )
+                              )
+                            ) : (
+                              <span className="ml-2">No rating</span>
+                            )}
+                            <span
+                              style={{ color: "#8E8D8A" }}
+                              className="ml-3 disnone"
+                            >
+                              {commentsCount[item.hotelId] === 0 ||
+                              commentsCount[item.hotelId] === 1
+                                ? `${commentsCount[item.hotelId] || 0} review`
+                                : `${commentsCount[item.hotelId] || 0} reviews`}
+                            </span>
+                          </div>
+                          <div className="flex items-center">
+                            <img
+                              className="w-5 h-5"
+                              src="/image/map.png"
+                              alt=""
+                            />
+                            <span className="ml-3 color-black">{item.hotelCity}</span>
+                          </div>
+                          <div className="row mt-4">
+                              {getRoomsByHotelId(item.hotelId).map((room) => (
+                                <div className="col-6" key={room.roomId}>
+                                  <div>
+                                    <p className="font-bold text-sm">
+                                      {room.roomName}
+                                    </p>
+                                    {roomServices[room.roomId]?.map(
+                                      (service) => (
+                                        <div
+                                          className="flex items-center mt-3"
+                                          key={service.serviceId}
+                                        >
+                                          <img
+                                            className="w-3 h-3"
+                                            src={
+                                              service.serviceImage ||
+                                              "/image/greenTick.png"
+                                            }
+                                            alt=""
+                                          />
+                                          <span className="ml-2 color-black">
+                                            {service.serviceName}
+                                          </span>
+                                        </div>
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          
+                        </div>
+                      </div>
+                      <div
+                        className="col-3"
+                        style={{
+                          borderRadius: "10px",
+                          backgroundColor: "#F5F5F5",
+                        }}
+                      >
+                        <div className="text-center pt-14">
+                          <p className="text-xl color-primary font-bold">
+                            Holiday sale
+                          </p>
+                          <p
+                            className="font-bold decor text-2xl"
+                            style={{ color: "#8E8D8A" }}
+                          >
+                            {getLowestPrice(item.hotelId) || "N/A"}US$
+                          </p>
+                          <p
+                            className="color-black font-bold text-2xl"
+                            style={{ color: "rgb(255, 94, 31)" }}
+                          >
+                            {getLowestPriceDiscount(item.hotelId) || "N/A"}US$
+                          </p>
+                          <p style={{ color: "#8E8D8A" }}>
+                            Exclude taxes & fees
+                          </p>
+                          <Link
+                            href={`/trekbooking/list_hotel/${item.hotelId}`}
+                            className="text-white font-medium py-2 px-6 text-lg border no-underline"
+                            style={{
+                              backgroundColor: "#305A61",
+                              borderRadius: "20px",
+                            }}
+                          >
+                            Book now
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
                   ))
                 ) : (
                   <div className="col-12">

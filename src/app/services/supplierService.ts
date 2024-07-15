@@ -1,30 +1,32 @@
 import Cookies from "js-cookie";
-import BASE_URL from "./apiService";
+import BASE_URL from './apiService';
 
 interface ISupplierService {
   getSupplierById(): Promise<ISupplier>;
-  getEmailBySupplierId(): Promise<ISupplier>;
-  checkPasswordSupplier(email: string, password: string): Promise<any>;
   updateSupplier(supplier: ISupplier): Promise<ISupplier>;
-  changePasswordSupplier(supplier: ISupplier): Promise<ISupplier>;
+  checkPasswordSupplier(email: string, password: string): Promise<any>;
+changePasswordSupplier(supplier: ISupplier): Promise<ISupplier>;
 }
 
 const supplierService: ISupplierService = {
   async getSupplierById() {
     try {
-      const response = await fetch(`${BASE_URL}/getSupplierbyId`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json, text/plain, */*",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
-        },
-      });
+      const response = await fetch(
+        `${BASE_URL}/getSupplierbyId`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, 
+          },
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch supplier staff list");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+     
       return data;
     } catch (error) {
       console.error("Error fetching supplier staff list:", error);
@@ -34,15 +36,18 @@ const supplierService: ISupplierService = {
 
   async updateSupplier(supplier) {
     try {
-      const response = await fetch(`${BASE_URL}/updateSupplier`, {
-        method: "PUT",
-        headers: {
-          Accept: "application/json, text/plain, */*",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("tokenSupplier")}`,
-        },
-        body: JSON.stringify(supplier),
-      });
+      const response = await fetch(
+        `${BASE_URL}/updateSupplier`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, 
+          },
+          body: JSON.stringify(supplier),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to update supplier");
@@ -56,7 +61,7 @@ const supplierService: ISupplierService = {
         data = await response.text();
       }
 
-      console.log(data);
+   
       return data;
     } catch (error) {
       console.error("Error updating supplier:", error);
@@ -66,7 +71,7 @@ const supplierService: ISupplierService = {
   async changePasswordSupplier(supplier) {
     try {
       const response = await fetch(
-        `https://localhost:7132/changePasswordSupplier`,
+        `${BASE_URL}/changePasswordSupplier`,
         {
           method: "PUT",
           headers: {
@@ -103,7 +108,7 @@ const supplierService: ISupplierService = {
   async checkPasswordSupplier(email, password) {
     try {
       const response = await fetch(
-        `https://localhost:7132/checkPasswordSupplier`,
+        `${BASE_URL}/checkPasswordSupplier`,
         {
           method: "POST",
           headers: {
@@ -143,30 +148,8 @@ const supplierService: ISupplierService = {
       return { success: false, message: errorMessage };
     }
   },
-  async getEmailBySupplierId() {
-    try {
-      const response = await fetch(
-        `https://localhost:7132/getEmailBySupplierId`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to get email ");
-      }
-      const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
-      return data;
-    } catch (error) {
-      console.error("Error fetching supplier email:", error);
-      throw error;
-    }
-  },
+
+
 };
 
 export default supplierService;

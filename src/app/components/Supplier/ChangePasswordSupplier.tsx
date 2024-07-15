@@ -89,7 +89,7 @@ function ChangePasswordSupplier(props: IProps) {
         email,
         address,
         password: newPassword,
-        status: true,
+status: true,
         isVerify: true,
         roleId: Number(roleId),
       };
@@ -182,7 +182,7 @@ function ChangePasswordSupplier(props: IProps) {
               >
                 Save
               </Button>
-            </Col>
+</Col>
             <Col xs="auto">
               <Button
                 style={{

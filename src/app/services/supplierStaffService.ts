@@ -27,7 +27,7 @@ const supplierStaffService: ISupplierStaffService = {
         throw new Error("Failed to fetch supplier staff list");
       }
       const data = await response.json();
-      console.log(data); // Trigger refetch after fetching
+     
       return data;
     } catch (error) {
       console.error("Error fetching supplier staff list:", error);

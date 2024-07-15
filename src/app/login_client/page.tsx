@@ -2,7 +2,6 @@
 import { useState, FormEvent, Suspense } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import authenticateService from "../services/authenticateService"; // Adjust the path as needed
 import "../../../public/css/authen.css"; // Adjust the path as needed
 import { useSearchParams } from "next/navigation";
@@ -25,11 +24,9 @@ function LoginClient() {
     const result = await authenticateService.loginClient(email, password);
 
     if (result.success) {
-      toast.success("Login Successful!..");
+    
       const redirectUrl = searchParams.get("redirect") || "/trekbooking";
-      setTimeout(() => {
         router.push(decodeURIComponent(redirectUrl)); // Chuyển hướng đến URL đã lưu trữ hoặc trang chủ nếu không có URL
-      }, 2000);
     } else {
       setErrorMessage(result.errorMessage || "An unknown error occurred.");
     }

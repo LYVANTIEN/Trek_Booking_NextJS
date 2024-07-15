@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { mutate } from "swr";
 import { toast } from "react-toastify";
-import supplierService from "@/app/services/supplierService";
 import userService from "@/app/services/userService";
 
 interface IProps {
@@ -89,7 +88,7 @@ function ChangePasswordUser(props: IProps) {
         isVerify: true,
         roleId: Number(roleId),
       };
-      //Check current password
+//Check current password
       const checkResponse = await userService.checkPasswordUser(
         email,
         currentPassword
@@ -182,7 +181,7 @@ function ChangePasswordUser(props: IProps) {
             <Col xs="auto">
               <Button
                 style={{
-                  border: "1px solid #ccc",
+border: "1px solid #ccc",
                   color: "black",
                   background: "white",
                 }}

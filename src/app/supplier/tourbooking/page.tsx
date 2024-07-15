@@ -75,9 +75,7 @@ const TourOrderListOfSupplier = () => {
                       <th scope="col" className="px-6 py-4 text-center">
                         Full Name
                       </th>
-                      <th scope="col" className="px-6 py-4">
-                        Email
-                      </th>
+                      
                       <th scope="col" className="px-6 py-4">
                         Phone
                       </th>
@@ -93,9 +91,7 @@ const TourOrderListOfSupplier = () => {
                       <th scope="col" className="px-6 py-4">
                         View Detail
                       </th>
-                      <th scope="col" className="px-6 py-4">
-                        Action
-                      </th>
+                      
                     </tr>
                   </thead>
                   <tbody>
@@ -120,9 +116,7 @@ const TourOrderListOfSupplier = () => {
                             <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {header.fullName}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-semibold">
-                              {header.email}
-                            </td>
+                           
                             <td className="whitespace-nowrap px-6 py-4 font-semibold">
                               {header.phone}
                             </td>
@@ -153,17 +147,7 @@ const TourOrderListOfSupplier = () => {
                                 />
                               </div>
                             </td>
-                            {/* <td className="whitespace-nowrap px-6 py-4 flex justify-center">
-                              <img
-                                className="w-5 h-5 cursor-pointer"
-                                src="/image/pen.png"
-                                alt="Edit"
-                                onClick={() => {
-                                  setTourOrder(item);
-                                  setShowModalEdit(true);
-                                }}
-                              />
-                            </td> */}
+                           
                           </tr>
                         );
                       })

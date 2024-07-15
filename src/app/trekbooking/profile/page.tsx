@@ -2,9 +2,9 @@
 "use client";
 import UpdateProfile from "@/app/components/Profile/UpdateProfile";
 import userService from "@/app/services/userService";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
+import Link from "../../../../node_modules/next/link";
 
 const Profile = () => {
   const [userName, setUserName] = useState<string>("");
@@ -85,7 +85,7 @@ const Profile = () => {
                     alt="Avatar"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.onerror = null;
+target.onerror = null;
                       target.src = "/image/usersupplier.png";
                     }}
                   />
@@ -168,7 +168,7 @@ const Profile = () => {
                   }}
                 >
                   Update
-                </button>
+</button>
               </div>
             </div>
             <UpdateProfile

@@ -37,11 +37,14 @@ const NavSupplier = () => {
         <div className="list-choose pt-10 px-4 pb-6">
           <ul className="pl-0">
             <div className="py-2">
-              <li className="flex items-center pb-10 pl-3">
+           
+              <li className="flex items-center pb-4 ">
+              <Link className={`flex no-underline  nav-i-hover py-2 pl-3 pr-32 ${pathname === "/supplier/dashboard" ? "active-link" : ""} `} href="/supplier/dashboard">
                 <img className="w-7 h-7 " src="/image/darhboard.png" alt="" />
                 <span className="text-white ml-2 text-xl font-semibold">
                   Dashboard
                 </span>
+                </Link>
               </li>
             </div>
 
@@ -50,7 +53,7 @@ const NavSupplier = () => {
                 <>
                   <li className="flex items-center pb-10 hotel-room">
                     <Link
-                      className={`flex no-underline  nav-i-hover py-2 pl-3 pr-40 ${
+                      className={`flex no-underline  nav-i-hover py-2 pl-3 pr-32 ${
                         pathname === "/supplier/hotel" ? "active-link" : ""
                       } `}
                       href="/supplier/hotel"
@@ -63,7 +66,7 @@ const NavSupplier = () => {
                   </li>
                   <li className="flex items-center pb-10 ">
                     <Link
-                      className={`flex no-underline  nav-i-hover py-2 pl-3 pr-40 ${
+                      className={`flex no-underline  nav-i-hover py-2 pl-3 pr-32 ${
                         pathname === "/supplier/staff" ? "active-link" : ""
                       } `}
                       href="/supplier/staff"
@@ -79,7 +82,7 @@ const NavSupplier = () => {
             </div>
             <li className="flex items-center pb-10">
               <Link
-                className={`flex no-underline nav-i-hover py-2 pl-3 pr-40 ${
+                className={`flex no-underline nav-i-hover py-2 pl-3 pr-32 ${
                   pathname === "/supplier/tour" ? "active-link" : ""
                 }`}
                 href="/supplier/tour"
@@ -92,7 +95,7 @@ const NavSupplier = () => {
             </li>
             <li className="flex items-center pb-10 ">
               <Link
-                className={`flex no-underline  nav-i-hover py-2 pl-3 pr-40 ${
+                className={`flex no-underline  nav-i-hover py-2 pl-3 pr-16 ${
                   pathname === "/supplier/roombooking" ? "active-link" : ""
                 } `}
                 href="/supplier/roombooking"
@@ -106,7 +109,7 @@ const NavSupplier = () => {
 
             <li className="flex items-center pb-10 ">
               <Link
-                className={`flex no-underline  nav-i-hover py-2 pl-3 pr-40 ${
+                className={`flex no-underline  nav-i-hover py-2 pl-3 pr-20 ${
                   pathname === "/supplier/tourbooking" ? "active-link" : ""
                 } `}
                 href="/supplier/tourbooking"
@@ -119,31 +122,7 @@ const NavSupplier = () => {
             </li>
           </ul>
         </div>
-        {/* <div className="border-t-2">
-          {role === "supplier" ? (
-            <Link
-              href="/"
-              className="bottom-logout flex justify-center items-center  no-underline text-white pt-3"
-              onClick={handleLogoutSupplier}
-            >
-              <img className="w-7 h-7" src="/image/out.png" alt="" />
-              <p className="color-white mb-0 ml-1 font-semibold text-xl">
-                Log out
-              </p>
-            </Link>
-          ) : (
-            <Link
-              href="/"
-              className="bottom-logout flex justify-center items-center  no-underline text-white pt-3"
-              onClick={handleLogoutStaff}
-            >
-              <img className="w-7 h-7" src="/image/out.png" alt="" />
-              <p className="color-white mb-0 ml-1 font-semibold text-xl">
-                Log out
-              </p>
-            </Link>
-          )}
-        </div> */}
+    
       </header>
     </div>
   );

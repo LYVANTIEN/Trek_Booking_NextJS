@@ -84,7 +84,7 @@ const ChangePassword = () => {
                 <div style={{ marginTop: "20px", marginBottom: "20px" }}>
                   <div className="flex justify-center flex-wrap">
                     <img
-                      className="w-[70px] h-[70px] cursor-pointer m-2 rounded-full object-cover"
+className="w-[70px] h-[70px] cursor-pointer m-2 rounded-full object-cover"
                       src={avatar ? avatar : "/image/usersupplier.png"}
                       alt="Avatar"
                       onError={(e) => {
@@ -98,16 +98,16 @@ const ChangePassword = () => {
                 <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
 
                 <div
-                  className="mb-3 col-6"
+                  className="mb-3 row"
                   style={{
                     display: "flex",
                     marginTop: "20px",
                   }}
                 >
-                  <div className="col-md-5">
+                  <div className="col-4">
                     <label className="font-bold text-xl">Supplier Name</label>
                   </div>
-                  <div className="flex-1">
+                  <div className="col-8">
                     <label className="font-bold text-xl text-gray-400">
                       {supplierName}
                     </label>
@@ -115,15 +115,15 @@ const ChangePassword = () => {
                 </div>
                 <div style={{ borderBottom: "1px solid #D2D2D2" }}></div>
                 <div
-                  className="mb-3 col-6"
+                  className="mb-3 row"
                   style={{ display: "flex", marginTop: "20px" }}
                 >
-                  <div className="col-md-5">
+                  <div className="col-4">
                     <label className="font-bold text-xl">Password</label>
                   </div>
-                  <div className="flex-1">
+                  <div className="col-8">
                     <label className="font-bold text-xl text-gray-400">
-                      {maskPassword(password)}
+                       ******
                     </label>
                   </div>
                 </div>

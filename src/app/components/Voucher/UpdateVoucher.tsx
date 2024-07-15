@@ -277,6 +277,7 @@ function UpdateVoucher(props: IProps) {
               <Form.Group className="mb-3">
                 <Form.Label>Available Date</Form.Label>
                 <Form.Control
+                  readOnly
                   type="date"
                   value={availableDate}
                   min={getTodayDate().split("-").reverse().join("-")}

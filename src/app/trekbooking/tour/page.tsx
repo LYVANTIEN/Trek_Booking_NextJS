@@ -7,7 +7,7 @@ import useSWR, { mutate } from "swr";
 import tourService from "@/app/services/tourService";
 import Link from "next/link";
 import "../../../../public/css/styles.css";
-
+import { Oval } from "react-loader-spinner"; // Import spinner
 const fetchTourImages = async (
   tourList: ITour[],
   setTourImages: (images: { [key: number]: string }) => void
@@ -57,7 +57,20 @@ const TourList = () => {
   }, [tourList]);
 
   if (!tourList) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Oval
+          height={80}
+          width={80}
+          color="#305A61"
+          visible={true}
+          ariaLabel="oval-loading"
+          secondaryColor="#4f9a94"
+          strokeWidth={2}
+          strokeWidthSecondary={2}
+        />
+      </div>
+    );
   }
 
   if (error) {

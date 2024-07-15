@@ -7,9 +7,10 @@ import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 import authenticateService from "../services/authenticateService";
 import { toast } from "react-toastify";
-import router from "next/router";
+
 import useSWR from "swr";
 import supplierService from "../services/supplierService";
+import { useRouter } from "../../../node_modules/next/navigation";
 interface HeaderSupplierProps {
   title: string;
 }
@@ -36,8 +37,6 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
     currentTitle = "STAFF";
   } else if (pathname === "/supplier/profile") {
     currentTitle = "PROFILE";
-  } else if (pathname === "/supplier/password") {
-    currentTitle = "CHANGE PASSWORD";
   } else if (pathname.match(/^\/supplier\/hotel\/voucher\/\d+$/)) {
     currentTitle = "VOUCHER";
   } else if (pathname === "/supplier/roombooking") {
@@ -69,7 +68,7 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
     const roleName = Cookies.get("roleName") || ""; // Thêm giá trị mặc định là chuỗi rỗng nếu roleName là undefined
     setRole(roleName);
   }, []);
-
+ const router = useRouter();
   const handleLogoutSupplier = async () => {
     await authenticateService.logOutSupplier();
     toast.success("Logout Success..");
@@ -81,7 +80,7 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
     router.push("/login_supplier_staff");
   };
   return (
-    <div className="fix-border flex justify-between ml-96 p-8 pr-11">
+    <div className="fix-border flex justify-between ml-72 p-8 pr-11 items-center">
       <div
         className={`overlay ${isDivVisible ? "show" : ""}`}
         onClick={handleMenuClick}
@@ -91,7 +90,7 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
         style={{ float: "right", fontSize: "22px" }}
         onClick={handleMenuClick}
       />
-      <span className="ml-4 color-black font-semibold text-2xl">
+      <span className="ml-4 color-black font-semibold text-2xl fix-title-400">
         {currentTitle}
       </span>
 
@@ -107,11 +106,7 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
               <div className="flex">
                 <div className="flex items-center relative z-2 color-mess">
                   <img
-                    src={
-                      supplier.avatar
-                        ? supplier.avatar
-                        : "/image/usersupplier.png"
-                    }
+                    src={supplier.avatar ? supplier.avatar : "/image/usersupplier.png"}
                     alt=""
                     className="h-7 w-7 rounded-full cursor-pointer m-2 object-cover"
                   />
@@ -164,7 +159,8 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
             <div className="list-choose pt-10 px-4 pb-14">
               <ul className="pl-0">
                 <div className="py-2">
-                  <li className="flex items-center pb-6 pl-3">
+                  <li className="flex items-center pb-3">
+                  <Link className={`flex no-underline  nav-i-hover py-2 pl-3 pr-32 ${pathname === "/supplier/dashboard" ? "active-link" : ""} `} href="/supplier/dashboard">
                     <img
                       className="w-7 h-7"
                       src="/image/darhboard.png"
@@ -173,6 +169,7 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
                     <span className="text-white ml-2 text-xl font-semibold">
                       Dashboard
                     </span>
+                    </Link>
                   </li>
                 </div>
                 <li className="flex items-center pb-6">
@@ -253,7 +250,7 @@ const HeaderSupplier: React.FC<HeaderSupplierProps> = ({ title }) => {
                   </Link>
                 </li>
               </ul>
-            </div>
+            </div>            
           </header>
         </div>
       )}

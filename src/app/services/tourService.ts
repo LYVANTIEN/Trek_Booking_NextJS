@@ -8,9 +8,37 @@ interface ITourService {
   getTourImageByTourId(tourId: number): Promise<ITourImage[]>;
   getTourById(tourId: number): Promise<ITour>;
   getTours(): Promise<any[]>;
+
+  searchTourByAddress(address: string): Promise<ITour[]>;
 }
 
 export const tourService: ITourService = {
+//search tour
+async searchTourByAddress(address: string): Promise<ITour[]> {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/searchTourByAddress?address=${encodeURIComponent(address)}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("tokenUser")}`,
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch Tours");
+    }
+    const data: ITour[] = await response.json();
+    return data;
+  } 
+  catch (error) {
+    console.error("Error fetching hotel details:", error);
+    throw error;
+  }
+},
+
   async getTours() {
     try {
       const response = await fetch(`${BASE_URL}/getTours`, {

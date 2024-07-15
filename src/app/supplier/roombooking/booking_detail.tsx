@@ -90,6 +90,21 @@ const BookingDetail = (props: IProps) => {
                 <Form.Label className="font-bold text-xl">Full Name</Form.Label>
                 <p>{fullName}</p>
               </Form.Group>
+              <Form.Group className="mb-3 col-6" controlId="totalPrice">
+                <Form.Label className="font-bold text-xl">
+                  Total Price
+                </Form.Label>
+                <p>${totalPrice}</p>
+              </Form.Group>
+              <Form.Group className="mb-3 col-6" controlId="Full Name">
+                <Form.Label className="font-bold text-xl">Email</Form.Label>
+                <p>{email}</p>
+              </Form.Group>
+              <Form.Group className="mb-3 col-6" controlId="Full Name">
+                <Form.Label className="font-bold text-xl">Phone</Form.Label>
+                <p>{phone}</p>
+              </Form.Group>
+              
               <Form.Group className="mb-3 col-6" controlId="hotelName">
                 <Form.Label className="font-bold text-xl">
                   Hotel Name
@@ -112,12 +127,7 @@ const BookingDetail = (props: IProps) => {
                 </Form.Label>
                 <p>{new Date(checkOutDate).toLocaleDateString()}</p>
               </Form.Group>
-              <Form.Group className="mb-3 col-6" controlId="totalPrice">
-                <Form.Label className="font-bold text-xl">
-                  Total Price
-                </Form.Label>
-                <p>{totalPrice}</p>
-              </Form.Group>
+              
               <Form.Group className="mb-3 col-6" controlId="roomQuantity">
                 <Form.Label className="font-bold text-xl">
                   Room Quantity

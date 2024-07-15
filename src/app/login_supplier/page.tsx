@@ -35,10 +35,7 @@ function LoginSupplier() {
     const result = await authenticateService.loginSupplier(email, password);
 
     if (result.success) {
-      toast.success("Login Successful!..");
-      setTimeout(() => {
         router.push("/supplier");
-      }, 2000);
     } else {
       setErrorMessage(result.errorMessage || "An unknown error occurred.");
     }

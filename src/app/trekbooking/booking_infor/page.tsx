@@ -24,7 +24,7 @@ const formatRoomDescription = (description: string) => {
 };
 
 const BookingInfo = () => {
-    const successUrl = 'http://localhost:3000/trekbooking';
+    // const successUrl = 'http://localhost:3000/trekbooking';
     const [bookingCart, setBookingCart] = useState<BookingCartItem[]>([]);
     const [roomDetails, setRoomDetails] = useState<IRoom | null>(null);
     const [hotelDetails, setHotelDetails] = useState<IHotel | null>(null);
@@ -108,7 +108,8 @@ const fetchedVouchers = await voucherService.getVouchersByHotelId(hotelId);
               requirement: requirement,
               process: "Pending",
               completed: false,
-              supplierId: hotelDetails?.supplierId
+              supplierId: hotelDetails?.supplierId,
+              voucherCode: selectedVoucher ? selectedVoucher.voucherCode : null ,
             },
             orderDetails: bookingCart.map(cartItem => ({
               roomId: cartItem.roomId,
@@ -121,7 +122,7 @@ const fetchedVouchers = await voucherService.getVouchersByHotelId(hotelId);
 
             })),
           },
-          successUrl: '', // Thay thế bằng URL thành công thực tế của bạn
+          successUrl: 'trekbooking/booking_history', // Thay thế bằng URL thành công thực tế của bạn
           cancelUrl: 'trekbooking/booking_cart', // Thay thế bằng URL hủy thực tế của bạn
         };
         const bookingData = {
@@ -133,7 +134,7 @@ const fetchedVouchers = await voucherService.getVouchersByHotelId(hotelId);
             checkOutDate: item?.checkOutDate,
             totalPrice: finalTotalPrice,
             roomQuantity: item.roomQuantity,
-            voucherCode: "string", // Thay thế bằng mã voucher nếu có
+            voucherCode: selectedVoucher ? selectedVoucher.voucherCode : null ,
             userNote: requirement, // Sử dụng ghi chú của người dùng nếu có
             status: true,
 isConfirmed: true,

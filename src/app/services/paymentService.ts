@@ -67,6 +67,35 @@ const createBooking = async (bookingData: any) => {
   }
 };
 
+const createTourOrder = async (bookingData: any) => {
+  try {
+    const response = await fetch(`${BASE_URL}/createTourOrder`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${Cookies.get("tokenUser")}` // Thêm token nếu cần thiết
+      },
+      body: JSON.stringify(bookingData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create booking');
+    }
+
+    // Kiểm tra nếu phản hồi không phải JSON
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return await response.json();
+    } else {
+      return await response.text(); // Nếu không phải JSON, trả về văn bản
+    }
+
+  } catch (error) {
+    console.error('Error creating booking:', error);
+    throw error;
+  }
+};
+
 const handleTourPayment = async (paymentData: any) => {
   try {
     const response = await fetch(`${BASE_URL}/StripePayment/CreateTour`, {
@@ -135,6 +164,7 @@ const clearCart = async (roomId: number) => {
 export default {
   handlePayment,
   createBooking,
+  createTourOrder,
   handleTourPayment,
   clearCart
 };

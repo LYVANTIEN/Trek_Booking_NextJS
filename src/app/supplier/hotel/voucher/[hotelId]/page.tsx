@@ -11,6 +11,7 @@ import UpdateVoucher from "@/app/components/Voucher/UpdateVoucher";
 import { toast } from "react-toastify";
 import { Button } from "react-bootstrap";
 import "../../../../../../public/css/voucher.css";
+import "../../../../../../public/css/room.css";
 const ListVoucher = ({ params }: { params: { hotelId: string } }) => {
   const [showVoucherCreate, setShowVoucherCreate] = useState<boolean>(false);
   const [showVoucherUpdate, setShowVoucherUpdate] = useState<boolean>(false);
@@ -178,7 +179,7 @@ const ListVoucher = ({ params }: { params: { hotelId: string } }) => {
           <img src="/image/search.png" alt="" />
         </div>
         <button
-          className="ml-8 button-add ml-4rem"
+          className="ml-8 button-add relative z-10"
           onClick={() => setShowVoucherCreate(true)}
         >
           + Add voucher

@@ -33,7 +33,7 @@ function UpdateTour(props: IProps) {
     } else {
       parsedDate = new Date(time);
     }
-    // parsedDate.setDate(parsedDate.getDate() + 1); // Cộng thêm một ngày
+     parsedDate.setDate(parsedDate.getDate() + 1); // Cộng thêm một ngày
     setTourTime(parsedDate.toISOString().split("T")[0]); // Định dạng ngày thành yyyy-MM-dd
   };
   useEffect(() => {
@@ -167,11 +167,14 @@ function UpdateTour(props: IProps) {
 
   const validateTourTime = (tourTime: string) => {
     if (!tourTime) return "Tour Time is required";
-    const today = getTodayDate().split("-").reverse().join("-");
-    if (tourTime < today) return "Tour Time cannot be in the past";
+    
+    const tourDate = tourTime.split(' ')[0]; // Assuming tourTime is in the format "YYYY-MM-DD HH:MM"
+    const today = getTodayDate(); // Assuming getTodayDate() returns the date in "YYYY-MM-DD" format
+  
+    if (tourDate < today) return "Tour Time cannot be in the past";
+  
     return "";
   };
-
   const validateTourTransportation = (tourTransportation: string) => {
     if (!tourTransportation) return "Tour Transportation is required";
     return "";

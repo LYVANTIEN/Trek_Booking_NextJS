@@ -14,7 +14,6 @@ export default function layout({
     <div>
    
           <NavSupplier />
-          {/* <ToastContainer/> */}
           {children}
           <HeaderSupplier title="Pages"/>
     </div>

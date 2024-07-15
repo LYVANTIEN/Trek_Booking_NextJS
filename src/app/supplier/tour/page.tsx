@@ -57,9 +57,9 @@ import DetailTour from "@/app/components/Tours/DetailTour";
   const toggleTour = async (userId:number) => {
     setLoading(true);
     try {
-      await toggleTourStatus(userId);
-      setShowPopup(false);
-      mutate(revalidateTours);
+      // await toggleTourStatus(userId);
+      // setShowPopup(false);
+      // mutate(revalidateTours);
       toast.success("Success");
     } catch (error: any) {
       console.error(error.message);
@@ -91,7 +91,7 @@ import DetailTour from "@/app/components/Tours/DetailTour";
           <img src="/image/search.png" alt="" />
         </div>
         <button
-          className="ml-8 button-add ml-4rem"
+          className="ml-8 button-add relative z-10"
           onClick={() => setShowTourCreate(true)}
         >
           + Add tour
@@ -121,9 +121,9 @@ import DetailTour from "@/app/components/Tours/DetailTour";
                       <th scope="col" className="px-6 py-4 text-center">
                         Manage Image
                       </th>
-                      <th scope="col" className="px-6 py-4">
+                      {/* <th scope="col" className="px-6 py-4">
                         Status
-                      </th>
+                      </th> */}
                       <th scope="col" className="px-6 py-4">
                         Action
                       </th>
@@ -175,13 +175,13 @@ import DetailTour from "@/app/components/Tours/DetailTour";
                                 />
                               </Link>
                             </td>
-                            <td
+                            {/* <td
                               className={`whitespace-nowrap px-6 py-4 ${
                                 item.status ? "color-active" : "color-stop"
                               }`}
                             >
                               {item.status ? "Active" : "Stopped"}
-                            </td>
+                            </td> */}
                             <td className="whitespace-nowrap px-6 py-4 flex justify-center">
                             
                                 <img
@@ -191,7 +191,7 @@ import DetailTour from "@/app/components/Tours/DetailTour";
                                   onClick={() => {setTour(item); setShowTourUpdate(true);}}
                                    />
                            
-                              <img
+                              {/* <img
                                 className="w-5 h-5 cursor-pointer ml-3"
                                 onClick={() => handleImageClick(item)}
                                 src={
@@ -201,7 +201,7 @@ import DetailTour from "@/app/components/Tours/DetailTour";
                                 }
                                 alt={item.status ? "Ban" : "Unban"}
                                 // onClick={() => handleDeleteTour(item.tourId)}
-                              />
+                              /> */}
                               {showPopup &&
                                 selectedTour?.tourId === item.tourId && (
                                   <div className="fixed inset-0 z-10 flex items-center justify-center ">
