@@ -1,5 +1,6 @@
 "use client";
-import tourOrderService from "@/app/services/tourOrderService";
+import orderTourHeaderService from "@/app/services/orderTourHeaderService";
+import supplierService from "@/app/services/supplierService";
 import tourService from "@/app/services/tourService";
 import userService from "@/app/services/userService";
 
@@ -7,44 +8,71 @@ import { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 import useSWR, { mutate } from "swr";
+import { format } from "date-fns";
 
 interface IProps {
   showModalEditTourOrder: boolean;
   setShowModalEditTourOrder: (value: boolean) => void;
-  tourOrder: ITourOrder | null;
-  setTourOrder: (value: ITourOrder | null) => void;
+  orderTourHeader: IOrderTourHeader | null;
+  setOrderTourHeader: (value: IOrderTourHeader[]) => void;
+  orderTourDetail: IOrderTourDetail | null;
+  setOrderTourDetail: (value: IOrderTourDetail) => void;
 }
 
 const UpdateTourOrder = (props: IProps) => {
-  const { showModalEditTourOrder, setShowModalEditTourOrder, tourOrder, setTourOrder } =
-    props;
-  const [tourOrderId, seTourOrderId] = useState<number>(0);
+  const [supplierId, setSupplierId] = useState<number | null>(null);
+  useEffect(() => {
+    const fetchSupplierId = async () => {
+      try {
+        const supplier = await supplierService.getSupplierById();
+        setSupplierId(supplier.supplierId);
+      } catch (error) {
+        toast.error("Failed to fetch supplier ID");
+      }
+    };
+    fetchSupplierId();
+  }, []);
+  const {
+    showModalEditTourOrder,
+    setShowModalEditTourOrder,
+    orderTourHeader,
+    setOrderTourHeader,
+    orderTourDetail,
+    setOrderTourDetail,
+  } = props;
+  const [orderTourHeaderId, setOrderTourHeaderId] = useState<number>(0);
   const [userId, setUserId] = useState<number>(0);
   const [tourId, setTourId] = useState<number>(0);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   const [tourOrderQuantity, setTourOrderQuantity] = useState<number>(0);
-  const [tourOrderDate, setTourOrderDate] = useState<string | Date>("");
   const [tourTotalPrice, setTourTotalPrice] = useState<number>(0);
-  const [supplierId, setSupplierId] = useState<number>(0);
-  const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
-  const [status, setStatus] = useState<boolean>(false);
+  const [tourOrderDate, setTourOrderDate] = useState<string | Date>("");
+  const [tourName, setTourName] = useState<string>("");
+  const [fullName, setFullName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [process, setProcess] = useState<string>("");
+  const [completed, setCompleted] = useState<boolean>(false);
 
   useEffect(() => {
-    if (tourOrder) {
-    seTourOrderId(tourOrder.tourOrderId);
-      setUserId(tourOrder.userId);
-      setTourId(tourOrder.tourId);
-      setTourOrderQuantity(tourOrder.tourOrderQuantity);
-      setTourOrderDate(tourOrder.tourOrderDate);
-      setTourTotalPrice(tourOrder.tourTotalPrice);
-      setSupplierId(tourOrder.supplierId);
-      setIsConfirmed(tourOrder.isConfirmed);
-      setStatus(tourOrder.status);
+    if (orderTourHeader && orderTourDetail) {
+      setOrderTourHeaderId(orderTourHeader.id);
+      setUserId(orderTourHeader.userId);
+      setTourId(orderTourDetail.tourId);
+      setTotalPrice(orderTourHeader.totalPrice);
+      setTourOrderQuantity(orderTourDetail.tourOrderQuantity);
+      setTourOrderDate(orderTourHeader.tourOrderDate);
+      setTourTotalPrice(orderTourDetail.tourTotalPrice);
+      setTourName(orderTourDetail.tourName);
+      setFullName(orderTourHeader.fullName);
+      setEmail(orderTourHeader.email);
+      setPhone(orderTourHeader.phone);
+      setProcess(orderTourHeader.process);
+      setCompleted(orderTourHeader.completed);
     }
-  }, [tourOrder]);
-  //   console.log(booking)
+  }, [orderTourHeader, orderTourDetail]);
   const { data: listTour } = useSWR("tourList", tourService.getTours);
   const { data: listUser } = useSWR("userList", userService.getUsers);
-  //   console.log(listUser);
   const handleCloseModal = () => {
     setShowModalEditTourOrder(false);
   };
@@ -59,23 +87,16 @@ const UpdateTourOrder = (props: IProps) => {
   };
   const handleSubmit = async () => {
     try {
-      const response = await tourOrderService.updateTourOrder({
-        tourOrderId,
-        userId,
-        tourId,
-        tourOrderDate,
-        tourOrderQuantity,
-        tourTotalPrice,
-        supplierId,
-        status,
-        isConfirmed,
+      const response = await orderTourHeaderService.updateOrderTourHeader({
+        id: orderTourHeaderId,
+        process,
       });
       if (typeof response === "string") {
         toast.success(response);
       } else {
         toast.success("Update tour order Success");
-        mutate("tourOrderList");
       }
+      mutate("orderTourData");
       handleCloseModal();
     } catch (error) {
       toast.error("Update Error");
@@ -83,7 +104,7 @@ const UpdateTourOrder = (props: IProps) => {
     }
   };
 
-  if (!tourOrder) {
+  if (!orderTourHeader) {
     return null; // or a loading indicator if needed
   }
 
@@ -95,9 +116,9 @@ const UpdateTourOrder = (props: IProps) => {
         keyboard={false}
         size="lg"
       >
-        {/* <Modal.Header closeButton>
-          <Modal.Title>Edit booking</Modal.Title>
-        </Modal.Header> */}
+        <Modal.Header closeButton>
+          <Modal.Title>Update Tour Booking</Modal.Title>
+        </Modal.Header>
         <Modal.Body>
           <Form>
             <div className="row">
@@ -115,7 +136,7 @@ const UpdateTourOrder = (props: IProps) => {
 
                 <Form.Group className="mb-3">
                   <Form.Label className="font-semibold">
-                    Check-in Date
+                    Tour Order Date
                   </Form.Label>
                   <Form.Control
                     readOnly
@@ -124,7 +145,7 @@ const UpdateTourOrder = (props: IProps) => {
                     type="date"
                     value={
                       tourOrderDate
-                        ? new Date(tourOrderDate).toISOString().substr(0, 10)
+                        ? format(new Date(tourOrderDate), "yyyy-MM-dd")
                         : ""
                     }
                     onChange={(e) => setTourOrderDate(e.target.value)}
@@ -154,43 +175,37 @@ const UpdateTourOrder = (props: IProps) => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label className="font-semibold">Tour Quantity</Form.Label>
+                  <Form.Label className="font-semibold">
+                    Tour Quantity
+                  </Form.Label>
                   <Form.Control
                     readOnly
                     style={{ backgroundColor: "#CED1D2" }}
                     type="number"
                     className="font-semibold"
                     value={tourOrderQuantity}
-                    onChange={(e) => setTourOrderQuantity(Number(e.target.value))}
+                    onChange={(e) =>
+                      setTourOrderQuantity(Number(e.target.value))
+                    }
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label className="font-semibold">
-                    Is Confirmed
-                  </Form.Label>
+                  <Form.Label className="font-semibold">Process</Form.Label>
                   <Form.Control
-                    className={isConfirmed ? "color-active" : "color-stop"}
-                    as="select"
-                    value={isConfirmed ? "confirmed" : "not confirmed"}
-                    onChange={(e) =>
-                      setIsConfirmed(e.target.value === "confirmed")
+                    className={
+                      process === "Paid" ? "color-paid" : "color-active"
                     }
+                    as="select"
+                    value={process}
+                    onChange={(e) => setProcess(e.target.value)}
                   >
-                    <option className="color-active" value="confirmed">
-                      Confirmed
+                    <option className="color-paid" value="Paid">
+                      Paid
                     </option>
-                    <option className="color-stop" value="not confirmed">
-                      Pending...
+                    <option className="color-active" value="Success">
+                      Success
                     </option>
                   </Form.Control>
-                </Form.Group>
-                <Form.Group className="mb-3 hidden">
-                  <Form.Label>Status</Form.Label>
-                  <Form.Check
-                    type="checkbox"
-                    checked={status}
-                    onChange={(e) => setStatus(e.target.checked)}
-                  />
                 </Form.Group>
               </div>
             </div>

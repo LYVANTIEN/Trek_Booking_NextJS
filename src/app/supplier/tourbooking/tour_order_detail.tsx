@@ -105,10 +105,10 @@ const TourOrderDetail = (props: IProps) => {
                 <Form.Label className="font-bold text-xl">Process</Form.Label>
                 <p
                   className={`whitespace-nowrap ${
-                    process ? "color-active" : "color-stop"
+                    process === "Paid" ? "color-paid" : "color-active"
                   }`}
                 >
-                  {process ? "Success" : "Pending..."}
+                  {process}
                 </p>
               </Form.Group>
             </div>

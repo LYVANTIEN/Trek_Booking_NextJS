@@ -104,7 +104,7 @@ const BookingDetail = (props: IProps) => {
                 <Form.Label className="font-bold text-xl">Phone</Form.Label>
                 <p>{phone}</p>
               </Form.Group>
-              
+
               <Form.Group className="mb-3 col-6" controlId="hotelName">
                 <Form.Label className="font-bold text-xl">
                   Hotel Name
@@ -127,7 +127,7 @@ const BookingDetail = (props: IProps) => {
                 </Form.Label>
                 <p>{new Date(checkOutDate).toLocaleDateString()}</p>
               </Form.Group>
-              
+
               <Form.Group className="mb-3 col-6" controlId="roomQuantity">
                 <Form.Label className="font-bold text-xl">
                   Room Quantity
@@ -150,10 +150,10 @@ const BookingDetail = (props: IProps) => {
                 <Form.Label className="font-bold text-xl">Process</Form.Label>
                 <p
                   className={`whitespace-nowrap ${
-                    process ? "color-active" : "color-stop"
+                    process === "Paid" ? "color-paid" : "color-active"
                   }`}
                 >
-                  {process ? "Success" : "Pending..."}
+                  {process}
                 </p>
               </Form.Group>
             </div>

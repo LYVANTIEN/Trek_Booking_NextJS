@@ -1,5 +1,4 @@
 "use client";
-import bookingService from "@/app/services/bookingService";
 import hotelService from "@/app/services/hotelService";
 import orderHotelHeaderService from "@/app/services/orderHotelHeaderService";
 import roomService from "@/app/services/roomService";
@@ -9,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 import useSWR, { mutate } from "swr";
+import { format } from "date-fns";
 
 interface IProps {
   showModalEditBooking: boolean;
@@ -17,8 +17,6 @@ interface IProps {
   setOrderHotelHeader: (value: IOrderHotelHeader[]) => void;
   orderHotelDetail: IOrderHotelDetail | null;
   setOrderHotelDetail: (value: IOrderHotelDetail) => void;
-  // booking: IBooking | null;
-  // setBooking: (value: IBooking | null) => void;
 }
 
 const UpdateBooking = (props: IProps) => {
@@ -42,7 +40,7 @@ const UpdateBooking = (props: IProps) => {
     orderHotelDetail,
     setOrderHotelDetail,
   } = props;
-  const [orderHotelHeaderlId, setOrderHotelHeaderId] = useState<number>(0);
+  const [orderHotelHeaderId, setOrderHotelHeaderId] = useState<number>(0);
   const [userId, setUserId] = useState<number>(0);
   const [hotelId, setHotelId] = useState<number>(0);
   const [roomId, setRoomId] = useState<number>(0);
@@ -95,14 +93,15 @@ const UpdateBooking = (props: IProps) => {
   const handleSubmit = async () => {
     try {
       const response = await orderHotelHeaderService.updateOrderHotelHeader({
-        completed,
+        id: orderHotelHeaderId,
+        process,
       });
       if (typeof response === "string") {
         toast.success(response);
       } else {
         toast.success("Update booking Success");
-        mutate("bookingList");
       }
+      mutate("orderHotelData");
       handleCloseModal();
     } catch (error) {
       toast.error("Update Error");
@@ -122,9 +121,9 @@ const UpdateBooking = (props: IProps) => {
         keyboard={false}
         size="lg"
       >
-        {/* <Modal.Header closeButton>
-          <Modal.Title>Edit booking</Modal.Title>
-        </Modal.Header> */}
+        <Modal.Header closeButton>
+          <Modal.Title>Update Booking</Modal.Title>
+        </Modal.Header>
         <Modal.Body>
           <Form>
             <div className="row">
@@ -151,7 +150,7 @@ const UpdateBooking = (props: IProps) => {
                     type="date"
                     value={
                       checkInDate
-                        ? new Date(checkInDate).toISOString().substr(0, 10)
+                        ? format(new Date(checkInDate), "yyyy-MM-dd")
                         : ""
                     }
                     onChange={(e) => setCheckInDate(e.target.value)}
@@ -168,7 +167,7 @@ const UpdateBooking = (props: IProps) => {
                     type="date"
                     value={
                       checkOutDate
-                        ? new Date(checkOutDate).toISOString().substr(0, 10)
+                        ? format(new Date(checkOutDate), "yyyy-MM-dd")
                         : ""
                     }
                     onChange={(e) => setCheckOutDate(e.target.value)}
@@ -187,17 +186,6 @@ const UpdateBooking = (props: IProps) => {
                     onChange={(e) => setVoucherCode(e.target.value)}
                   />
                 </Form.Group>
-                {/* <Form.Group className="mb-3">
-                  <Form.Label className="font-semibold">User Note</Form.Label>
-                  <Form.Control
-                    readOnly
-                    style={{ backgroundColor: "#CED1D2" }}
-                    className="font-semibold"
-                    as="textarea"
-                    value={userNote}
-                    onChange={(e) => setUserNote(e.target.value)}
-                  />
-                </Form.Group> */}
               </div>
               <div className="col-6">
                 <Form.Group className="mb-3">
@@ -234,6 +222,8 @@ const UpdateBooking = (props: IProps) => {
                     className="font-semibold"
                     value={totalPrice}
                     onChange={(e) => setTotalPrice(Number(e.target.value))}
+                    placeholder="Total Price"
+                    title="Total Price"
                   />
                 </Form.Group>
 
@@ -253,16 +243,18 @@ const UpdateBooking = (props: IProps) => {
                 <Form.Group className="mb-3">
                   <Form.Label className="font-semibold">Process</Form.Label>
                   <Form.Control
-                    className={process ? "color-active" : "color-stop"}
+                    className={
+                      process === "Paid" ? "color-paid" : "color-active"
+                    }
                     as="select"
-                    value={process ? "success" : "pending"}
-                    onChange={(e) => setCompleted(e.target.value === "success")}
+                    value={process}
+                    onChange={(e) => setProcess(e.target.value)}
                   >
-                    <option className="color-active" value="success">
-                      Success
+                    <option className="color-paid" value="Paid">
+                      Paid
                     </option>
-                    <option className="color-stop" value="pending">
-                      Pending...
+                    <option className="color-active" value="Success">
+                      Success
                     </option>
                   </Form.Control>
                 </Form.Group>

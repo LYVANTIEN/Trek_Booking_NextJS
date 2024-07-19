@@ -1,5 +1,5 @@
-import Cookies from 'js-cookie';
-import BASE_URL from './apiService';
+import Cookies from "js-cookie";
+import BASE_URL from "./apiService";
 
 interface IOrderHotelHeaderService {
   getOrderHotelHeaderByUserId(): Promise<IOrderHotelHeader[]>;
@@ -12,27 +12,28 @@ interface IOrderHotelHeaderService {
   getCurrentWeekRevenueHotelBySupplierId(): Promise<IWeeklyRevenue>;
   getCurrentMonthOfYearRevenueHotelBySupplierId(): Promise<IMonthlyRevenue>;
   getCurrentQuarterOfYearRevenueHotelBySupplierId(): Promise<IQuarterlyRevenue>;
+  updateOrderHotelHeader(orderHotelHeader: {
+    id: number;
+    process: string;
+  }): Promise<IOrderHotelHeader[]>;
 }
 
 const orderHotelHeaderService: IOrderHotelHeaderService = {
   async getOrderHotelHeaderByUserId() {
     try {
-      const response = await fetch(
-        `${BASE_URL}/getOrderHotelHeaderByUserId`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenUser")}`, // Retrieve token from localStorage
-          },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/getOrderHotelHeaderByUserId`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("tokenUser")}`, // Retrieve token from localStorage
+        },
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-    
+
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
@@ -42,7 +43,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
   async getOrderHotelHeaderBySupplierId() {
     try {
       const response = await fetch(
-        `${BASE_URL}/getOrderHotelHeaderBySupplierId`,
+        `https://localhost:7132/getOrderHotelHeaderBySupplierId`,
         {
           method: "GET",
           headers: {
@@ -56,8 +57,38 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-     
+
       return data;
+    } catch (error) {
+      console.error("Error fetching order hotel headers:", error);
+      throw error;
+    }
+  },
+  async updateOrderHotelHeader(orderHotelHeader) {
+    try {
+      const response = await fetch(
+        `https://localhost:7132/updateOrderHotelHeader`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+          },
+          body: JSON.stringify(orderHotelHeader),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch order hotel headers");
+      }
+
+      const responseData = await response.json();
+
+      if (!responseData.data) {
+        throw new Error("Empty response data from server");
+      }
+
+      return responseData.data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
       throw error;
@@ -65,22 +96,19 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
   },
   async getRevenueYearBySupplierId() {
     try {
-      const response = await fetch(
-        `${BASE_URL}/getRevenueYearBySupplierId`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
-          },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/getRevenueYearBySupplierId`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+        },
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-     
+
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
@@ -110,33 +138,29 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
       throw error;
     }
   },
-  
-  
+
   async getPercentChangeFromLastWeek() {
     try {
-      const response = await fetch(
-        `${BASE_URL}/getPercentChangeFromLastWeek`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
-          },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/getPercentChangeFromLastWeek`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("tokenSupplier")}`, // Retrieve token from localStorage
+        },
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-    
+
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
       throw error;
     }
   },
-  
+
   async getTotalRevenueHotelBySupplierId() {
     try {
       const response = await fetch(
@@ -161,7 +185,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
       throw error;
     }
   },
-  
+
   async getPercentChangeRevenueFromLastWeek() {
     try {
       const response = await fetch(
@@ -179,7 +203,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-    
+
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
@@ -204,7 +228,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-    
+
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
@@ -228,7 +252,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-    
+
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
@@ -252,7 +276,7 @@ const orderHotelHeaderService: IOrderHotelHeaderService = {
         throw new Error("Failed to fetch order hotel headers");
       }
       const data = await response.json();
-    
+
       return data;
     } catch (error) {
       console.error("Error fetching order hotel headers:", error);
