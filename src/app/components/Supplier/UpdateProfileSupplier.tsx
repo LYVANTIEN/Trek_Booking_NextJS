@@ -48,6 +48,9 @@ function UpdateProfileSupplier(props: IProps) {
   const [address, setAddress] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [roleId, setRoleId] = useState<number>();
+  const [bankName, setBankName] = useState<string>("");
+  const [bankAccount, setBankAccount] = useState<string>("");
+  const [bankNumber, setBankNumber] = useState<string>("");
 
   const [fileUpload, setFileUpload] = useState<File | null>(null);
   const [previewImageURL, setPreviewImageURL] = useState<string | null>(null);
@@ -130,11 +133,24 @@ function UpdateProfileSupplier(props: IProps) {
       newErrors.phone = "Please enter phone number";
     } else if (isNaN(parseInt(phone))) {
       newErrors.phone = "Phone must be a number";
+    } else if (!/0[0-9]{9}$/.test(phone)) {
+      newErrors.phone = "Phone must be 10 digits";
     }
-    if (!email) newErrors.email = "Email is required";
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/^([A-Za-z][\w\.\-]+)@([a-z]+)((\.(\w){2,3})+)$/.test(email)) {
+      newErrors.email = "Email is must be a valid format email address";
+    }
     if (!selectedCountry) newErrors.country = "Please select a country";
     if (!address || address.trim() === "") {
       newErrors.address = "Address is required";
+    }
+    if (!bankAccount) newErrors.bankAccount = "Please enter a bank account";
+    if (!bankName) newErrors.bankName = "Please enter a bank name";
+    if (!bankNumber) {
+      newErrors.bankNumber = "Please enter a bank number";
+    } else if (isNaN(parseInt(bankNumber))) {
+      newErrors.bankNumber = "Please enter number only";
     }
     return newErrors;
   };
@@ -155,6 +171,9 @@ function UpdateProfileSupplier(props: IProps) {
       setPassword(supplier.password);
       setEmail(supplier.email);
       setRoleId(supplier.roleId);
+      setBankAccount(supplier.bankAccount);
+      setBankName(supplier.bankName);
+      setBankNumber(supplier.bankNumber);
 
       if (supplier.address) {
         const addressParts = supplier.address.split(",");
@@ -197,6 +216,9 @@ function UpdateProfileSupplier(props: IProps) {
         status: true,
         isVerify: true,
         roleId: Number(roleId),
+        bankAccount: bankAccount,
+        bankName: bankName,
+        bankNumber: bankNumber,
       };
 
       const updateSupplier = await supplierService.updateSupplier(supplier);
@@ -283,6 +305,42 @@ function UpdateProfileSupplier(props: IProps) {
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.address}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Bank Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={bankName}
+                  onChange={(e) => setBankName(e.target.value)}
+                  isInvalid={!!errors.bankName}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.bankName}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Bank Account</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={bankAccount}
+                  onChange={(e) => setBankAccount(e.target.value)}
+                  isInvalid={!!errors.bankAccount}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.bankAccount}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Bank Number</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={bankNumber}
+                  onChange={(e) => setBankNumber(e.target.value)}
+                  isInvalid={!!errors.bankNumber}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.bankNumber}
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>

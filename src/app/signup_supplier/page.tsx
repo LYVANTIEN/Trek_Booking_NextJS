@@ -41,7 +41,9 @@ const signUpClient = () => {
       <div className="image-bk">
         <div className="login">
           <div className="text-login">
-            <h3 className="text-center font-bold color-black text-xl">Sign up to be a Supplier</h3>
+            <h3 className="text-center font-bold color-black text-xl">
+              Sign up to be a Supplier
+            </h3>
           </div>
           <form onSubmit={handleSubmit}>
             <div className="text-input relative">
@@ -54,7 +56,9 @@ const signUpClient = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <p className="color-black m-0 pt-2 pb-1">Enter your supplier name</p>
+              <p className="color-black m-0 pt-2 pb-1">
+                Enter your supplier name
+              </p>
               <input
                 className="input-text"
                 type="text"
@@ -96,23 +100,20 @@ const signUpClient = () => {
               />
               <div className="flex justify-center">
                 <button
-                    className="w-4/5 text-xl text-white button-text mt-4"
-                    style={{ backgroundColor: "#305A61", borderRadius: "20px" }}
-                  >
-                    Continue
-                  </button>
+                  className="w-4/5 text-xl text-white button-text mt-4"
+                  style={{ backgroundColor: "#305A61", borderRadius: "20px" }}
+                >
+                  Continue
+                </button>
               </div>
-                
 
               <div className="nav-sign flex justify-between">
                 <Link
                   className="pt-2 text-right text-base cursor-pointer text-decoration"
-                 
                   href="login_supplier"
                 >
                   You have a account?
                 </Link>
-                
               </div>
             </div>
           </form>
