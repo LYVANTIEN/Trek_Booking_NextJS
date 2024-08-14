@@ -142,7 +142,7 @@ chartRef.current.innerHTML = `<div style='text-align: center; font-size: 20px; p
           value={timeRange}
         >
           <option value="week">Week</option>
-          <option value="total">Total</option>
+          {/* <option value="total">Total</option> */}
           <option value="custom">Custom Made</option>
         </select>
         {timeRange === "custom" && (

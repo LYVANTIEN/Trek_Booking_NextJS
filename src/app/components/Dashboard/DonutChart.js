@@ -144,7 +144,7 @@ const drawChart = () => {
           value={timeRange}
         >
           <option value="week">Week</option>
-          <option value="total">Total</option>
+          {/* <option value="total">Total</option> */}
           <option value="custom">Custom Made</option>
         </select>
         {timeRange === "custom" && (
