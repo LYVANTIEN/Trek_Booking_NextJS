@@ -305,8 +305,8 @@ const TourList = () => {
           <div className=" activities flex justify-center pt-8 pb-12">
             <h3 className="heading-activiti">ACTIVITIES</h3>
           </div>
-          <div className="row column-5 pb-12 animate-on-scroll">
-            <div className="item">
+          <div className="row  pb-12 animate-on-scroll">
+            <div className="item ">
               <div className="taxonomy-post">
                 <div className="box-card flex">
                   <div className="box-card-inner">
@@ -327,7 +327,7 @@ const TourList = () => {
                 </div>
               </div>
             </div>
-            <div className="item">
+            <div className="item ">
               <div className="taxonomy-post">
                 <div className="box-card flex">
                   <div className="box-card-inner">
@@ -352,7 +352,7 @@ const TourList = () => {
                 </div>
               </div>
             </div>
-            <div className="item">
+            <div className="item ">
               <div className="taxonomy-post">
                 <div className="box-card flex">
                   <div className="box-card-inner">
@@ -381,7 +381,7 @@ const TourList = () => {
                 </div>
               </div>
             </div>
-            <div className="item">
+            <div className="item ">
               <div className="taxonomy-post">
                 <div className="box-card flex">
                   <div className="box-card-inner">
@@ -400,7 +400,7 @@ const TourList = () => {
                 </div>
               </div>
             </div>
-            <div className="item">
+            <div className="item ">
               <div className="taxonomy-post">
                 <div className="box-card flex">
                   <div className="box-card-inner">

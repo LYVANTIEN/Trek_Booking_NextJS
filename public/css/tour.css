@@ -8,7 +8,7 @@
   font-size: 20px;
     font-weight: 600;
     color: #4da528;
-}
+}item
 .heading{
   color: #081E2A;
   font-size: 50px;
@@ -169,7 +169,7 @@ margin-left: -8px;
     -webkit-text-fill-color: transparent;
 }
 .item {
-  flex: 0 0 20%;
+
   max-width: 20%;
   padding: 0 13.5px;
 
@@ -268,10 +268,15 @@ margin-left: -8px;
     color: #FFFFFF;
     background: #B8101A;
 }  
+
 @media all and (max-width: 768px) {
 .fix-768-tour{
     padding-top: 32px;
     padding-bottom: 12px;
+}
+.item {
+  max-width: 33.3333%;
+  padding: 6px 13.5px;
 }
 .content-tour{
    
@@ -279,4 +284,22 @@ margin-left: -8px;
     margin-left: 5px;
 }
 
+}
+@media all and (max-width: 600px) {
+  .heading-activiti{
+    font-size: 80px;
+  }
+}
+
+@media all and (max-width: 450px) {
+  .item {
+    max-width: 50%;
+    padding: 6px 13.5px;
+  } 
+ .content .name{
+    font-size: 14px;
+  }
+  .heading-activiti{
+    font-size: 60px;
+  }
 }

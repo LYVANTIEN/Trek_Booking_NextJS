@@ -219,6 +219,7 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
           {showSubMenu && (
             <div className="sub-menu-mobi flex justify-center pt-4">
               <ul className="lg:hidden">
+              {user ? (
                 <li className="flex items-center pb-4 hover-bold">
                   <img
                     style={{ width: "40px" }}
@@ -233,6 +234,22 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
                     Cart
                   </a>
                 </li>
+                 ) : (
+                  <li className="flex items-center pb-4 hover-bold">
+                  <img
+                    style={{ width: "40px" }}
+                    src="/image/gifcart.gif"
+                    alt=""
+                    className="pr-2"
+                  />
+                  <a
+                    href="/login_client"
+                    className="font-bold text-decoration-none text-accent"
+                  >
+                    Cart
+                  </a>
+                </li>
+                )}
                 <li className="flex items-center pb-4 hover-bold">
                   <img
                     style={{ width: "40px" }}
