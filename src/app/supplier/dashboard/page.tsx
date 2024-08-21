@@ -201,11 +201,13 @@ console.error("Failed to fetch total tour count", error);
                       </h4>
                       {percent !== null ? (
                         <p className="mb-0 font-13">
-                          {`${percent > 0 ? "+" : ""}${
-                            Number.isInteger(percent)
-                              ? percent
-                              : percent.toFixed(1).replace(".", ",")
-                          }% from last week`}
+                          {percent === Number.MAX_VALUE
+                            ? "+∞% from last week"
+                            : `${percent > 0 ? "+" : ""}${
+                                Number.isInteger(percent)
+                                  ? percent
+                                  : percent.toFixed(1).replace(".", ",")
+                              }% from last week`}
                         </p>
                       ) : (
                         <p className="mb-0 font-13">Loading...</p>
@@ -233,12 +235,16 @@ console.error("Failed to fetch total tour count", error);
 
                       {percentRevenueHotel !== null ? (
                         <p className="mb-0 font-13">
-                          {`${percentRevenueHotel > 0 ? "+" : ""}${
-                            Number.isInteger(percentRevenueHotel)
-                              ? percentRevenueHotel
-                              : percentRevenueHotel.toFixed(1).replace(".", ",")
-                          }% from last week`}
-</p>
+                          {percentRevenueHotel === 999999999
+                            ? "+∞% from last week"
+                            : `${percentRevenueHotel > 0 ? "+" : ""}${
+                                Number.isInteger(percentRevenueHotel)
+                                  ? percentRevenueHotel
+                                  : percentRevenueHotel
+                                      .toFixed(1)
+                                      .replace(".", ",")
+                              }% from last week`}
+                        </p>
                       ) : (
                         <p className="mb-0 font-13">Loading...</p>
                       )}
@@ -262,11 +268,13 @@ console.error("Failed to fetch total tour count", error);
 
                       {percentTour !== null ? (
                         <p className="mb-0 font-13">
-                          {`${percentTour > 0 ? "+" : ""}${
-                            Number.isInteger(percentTour)
-                              ? percentTour
-                              : percentTour.toFixed(1).replace(".", ",")
-                          }% from last week`}
+                          {percentTour === Number.MAX_VALUE
+                            ? "+∞% from last week"
+                            : `${percentTour > 0 ? "+" : ""}${
+                                Number.isInteger(percentTour)
+                                  ? percentTour
+                                  : percentTour.toFixed(1).replace(".", ",")
+                              }% from last week`}
                         </p>
                       ) : (
                         <p className="mb-0 font-13">Loading...</p>
@@ -293,11 +301,15 @@ console.error("Failed to fetch total tour count", error);
                       </h4>
                       {percentRevenueTour !== null ? (
                         <p className="mb-0 font-13">
-                          {`${percentRevenueTour > 0 ? "+" : ""}${
-                            Number.isInteger(percentRevenueTour)
-                              ? percentRevenueTour
-                              : percentRevenueTour.toFixed(1).replace(".", ",")
-                          }% from last week`}
+                          {percentRevenueTour === 999999999
+                            ? "+∞% from last week"
+                            : `${percentRevenueTour > 0 ? "+" : ""}${
+                                Number.isInteger(percentRevenueTour)
+                                  ? percentRevenueTour
+                                  : percentRevenueTour
+                                      .toFixed(1)
+                                      .replace(".", ",")
+                              }% from last week`}
                         </p>
                       ) : (
                         <p className="mb-0 font-13">Loading...</p>

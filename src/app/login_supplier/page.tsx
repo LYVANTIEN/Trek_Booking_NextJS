@@ -38,7 +38,7 @@ function LoginSupplier() {
     if (result.success) {
       setSuccessMessage("Login successful! Redirecting...");
       setErrorMessage(""); // Clear any previous error message
-        router.push("/supplier/hotel");
+        router.push("/supplier/dashboard");
     } else {
       setSuccessMessage(""); // Clear any previous success message
       setErrorMessage(result.errorMessage || "Account or password is incorrect.");

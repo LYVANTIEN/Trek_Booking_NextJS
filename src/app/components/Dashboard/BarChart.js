@@ -144,32 +144,53 @@ const formattedData = formatData(dataHotel, dataTour);
             tourData[index]?.revenue || 0,
           ]);
         });
-      } else if (startDate && endDate) {
-        formattedData = [
-          [`Revenue from ${startDate} to ${endDate}`, "Hotel", "Tour"],
-        ];
+      }
+      else if (startDate && endDate) {
+        const dataMap = new Map();
+
+        // Thêm dữ liệu khách sạn vào dataMap
         if (hotelData.length > 0) {
-          hotelData.forEach((item, index) => {
+          hotelData.forEach((item) => {
             const date = new Date(item.dateRange);
             const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
               .toString()
               .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
-            formattedData.push([
-              formattedDate,
-              item.revenue,
-              tourData[index]?.revenue || 0,
-            ]);
+            dataMap.set(formattedDate, { hotel: item.revenue, tour: 0 });
           });
-        } else if (tourData.length > 0) {
+        }
+
+        // Thêm dữ liệu tour vào dataMap
+        if (tourData.length > 0) {
           tourData.forEach((item) => {
             const date = new Date(item.dateRange);
             const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
               .toString()
               .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
-            formattedData.push([formattedDate, 0, item.revenue]);
+            if (dataMap.has(formattedDate)) {
+              dataMap.get(formattedDate).tour = item.revenue;
+            } else {
+              dataMap.set(formattedDate, { hotel: 0, tour: item.revenue });
+            }
           });
         }
-      } else if (timeRange === "year") {
+
+        // Chuyển đổi dataMap thành mảng và sắp xếp theo ngày
+        formattedData = [
+          [`Revenue from ${startDate} to ${endDate}`, "Hotel", "Tour"],
+        ];
+
+        // Sắp xếp các ngày
+        const sortedDates = Array.from(dataMap.keys()).sort(
+          (a, b) => new Date(a) - new Date(b)
+        );
+
+        // Thêm dữ liệu đã sắp xếp vào formattedData
+        sortedDates.forEach((date) => {
+          const value = dataMap.get(date);
+          formattedData.push([date, value.hotel, value.tour]);
+        });
+      }
+      else if (timeRange === "year") {
 formattedData = [
           ["Revenue of the Months in the Year " + `${year}`, "Hotel", "Tour"],
         ];
