@@ -47,7 +47,7 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
 
   const handleLogout = async () => {
     await authenticateService.logOutClient();
-    toast.success("Logout Success..");
+   // toast.success("Logout Success..");
     router.push("/login_client");
   };
 

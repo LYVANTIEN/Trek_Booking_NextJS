@@ -843,7 +843,7 @@ const DetailHotel = ({ params }: { params: { hotelId: string } }) => {
                     />
                   ))}
                 </div>
-                <div className="comment-text">({averageRating1} out of {`${combinedList.length} `})</div>
+                <div className="comment-text">({averageRating1} out of 5)</div>
               </div>
             </div>
             <div className="comment mt-8">
